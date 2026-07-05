@@ -96,6 +96,12 @@ const linkRewrites = new Map([
   ["https://www.paunova.co/international-patients/", "/international-patients"],
 ]);
 
+const hashRewrites = new Map([
+  ["#tratamientos", "/tratamientos"],
+  ["#nosotros", "/quienes-somos"],
+  ["#contacto", "/contacto"],
+]);
+
 const topNavigationScript = `<script>
 document.addEventListener("click", function(event) {
   const link = event.target.closest && event.target.closest("a[href]");
@@ -161,6 +167,65 @@ async function downloadImage(url) {
   return publicPath;
 }
 
+function visibleText(html) {
+  return html
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function normalizeText(text) {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function routeForAnchor(href, innerHtml) {
+  if (hashRewrites.has(href)) return hashRewrites.get(href);
+  if (href !== "#") return null;
+
+  const text = normalizeText(visibleText(innerHtml));
+  if (!text) return null;
+
+  if (text.includes("toxina")) return "/toxina-botulinica";
+  if (text.includes("hydrash") || text.includes("limpieza")) return "/limpieza-facial-profunda-hydrash";
+  if (text.includes("pacientes internacionales")) return "/international-patients";
+  if (text.includes("blog")) return "/blog";
+  if (
+    text.includes("tratamiento") ||
+    text.includes("catalogo") ||
+    text.includes("faciales") ||
+    text.includes("laser") ||
+    text.includes("contorno")
+  ) {
+    return "/tratamientos";
+  }
+  if (
+    text.includes("contact") ||
+    text.includes("agendar") ||
+    text.includes("valoracion") ||
+    text.includes("iniciar proceso") ||
+    text.includes("google maps")
+  ) {
+    return "/contacto";
+  }
+  if (text.includes("nosotros") || text.includes("sobre la dra") || text.includes("staff")) {
+    return "/quienes-somos";
+  }
+  if (text.includes("dra. carolina") || text.includes("dra carolina")) return "/";
+
+  return null;
+}
+
+function rewriteAnchorRoutes(html) {
+  return html.replace(/<a\b([^>]*?)href="([^"]+)"([^>]*)>([\s\S]*?)<\/a>/g, (match, before, href, after, inner) => {
+    const route = routeForAnchor(href, inner);
+    if (!route) return match;
+    return `<a${before}href="${route}"${after}>${inner}</a>`;
+  });
+}
+
 async function rewriteHtml(page) {
   const sourcePath = path.join(ZIP_EXPORT_ROOT, page.sourceDir, "code.html");
   let html = await readFile(sourcePath, "utf8");
@@ -176,6 +241,7 @@ async function rewriteHtml(page) {
     html = html.replaceAll(`href="${from}"`, `href="${to}"`);
   }
 
+  html = rewriteAnchorRoutes(html);
   html = html.replace("</body>", `${topNavigationScript}</body>`);
   await writeFile(path.join(PAGES_OUT, page.output), html, "utf8");
 }
