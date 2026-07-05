@@ -1,5 +1,5 @@
 * +57 350 656 1869
-  * Calle 9 Sur # 13 -117 Buga , Valle del Cauca, CO.
+  * Av. Principal 123, Centro Médico Especializado, Consultorio 504. Av. Principal 123, Centro Médico Especializado, Consultorio 504.
   * [ paunova.co ](https://www.instagram.com/paunova.co/)
 
 
@@ -166,8 +166,7 @@ __
 
 #####  Ubicación 
 
-Calle 9 Sur # 13 -117   
-Buga , Valle del Cauca, CO. 
+Av. Principal 123, Centro Médico Especializado, Consultorio 504. 
 
 __
 
@@ -225,8 +224,7 @@ __
 
 #####  Ubicación 
 
-Calle 9 Sur # 13 -117   
-Buga , Valle del Cauca, CO. 
+Av. Principal 123, Centro Médico Especializado, Consultorio 504. 
 
 __
 
@@ -267,7 +265,6 @@ Sábados 8: 00 a.m a 12 :00 m
 
 
   * +57 350 656 1869
-  * Calle 9 Sur # 13 -117   
-Buga , Valle del Cauca, CO.
+  * Av. Principal 123, Centro Médico Especializado, Consultorio 504.
   * paunova.co@gmail.com
   * [ @paunova.co ](https://www.instagram.com/paunova.co/)

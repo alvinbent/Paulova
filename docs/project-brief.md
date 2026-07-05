@@ -8,7 +8,7 @@ Marca oficial: **Dra Carolina Aguirre - Paunova Skin & Age Clinic**
 
 ## Objetivo
 
-Construir una plataforma digital integral para una clinica estetica en Buga, Valle del Cauca, Colombia, orientada a captar pacientes locales, regionales, nacionales e internacionales, mejorar la presencia web actual, crear una aplicacion privada para la doctora, automatizar atencion por WhatsApp, gestionar CRM, historia clinica estetica, inventario, seguimiento de tratamientos y contenido publicitario con IA.
+Construir una plataforma digital integral para una clinica estetica ubicada en Av. Principal 123, Centro Médico Especializado, Consultorio 504, orientada a captar pacientes locales, regionales, nacionales e internacionales, mejorar la presencia web actual, crear una aplicacion privada para la doctora, automatizar atencion por WhatsApp, gestionar CRM, historia clinica estetica, inventario, seguimiento de tratamientos y contenido publicitario con IA.
 
 ## Principios
 
@@ -79,4 +79,3 @@ NEXT_PUBLIC_SITE_URL=
 - No inventar diagnosticos automatizados.
 - No exponer credenciales en frontend.
 - No mezclar historia clinica con marketing.
-

@@ -6,7 +6,7 @@ Bitacora de coordinacion para Codex, Anti-Gravity y agentes importados.
 
 Fecha: 2026-07-04  
 Repositorio local: `C:\dev\Paunova\paunova proyect`  
-Repositorio remoto objetivo: `https://github.com/alvinbent/Paulova.git`
+Repositorio remoto objetivo: `https://github.com/alvinbent/Paunova.git`
 
 ## Decision actual
 
@@ -49,7 +49,7 @@ Coordinador modelos colaboracion:
 ## Pendientes
 
 - Recibir URL, export o acceso verificable de Stitch para sincronizar **Paunova Premium Web Expansion**.
-- Confirmar si el remoto `alvinbent/Paulova.git` es el nombre definitivo aunque el proyecto sea Paunova.
+- Confirmar y migrar el remoto a `alvinbent/Paunova.git` para mantener consistencia total con la marca Paunova.
 - Crear proyecto Next.js cuando se autorice empezar implementacion de la web/app.
 
 ## Stitch MCP

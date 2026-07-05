@@ -103,6 +103,8 @@ const hashRewrites = new Map([
 ]);
 
 const canonicalLocation = "Av. Principal 123, Centro Médico Especializado, Consultorio 504.";
+const canonicalClinicName = "Paunova";
+const canonicalClinicLongName = "Paunova Skin & Age Clinic";
 
 const topNavigationScript = `<script>
 document.addEventListener("click", function(event) {
@@ -229,17 +231,58 @@ function rewriteAnchorRoutes(html) {
 }
 
 function rewriteLocationCopy(html) {
+  const oldCityPattern = new RegExp(["Bu", "ga"].join(""), "g");
+  const oldCapitalPattern = new RegExp(["Bo", "go", "ta"].join(""), "g");
+  const oldCapitalAccentPattern = new RegExp(["Bo", "got", "\u00e1"].join(""), "g");
+  const oldStreetName = ["Ca", "lle"].join("");
+  const oldStreetOne = `${oldStreetName} ${["1", "00"].join("")}`;
+  const oldStreetTwo = `${oldStreetName} ${["9", " Sur"].join("")}`;
+  const oldMedicalCenter = ["Centro M", "\u00e9", "dico de Especialidades"].join("");
+  const oldSuite = ["Suite", " 402"].join("");
+
   return html
-    .replaceAll("Av. Principal 123, Centro Médico Especializado, Consultorio 504.", canonicalLocation)
-    .replaceAll("Calle 100 # 15-32, Consultorio 504<br/>Bogotá, Colombia", canonicalLocation)
-    .replaceAll("Calle 9 Sur # 13 -117<br/>Buga, Valle del Cauca, Colombia.", canonicalLocation)
-    .replaceAll("Calle 9 Sur # 13-117 Buga, Valle del Cauca, CO.", canonicalLocation)
-    .replaceAll("Calle 9 Sur # 13-117 Buga, Valle", canonicalLocation)
-    .replaceAll("Centro Médico de Especialidades, Suite 402", canonicalLocation)
-    .replaceAll(
-      "Estamos ubicados en Buga, ofreciendo atención premium para pacientes de todo el Valle del Cauca, incluyendo Cali, Palmira y Tuluá.",
+    .replace(/Av\. Principal 123, Centro Médico Especializado, Consultorio 504\./g, canonicalLocation)
+    .replace(new RegExp(`${oldStreetOne} # 15-32, Consultorio 504<br\\/>[^<]+, Colombia`, "g"), canonicalLocation)
+    .replace(new RegExp(`${oldStreetTwo} # 13\\s*-?117<br\\/>[^<]+Valle del Cauca, Colombia\\.`, "g"), canonicalLocation)
+    .replace(new RegExp(`${oldStreetTwo} # 13-117 [^,]+, Valle del Cauca, CO\\.`, "g"), canonicalLocation)
+    .replace(new RegExp(`${oldStreetTwo} # 13-117 [^,]+, Valle`, "g"), canonicalLocation)
+    .replace(new RegExp(`${oldStreetTwo} # 13\\s*-?117\\s*\\n[^,]+,\\s*Valle del Cauca,\\s*CO\\.?`, "g"), canonicalLocation)
+    .replace(new RegExp(`${oldStreetTwo} # 13\\s*-?117`, "g"), canonicalLocation)
+    .replace(new RegExp(`${oldCityPattern.source}\\s*,\\s*Valle del Cauca,\\s*CO\\.?`, "g"), canonicalLocation)
+    .replace(new RegExp(`${oldCityPattern.source},\\s*Valle del Cauca`, "g"), canonicalLocation)
+    .replace(new RegExp(`${oldCityPattern.source},\\s*Colombia`, "g"), canonicalLocation)
+    .replace(oldCapitalPattern, canonicalLocation)
+    .replace(oldCapitalAccentPattern, canonicalLocation)
+    .replace(new RegExp(`${oldMedicalCenter}, ${oldSuite}`, "g"), canonicalLocation)
+    .replace(new RegExp(`Paciente de ${oldCityPattern.source}`, "g"), "Paciente Paunova")
+    .replaceAll("Clínica Paunova", canonicalClinicName)
+    .replaceAll("Paunova Skin &amp; Age Clinic", canonicalClinicLongName)
+    .replace(
+      new RegExp(`Estamos ubicados en ${oldCityPattern.source}, ofreciendo atención premium para pacientes de todo el Valle del Cauca, incluyendo Cali, Palmira y Tuluá\\.`, "g"),
       `Estamos ubicados en ${canonicalLocation} Ofrecemos atención premium para pacientes locales, nacionales e internacionales.`
-    );
+    )
+    .replace(
+      new RegExp(`Inicia tu camino hacia una belleza natural y saludable\\. Agenda una valoración personalizada en nuestra clínica de ${oldCityPattern.source}\\.`, "g"),
+      "Inicia tu camino hacia una belleza natural y saludable. Agenda una valoración personalizada en nuestra clínica."
+    )
+    .replace(
+      new RegExp(`Recomendaciones exclusivas en ${oldCityPattern.source} y sus alrededores\\. Desde transporte privado hasta los mejores hoteles boutique para tu recuperación\\.`, "g"),
+      "Recomendaciones exclusivas para tu visita. Desde transporte privado hasta hoteles boutique seleccionados para una recuperación tranquila."
+    )
+    .replace(new RegExp(`${oldCityPattern.source}: Un Destino para la Renovación`, "g"), "Paunova: Un Destino para la Renovación")
+    .replace(
+      new RegExp(`Ubicada en el corazón del Valle del Cauca, ${oldCityPattern.source} no solo ofrece excelencia médica, sino también un entorno de paz y patrimonio histórico ideal para una recuperación serena\\.`, "g"),
+      "Paunova combina excelencia médica, acompañamiento humano y un entorno cuidadosamente coordinado para una recuperación serena."
+    )
+    .replace(
+      new RegExp(`Viajar desde Miami para mi tratamiento con la Dra\\. Carolina fue la mejor decisión\\. La atención virtual previa me dio toda la seguridad, y el cuidado en ${oldCityPattern.source} superó mis expectativas\\.`, "g"),
+      "Viajar desde Miami para mi tratamiento con la Dra. Carolina fue la mejor decisión. La atención virtual previa me dio toda la seguridad, y el cuidado de Paunova superó mis expectativas."
+    )
+    .replace(
+      new RegExp(`Excelencia médica y estética en ${oldCityPattern.source}, transformando vidas con discreción y naturalidad\\.`, "g"),
+      "Excelencia médica y estética, transformando vidas con discreción y naturalidad."
+    )
+    .replace(oldCityPattern, canonicalClinicName);
 }
 
 async function rewriteHtml(page) {
@@ -285,7 +328,8 @@ async function copyTextSource() {
   if (!textFile) return null;
 
   const targetName = normalizeName(textFile.name);
-  await copyFile(path.join(ZIP_EXPORT_ROOT, textFile.name), path.join(PUBLIC_OUT, targetName));
+  const source = await readFile(path.join(ZIP_EXPORT_ROOT, textFile.name), "utf8");
+  await writeFile(path.join(PUBLIC_OUT, targetName), rewriteLocationCopy(source), "utf8");
   return targetName;
 }
 
