@@ -3,6 +3,10 @@ export const stitchPages = {
     title: "Home Premium - Paunova",
     src: "/stitch-assets/pages/home.html",
   },
+  homeAccesoPrivado: {
+    title: "Home Premium con Acceso Privado - Paunova",
+    src: "/stitch-assets/pages/home-acceso-privado.html",
+  },
   tratamientos: {
     title: "Tratamientos Premium - Paunova",
     src: "/stitch-assets/pages/tratamientos.html",
@@ -10,6 +14,10 @@ export const stitchPages = {
   hydrash: {
     title: "Hydrash Detox Facial - Paquetes Exclusivos",
     src: "/stitch-assets/pages/limpieza-facial-profunda-hydrash.html",
+  },
+  toxinaBotulinica: {
+    title: "Toxina Botulinica - Detalle de Tratamiento",
+    src: "/stitch-assets/pages/toxina-botulinica.html",
   },
   quienesSomos: {
     title: "Quienes Somos - Dra Carolina Aguirre",
@@ -28,4 +36,3 @@ export const stitchPages = {
     src: "/stitch-assets/pages/blog.html",
   },
 } as const;
-

@@ -1,27 +1,89 @@
 #!/usr/bin/env node
 
 import { createHash } from "node:crypto";
-import { copyFile, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import {
+  copyFile,
+  mkdir,
+  readFile,
+  readdir,
+  rm,
+  stat,
+  writeFile,
+} from "node:fs/promises";
 import path from "node:path";
 
-const HTML_IN = ".stitch-cache/html";
-const SHOTS_IN = ".stitch-cache/screenshots";
+const ZIP_EXPORT_ROOT = ".stitch-cache/zip-export/stitch_paunova_premium_web";
 const PUBLIC_OUT = "public/stitch-assets";
 const PAGES_OUT = path.join(PUBLIC_OUT, "pages");
 const IMAGES_OUT = path.join(PUBLIC_OUT, "images");
 const SHOTS_OUT = path.join(PUBLIC_OUT, "screenshots");
+const REFERENCE_OUT = path.join(PUBLIC_OUT, "reference-images");
 
-const pageMap = new Map([
-  ["42d134c36fac472d91b255aef6a4d07a.html", "home.html"],
-  ["6693b610cfbe41c781baa66a0e56d1ac.html", "home-acceso-privado.html"],
-  ["a80a1383282e40839140077a0ef8b615.html", "tratamientos.html"],
-  ["210d5935032d419087a65ee5474e2c6e.html", "limpieza-facial-profunda-hydrash.html"],
-  ["b28666d6225d4c52a8db3dff05331b74.html", "toxina-botulinica.html"],
-  ["f913911b803043eaac9a8ca12c200582.html", "quienes-somos.html"],
-  ["5bcca473651942ca9f61119d90daaa0d.html", "contacto.html"],
-  ["373e2e3b16e2496faca6b14ebfd34545.html", "international-patients.html"],
-  ["93636dc7f95d4d029e939ba9de24bb54.html", "blog.html"],
-]);
+const pages = [
+  {
+    sourceDir: "home_premium_paunova",
+    slug: "home",
+    output: "home.html",
+    title: "Home Premium - Paunova",
+    route: "/",
+  },
+  {
+    sourceDir: "home_premium_con_acceso_privado_paunova",
+    slug: "home-acceso-privado",
+    output: "home-acceso-privado.html",
+    title: "Home Premium con Acceso Privado - Paunova",
+    route: "/home-acceso-privado",
+  },
+  {
+    sourceDir: "tratamientos_premium_paunova",
+    slug: "tratamientos",
+    output: "tratamientos.html",
+    title: "Tratamientos Premium - Paunova",
+    route: "/tratamientos",
+  },
+  {
+    sourceDir: "hydrash_detox_facial_paquetes_exclusivos",
+    slug: "limpieza-facial-profunda-hydrash",
+    output: "limpieza-facial-profunda-hydrash.html",
+    title: "Hydrash Detox Facial - Paquetes Exclusivos",
+    route: "/limpieza-facial-profunda-hydrash",
+  },
+  {
+    sourceDir: "toxina_botul_nica_detalle_de_tratamiento",
+    slug: "toxina-botulinica",
+    output: "toxina-botulinica.html",
+    title: "Toxina Botulinica - Detalle de Tratamiento",
+    route: "/toxina-botulinica",
+  },
+  {
+    sourceDir: "qui_nes_somos_dra._carolina_aguirre",
+    slug: "quienes-somos",
+    output: "quienes-somos.html",
+    title: "Quienes Somos - Dra. Carolina Aguirre",
+    route: "/quienes-somos",
+  },
+  {
+    sourceDir: "contacto_paunova",
+    slug: "contacto",
+    output: "contacto.html",
+    title: "Contacto - Paunova",
+    route: "/contacto",
+  },
+  {
+    sourceDir: "international_patients_paunova",
+    slug: "international-patients",
+    output: "international-patients.html",
+    title: "International Patients - Paunova",
+    route: "/international-patients",
+  },
+  {
+    sourceDir: "blog_educativo_paunova",
+    slug: "blog",
+    output: "blog.html",
+    title: "Blog Educativo - Paunova",
+    route: "/blog",
+  },
+];
 
 const linkRewrites = new Map([
   ["https://www.paunova.co/", "/"],
@@ -42,12 +104,13 @@ document.addEventListener("click", function(event) {
   if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:") || href.startsWith("http://wa.link")) return;
   if (href.startsWith("/")) {
     event.preventDefault();
-    window.top.location.href = href;
+    window.location.href = href;
   }
 });
 </script>`;
 
 const imageUrlToLocal = new Map();
+const missingAssets = [];
 
 function hashUrl(url) {
   return createHash("sha256").update(url).digest("hex").slice(0, 16);
@@ -61,12 +124,31 @@ function extensionFromContentType(contentType) {
   return ".jpg";
 }
 
+function normalizeName(name) {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9._-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .toLowerCase();
+}
+
+async function exists(filePath) {
+  try {
+    await stat(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 async function downloadImage(url) {
   if (imageUrlToLocal.has(url)) return imageUrlToLocal.get(url);
 
   const res = await fetch(url);
   if (!res.ok) {
-    throw new Error(`Could not download image ${url}: ${res.status}`);
+    missingAssets.push({ type: "image", url, reason: `HTTP ${res.status}` });
+    return url;
   }
 
   const ext = extensionFromContentType(res.headers.get("content-type"));
@@ -79,11 +161,9 @@ async function downloadImage(url) {
   return publicPath;
 }
 
-async function rewriteHtml(fileName) {
-  const outputName = pageMap.get(fileName);
-  if (!outputName) return;
-
-  let html = await readFile(path.join(HTML_IN, fileName), "utf8");
+async function rewriteHtml(page) {
+  const sourcePath = path.join(ZIP_EXPORT_ROOT, page.sourceDir, "code.html");
+  let html = await readFile(sourcePath, "utf8");
   const srcMatches = [...html.matchAll(/src="(https:\/\/lh3\.googleusercontent\.com\/[^"]+)"/g)];
 
   for (const match of srcMatches) {
@@ -97,37 +177,94 @@ async function rewriteHtml(fileName) {
   }
 
   html = html.replace("</body>", `${topNavigationScript}</body>`);
+  await writeFile(path.join(PAGES_OUT, page.output), html, "utf8");
+}
 
-  await writeFile(path.join(PAGES_OUT, outputName), html, "utf8");
+async function copyScreenshots() {
+  for (const page of pages) {
+    const sourcePath = path.join(ZIP_EXPORT_ROOT, page.sourceDir, "screen.png");
+    const targetPath = path.join(SHOTS_OUT, `${page.slug}.png`);
+    if (await exists(sourcePath)) await copyFile(sourcePath, targetPath);
+  }
+
+  const entries = await readdir(ZIP_EXPORT_ROOT, { withFileTypes: true });
+  for (const entry of entries) {
+    if (!entry.isDirectory() || !entry.name.startsWith("image_from_")) continue;
+    const sourcePath = path.join(ZIP_EXPORT_ROOT, entry.name, "screen.png");
+    if (!(await exists(sourcePath))) continue;
+    await copyFile(sourcePath, path.join(REFERENCE_OUT, `${normalizeName(entry.name)}.png`));
+  }
+}
+
+async function copyTextSource() {
+  const entries = await readdir(ZIP_EXPORT_ROOT, { withFileTypes: true });
+  const textFile = entries.find((entry) => entry.isFile() && entry.name.endsWith(".md"));
+  if (!textFile) return null;
+
+  const targetName = normalizeName(textFile.name);
+  await copyFile(path.join(ZIP_EXPORT_ROOT, textFile.name), path.join(PUBLIC_OUT, targetName));
+  return targetName;
 }
 
 async function main() {
+  if (!(await exists(ZIP_EXPORT_ROOT))) {
+    throw new Error(`Stitch ZIP export not found at ${ZIP_EXPORT_ROOT}. Unzip the Stitch export before materializing.`);
+  }
+
+  await rm(PUBLIC_OUT, { recursive: true, force: true });
   await mkdir(PAGES_OUT, { recursive: true });
   await mkdir(IMAGES_OUT, { recursive: true });
   await mkdir(SHOTS_OUT, { recursive: true });
+  await mkdir(REFERENCE_OUT, { recursive: true });
 
-  const htmlFiles = (await readdir(HTML_IN)).filter((file) => file.endsWith(".html"));
-  for (const file of htmlFiles) {
-    await rewriteHtml(file);
+  for (const page of pages) {
+    await rewriteHtml(page);
   }
 
-  const shotFiles = (await readdir(SHOTS_IN)).filter((file) => file.endsWith(".png"));
-  for (const file of shotFiles) {
-    await copyFile(path.join(SHOTS_IN, file), path.join(SHOTS_OUT, file));
-  }
+  await copyScreenshots();
+  const textSource = await copyTextSource();
 
   const manifest = {
     generatedAt: new Date().toISOString(),
-    source: "Stitch MCP cache",
-    pages: [...pageMap.values()],
-    localImages: imageUrlToLocal.size,
-    screenshots: shotFiles.length,
+    source: "Stitch ZIP export",
+    zipSource: "C:/Users/PC/Downloads/stitch_paunova_premium_web.zip",
+    pages: pages.map(({ sourceDir, slug, output, title, route }) => ({
+      sourceDir,
+      slug,
+      output,
+      title,
+      route,
+      screenshot: `/stitch-assets/screenshots/${slug}.png`,
+    })),
+    assets: {
+      cssFiles: [],
+      fonts: [
+        "Google Fonts: EB Garamond",
+        "Google Fonts: Hanken Grotesk",
+        "Google Fonts: Sora",
+        "Google Fonts: Material Symbols Outlined",
+      ],
+      localImages: imageUrlToLocal.size,
+      referenceImages: (await readdir(REFERENCE_OUT)).length,
+      screenshots: (await readdir(SHOTS_OUT)).length,
+      textSource,
+      missingAssets,
+    },
+    reusableComponents: [
+      "Navigation/header",
+      "Hero sections",
+      "Treatment cards",
+      "CTA buttons",
+      "Footer/contact blocks",
+    ],
   };
 
   await writeFile(path.join(PUBLIC_OUT, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
-  console.log(`Materialized ${manifest.pages.length} Stitch pages`);
-  console.log(`Downloaded ${manifest.localImages} images`);
-  console.log(`Copied ${manifest.screenshots} screenshots`);
+  console.log(`Materialized ${pages.length} Stitch ZIP pages`);
+  console.log(`Downloaded ${imageUrlToLocal.size} images`);
+  console.log(`Copied ${manifest.assets.screenshots} page screenshots`);
+  console.log(`Copied ${manifest.assets.referenceImages} reference images`);
+  if (missingAssets.length > 0) console.log(`Missing assets: ${missingAssets.length}`);
 }
 
 main().catch((error) => {

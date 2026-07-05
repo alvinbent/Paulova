@@ -350,7 +350,7 @@ document.addEventListener("click", function(event) {
   if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:") || href.startsWith("http://wa.link")) return;
   if (href.startsWith("/")) {
     event.preventDefault();
-    window.top.location.href = href;
+    window.location.href = href;
   }
 });
 </script></body></html>
