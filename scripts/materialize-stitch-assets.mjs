@@ -13,8 +13,10 @@ const SHOTS_OUT = path.join(PUBLIC_OUT, "screenshots");
 
 const pageMap = new Map([
   ["42d134c36fac472d91b255aef6a4d07a.html", "home.html"],
+  ["6693b610cfbe41c781baa66a0e56d1ac.html", "home-acceso-privado.html"],
   ["a80a1383282e40839140077a0ef8b615.html", "tratamientos.html"],
   ["210d5935032d419087a65ee5474e2c6e.html", "limpieza-facial-profunda-hydrash.html"],
+  ["b28666d6225d4c52a8db3dff05331b74.html", "toxina-botulinica.html"],
   ["f913911b803043eaac9a8ca12c200582.html", "quienes-somos.html"],
   ["5bcca473651942ca9f61119d90daaa0d.html", "contacto.html"],
   ["373e2e3b16e2496faca6b14ebfd34545.html", "international-patients.html"],
@@ -26,6 +28,7 @@ const linkRewrites = new Map([
   ["https://www.paunova.co/quienes-somos/", "/quienes-somos"],
   ["https://www.paunova.co/contacto/", "/contacto"],
   ["https://www.paunova.co/limpieza-facial-profunda-hydrash/", "/limpieza-facial-profunda-hydrash"],
+  ["https://www.paunova.co/toxina-botulinica/", "/toxina-botulinica"],
   ["https://www.paunova.co/tratamientos/", "/tratamientos"],
   ["https://www.paunova.co/blog/", "/blog"],
   ["https://www.paunova.co/international-patients/", "/international-patients"],
