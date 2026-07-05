@@ -52,3 +52,28 @@ Coordinador modelos colaboracion:
 - Confirmar si el remoto `alvinbent/Paulova.git` es el nombre definitivo aunque el proyecto sea Paunova.
 - Crear proyecto Next.js cuando se autorice empezar implementacion de la web/app.
 
+## Stitch MCP
+
+Fecha: 2026-07-05
+
+Se confirmo que este entorno de Codex soporta servidores MCP personalizados mediante `config.toml`.
+
+Configuracion creada:
+
+- Archivo: `.codex/config.toml`
+- Servidor: `stitch`
+- URL: `https://stitch.googleapis.com/mcp`
+- Header seguro: `X-Goog-Api-Key` tomado desde la variable de entorno `STITCH_API_KEY`
+
+Pruebas realizadas:
+
+- `codex mcp list`: el servidor `stitch` aparece habilitado.
+- `initialize`: responde `HTTP 200`.
+- `tools/list`: expone herramientas como `list_projects`, `get_project`, `list_screens`, `get_screen`, `list_design_systems`, `apply_design_system`.
+- `list_projects`: responde `HTTP 401` porque `STITCH_API_KEY` no esta disponible en el entorno local actual.
+
+Siguiente accion requerida:
+
+- Definir `STITCH_API_KEY` como variable de entorno local antes de iniciar Codex.
+- Reiniciar o recargar Codex para que el servidor MCP cargue la variable.
+- Reintentar `list_projects` y localizar el proyecto **Paunova Premium Web Expansion**.
