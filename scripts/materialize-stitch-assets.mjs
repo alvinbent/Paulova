@@ -102,6 +102,8 @@ const hashRewrites = new Map([
   ["#contacto", "/contacto"],
 ]);
 
+const canonicalLocation = "Av. Principal 123, Centro Médico Especializado, Consultorio 504.";
+
 const topNavigationScript = `<script>
 document.addEventListener("click", function(event) {
   const link = event.target.closest && event.target.closest("a[href]");
@@ -226,6 +228,20 @@ function rewriteAnchorRoutes(html) {
   });
 }
 
+function rewriteLocationCopy(html) {
+  return html
+    .replaceAll("Av. Principal 123, Centro Médico Especializado, Consultorio 504.", canonicalLocation)
+    .replaceAll("Calle 100 # 15-32, Consultorio 504<br/>Bogotá, Colombia", canonicalLocation)
+    .replaceAll("Calle 9 Sur # 13 -117<br/>Buga, Valle del Cauca, Colombia.", canonicalLocation)
+    .replaceAll("Calle 9 Sur # 13-117 Buga, Valle del Cauca, CO.", canonicalLocation)
+    .replaceAll("Calle 9 Sur # 13-117 Buga, Valle", canonicalLocation)
+    .replaceAll("Centro Médico de Especialidades, Suite 402", canonicalLocation)
+    .replaceAll(
+      "Estamos ubicados en Buga, ofreciendo atención premium para pacientes de todo el Valle del Cauca, incluyendo Cali, Palmira y Tuluá.",
+      `Estamos ubicados en ${canonicalLocation} Ofrecemos atención premium para pacientes locales, nacionales e internacionales.`
+    );
+}
+
 async function rewriteHtml(page) {
   const sourcePath = path.join(ZIP_EXPORT_ROOT, page.sourceDir, "code.html");
   let html = await readFile(sourcePath, "utf8");
@@ -242,6 +258,7 @@ async function rewriteHtml(page) {
   }
 
   html = rewriteAnchorRoutes(html);
+  html = rewriteLocationCopy(html);
   html = html.replace("</body>", `${topNavigationScript}</body>`);
   await writeFile(path.join(PAGES_OUT, page.output), html, "utf8");
 }
