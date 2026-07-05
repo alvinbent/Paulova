@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nosotros | Dra. Carolina Aguirre</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&amp;family=Hanken+Grotesk:wght@300;400;500;600&amp;family=Sora:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #FDFBF7; /* warm-white from config */
+            -webkit-font-smoothing: antialiased;
+        }
+        .ebGaramond { font-family: 'EB Garamond', serif; }
+        .hankenGrotesk { font-family: 'Hanken Grotesk', sans-serif; }
+        .sora { font-family: 'Sora', sans-serif; }
+        
+        .glass-nav {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .scroll-reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary": "#ffffff",
+                      "on-background": "#1b1c1c",
+                      "surface": "#fbf9f8",
+                      "on-tertiary-fixed": "#261900",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-surface": "#303030",
+                      "on-surface-variant": "#4e453e",
+                      "warm-white": "#FDFBF7",
+                      "tertiary-fixed": "#ffdea5",
+                      "outline-variant": "#d2c4bb",
+                      "primary-fixed-dim": "#dec1ac",
+                      "on-tertiary-fixed-variant": "#5d4201",
+                      "on-error-container": "#93000a",
+                      "surface-dim": "#dcd9d9",
+                      "secondary": "#665d4e",
+                      "surface-container": "#f0eded",
+                      "on-tertiary-container": "#fffbff",
+                      "tertiary-container": "#90702e",
+                      "primary-container": "#88705e",
+                      "on-primary-fixed-variant": "#574333",
+                      "light-coffee": "#A69080",
+                      "background": "#fbf9f8",
+                      "outline": "#80756d",
+                      "secondary-container": "#ebdecb",
+                      "tertiary": "#755717",
+                      "primary-fixed": "#fbddc7",
+                      "on-error": "#ffffff",
+                      "secondary-fixed-dim": "#d1c5b2",
+                      "inverse-primary": "#dec1ac",
+                      "primary": "#6d5847",
+                      "error-container": "#ffdad6",
+                      "surface-variant": "#e4e2e1",
+                      "inverse-on-surface": "#f3f0f0",
+                      "on-primary-fixed": "#28180b",
+                      "secondary-fixed": "#eee1ce",
+                      "surface-container-highest": "#e4e2e1",
+                      "on-surface": "#1b1c1c",
+                      "surface-container-high": "#eae8e7",
+                      "on-secondary-container": "#6b6152",
+                      "tertiary-fixed-dim": "#e9c176",
+                      "on-primary-container": "#fffbff",
+                      "error": "#ba1a1a",
+                      "on-secondary-fixed": "#211b0f",
+                      "surface-tint": "#705a49",
+                      "elegant-grey": "#707070",
+                      "surface-container-low": "#f5f3f3",
+                      "on-secondary-fixed-variant": "#4e4638",
+                      "soft-nude": "#F5EDE3",
+                      "on-primary": "#ffffff",
+                      "surface-bright": "#fbf9f8",
+                      "on-secondary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "section-gap": "120px",
+                      "stack-md": "16px",
+                      "stack-sm": "8px",
+                      "margin-mobile": "20px",
+                      "margin-desktop": "64px",
+                      "gutter": "24px",
+                      "container-max": "1280px",
+                      "stack-lg": "32px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["EB Garamond"],
+                      "label-sm": ["Sora"],
+                      "body-md": ["Hanken Grotesk"],
+                      "body-lg": ["Hanken Grotesk"],
+                      "display-lg": ["EB Garamond"],
+                      "headline-lg": ["EB Garamond"],
+                      "headline-md": ["EB Garamond"],
+                      "label-md": ["Sora"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "display-lg": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+                      "headline-lg": ["40px", {"lineHeight": "48px", "fontWeight": "400"}],
+                      "headline-md": ["32px", {"lineHeight": "40px", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-warm-white text-on-surface">
+<!-- TopNavBar -->
+<header class="bg-warm-white/80 backdrop-blur-md fixed top-0 w-full z-50 border-none transition-all duration-300">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex justify-between items-center h-20">
+<a class="font-headline-md text-headline-md text-primary tracking-wide" href="/">Dra. Carolina Aguirre</a>
+<nav class="hidden md:flex items-center gap-stack-lg">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Tratamientos</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Tecnología</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Resultados</a>
+<a class="font-label-md text-label-md text-primary font-bold border-b border-primary pb-1" href="#">Nosotros</a>
+</nav>
+<div class="flex items-center gap-stack-md">
+<button class="material-symbols-outlined text-primary hidden md:block" data-icon="public"></button>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md text-label-md transition-transform duration-200 active:scale-95">
+                    Agendar Cita
+                </button>
+</div>
+</div>
+</header>
+<main class="pt-20">
+<!-- Hero Section / Portrait -->
+<section class="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden px-margin-mobile">
+<div class="absolute inset-0 z-0">
+<div class="w-full h-full bg-[url('placeholder')] bg-cover bg-center grayscale-[0.3] brightness-95 opacity-20" data-alt="A macro cinematic shot of soft medical linens and warm architectural curves in a luxury dermatology clinic. The lighting is ethereal and high-key, using soft beige and cream tones to evoke a sense of professional serenity and high-end aesthetic medicine."></div>
+</div>
+<div class="max-w-container-max mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-gutter relative z-10 items-center">
+<div class="md:col-span-7 flex flex-col gap-stack-md order-2 md:order-1">
+<span class="font-label-md text-label-md text-primary tracking-widest uppercase">Excelencia Médica</span>
+<h1 class="font-display-lg text-display-lg md:text-[84px] leading-tight text-primary">Dra. Carolina Aguirre</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl leading-relaxed">
+                        Comprometida con la armonía facial y el bienestar integral, combinando la precisión clínica con una visión artística única.
+                    </p>
+<div class="mt-stack-lg flex gap-stack-md">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined" data-icon="verified"></span>
+<span class="font-label-md text-label-md">Médica Especialista</span>
+</div>
+<div class="w-px h-5 bg-outline-variant"></div>
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined" data-icon="spa"></span>
+<span class="font-label-md text-label-md">Medicina Estética de Lujo</span>
+</div>
+</div>
+</div>
+<div class="md:col-span-5 order-1 md:order-2 flex justify-center md:justify-end">
+<div class="relative w-full max-w-[450px] aspect-[4/5] rounded-t-full overflow-hidden shadow-2xl border-8 border-warm-white">
+<img alt="Dra. Carolina Aguirre" class="w-full h-full object-cover" src="/stitch-assets/images/889c97435fd1181b.jpg"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Biography Section -->
+<section class="py-section-gap bg-surface">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<div class="lg:col-span-4 scroll-reveal">
+<h2 class="font-headline-lg text-headline-lg text-primary sticky top-32">Trayectoria y Formación</h2>
+</div>
+<div class="lg:col-span-8 flex flex-col gap-stack-lg font-body-lg text-body-lg text-on-surface-variant leading-relaxed scroll-reveal">
+<p>
+                            Dra. Carolina Aguirre es reconocida por su enfoque meticuloso en la medicina estética, donde la ciencia se encuentra con la sofisticación. Con años de experiencia en tratamientos inyectables de alta precisión y tecnologías de vanguardia, su práctica se define por la búsqueda incansable de la excelencia.
+                        </p>
+<p>
+                            Formada en las instituciones más prestigiosas del país e internacionalmente, la Dra. Aguirre entiende que cada rostro cuenta una historia diferente. Su biografía profesional, detallada en sus credenciales médicas, refleja un compromiso inquebrantable con la actualización constante y la seguridad del paciente.
+                        </p>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter mt-stack-lg">
+<div class="flex flex-col">
+<span class="font-display-lg text-headline-lg text-primary">15+</span>
+<span class="font-label-sm text-label-sm text-outline">Años de Exp.</span>
+</div>
+<div class="flex flex-col">
+<span class="font-display-lg text-headline-lg text-primary">8k+</span>
+<span class="font-label-sm text-label-sm text-outline">Pacientes</span>
+</div>
+<div class="flex flex-col">
+<span class="font-display-lg text-headline-lg text-primary">20+</span>
+<span class="font-label-sm text-label-sm text-outline">Tecnologías</span>
+</div>
+<div class="flex flex-col">
+<span class="font-display-lg text-headline-lg text-primary">05</span>
+<span class="font-label-sm text-label-sm text-outline">Certificaciones</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Philosophy Bento Grid -->
+<section class="py-section-gap">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="text-center mb-stack-lg scroll-reveal">
+<span class="font-label-md text-label-md text-primary tracking-widest uppercase">Nuestra Filosofía</span>
+<h2 class="font-headline-lg text-headline-lg text-on-background mt-4">Armonía, Naturalidad y Discreción</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
+<!-- Large Feature -->
+<div class="md:col-span-2 md:row-span-2 bg-soft-nude rounded-xl p-stack-lg flex flex-col justify-end relative overflow-hidden group scroll-reveal">
+<div class="absolute inset-0 bg-[url('placeholder')] bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-40 mix-blend-multiply" data-alt="Close-up of a human hand delicately holding a high-end medical skincare product. The setting is bright and clean with a soft bokeh effect. Soft nude and beige tones dominate the scene, reflecting a premium medical-aesthetic environment focused on luxury and precision."></div>
+<div class="relative z-10 max-w-md">
+<h3 class="font-headline-md text-headline-md text-primary mb-4">Personalización Absoluta</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">No existen protocolos estándar. Cada tratamiento es una arquitectura personalizada diseñada para realzar tu belleza intrínseca sin alterar tu identidad.</p>
+</div>
+</div>
+<!-- Side Card 1 -->
+<div class="bg-primary text-on-primary rounded-xl p-stack-lg flex flex-col justify-between scroll-reveal">
+<span class="material-symbols-outlined text-4xl" data-icon="shield_with_heart"></span>
+<div>
+<h3 class="font-headline-md text-label-md uppercase tracking-widest mb-2">Misión</h3>
+<p class="font-body-md text-body-md opacity-90">Brindar resultados médicos excepcionales bajo los más altos estándares de seguridad y ética clínica.</p>
+</div>
+</div>
+<!-- Side Card 2 -->
+<div class="bg-surface-container rounded-xl p-stack-lg flex flex-col justify-between border border-outline-variant/30 scroll-reveal">
+<span class="material-symbols-outlined text-4xl text-primary" data-icon="visibility"></span>
+<div>
+<h3 class="font-headline-md text-label-md uppercase tracking-widest text-primary mb-2">Visión</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Ser el referente líder en rejuvenecimiento facial no quirúrgico basado en la armonía natural.</p>
+</div>
+</div>
+<!-- Bottom Wide Card (Implicit from Bento flow) -->
+<div class="md:col-span-3 bg-white rounded-xl p-stack-lg border border-outline-variant/20 flex flex-col md:flex-row items-center gap-gutter scroll-reveal">
+<div class="flex-1">
+<h3 class="font-headline-md text-headline-md text-primary mb-2">Nuestros Valores</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 md:mb-0">Fundamentados en la transparencia, la innovación científica y el respeto profundo por la anatomía humana.</p>
+</div>
+<div class="flex flex-wrap gap-4">
+<span class="bg-soft-nude text-primary px-4 py-2 rounded-full font-label-md text-label-md">Integridad</span>
+<span class="bg-soft-nude text-primary px-4 py-2 rounded-full font-label-md text-label-md">Innovación</span>
+<span class="bg-soft-nude text-primary px-4 py-2 rounded-full font-label-md text-label-md">Discreción</span>
+<span class="bg-soft-nude text-primary px-4 py-2 rounded-full font-label-md text-label-md">Empatía</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Commitment Section -->
+<section class="py-section-gap bg-primary text-on-primary overflow-hidden relative">
+<!-- Decorative circle -->
+<div class="absolute -right-24 -bottom-24 w-96 h-96 border border-on-primary/10 rounded-full"></div>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative z-10">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter items-center">
+<div class="scroll-reveal">
+<span class="font-label-md text-label-sm tracking-[0.2em] opacity-80 uppercase">El Factor Humano</span>
+<h2 class="font-display-lg text-headline-lg md:text-[56px] leading-tight mt-6 mb-8">Un compromiso que trasciende la piel</h2>
+<p class="font-body-lg text-body-lg opacity-90 max-w-lg mb-10 leading-relaxed">
+                            Entendemos que detrás de cada procedimiento hay una persona con sueños, miedos y expectativas. Nuestra calidad médica premium se complementa con un trato humano cálido y cercano, asegurando que te sientas segura y comprendida en cada etapa de tu transformación.
+                        </p>
+<button class="border border-on-primary/40 hover:bg-on-primary hover:text-primary transition-all duration-300 px-8 py-4 rounded-full font-label-md text-label-md uppercase tracking-widest">
+                            Conocer nuestro equipo
+                        </button>
+</div>
+<div class="relative flex justify-center scroll-reveal">
+<div class="w-full max-w-[500px] h-[600px] bg-[url('placeholder')] bg-cover bg-center rounded-2xl shadow-3xl" data-alt="An artistic, soft-focus lifestyle image of a consultation area in a high-end medical clinic. Warm sunlight filters through sheer curtains onto a minimalist wooden desk. The scene conveys luxury, calmness, and a human-centered approach to medical care in a sober, elegant environment."></div>
+<!-- Abstract overlay element -->
+<div class="absolute -top-10 -left-10 bg-warm-white p-8 rounded-2xl shadow-xl hidden lg:block max-w-[200px]">
+<span class="material-symbols-outlined text-primary text-5xl mb-4" data-icon="handshake"></span>
+<p class="text-on-background font-label-sm text-label-sm">Atención 1 a 1 de principio a fin.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-section-gap text-center px-margin-mobile">
+<div class="max-w-3xl mx-auto scroll-reveal">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-6">Comienza tu camino hacia una belleza consciente</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-10">Agende su consulta de valoración personalizada hoy mismo y descubra lo que la medicina estética de precisión puede hacer por usted.</p>
+<div class="flex flex-col sm:flex-row justify-center gap-stack-md">
+<a class="bg-primary text-on-primary px-10 py-4 rounded-full font-label-md text-label-md uppercase tracking-widest hover:shadow-lg transition-shadow" href="#">Agendar Ahora</a>
+<a class="border border-outline px-10 py-4 rounded-full font-label-md text-label-md uppercase tracking-widest hover:bg-surface transition-colors" href="#">Contáctenos</a>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface border-t border-outline-variant/10">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-section-gap grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<div class="flex flex-col gap-stack-md">
+<span class="font-headline-md text-headline-md text-primary">Dra. Carolina Aguirre</span>
+<p class="font-body-md text-body-md text-on-surface-variant opacity-80">Redefiniendo los estándares de la medicina estética con elegancia y rigor científico.</p>
+<div class="flex gap-4 mt-4">
+<span class="material-symbols-outlined text-primary cursor-pointer hover:opacity-70" data-icon="mail"></span>
+<span class="material-symbols-outlined text-primary cursor-pointer hover:opacity-70" data-icon="call"></span>
+<span class="material-symbols-outlined text-primary cursor-pointer hover:opacity-70" data-icon="distance"></span>
+</div>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface mb-stack-lg uppercase tracking-wider">Enlaces</h4>
+<ul class="flex flex-col gap-stack-sm font-body-md text-body-md text-on-surface-variant">
+<li><a class="hover:text-primary transition-colors" href="#">Pacientes Internacionales</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Tratamientos</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Tecnología</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Resultados</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface mb-stack-lg uppercase tracking-wider">Legal</h4>
+<ul class="flex flex-col gap-stack-sm font-body-md text-body-md text-on-surface-variant">
+<li><a class="hover:text-primary transition-colors" href="#">Política de Privacidad</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Términos de Servicio</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Contacto</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface mb-stack-lg uppercase tracking-wider">Ubicación</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">Av. Principal 123, Centro Médico Especializado, Consultorio 504.</p>
+<img class="w-full h-32 object-cover rounded-lg opacity-60 grayscale" data-alt="A minimalist map snippet showing a high-end urban location, styled in muted beige and grey tones to match the editorial UI palette." data-location="Bogota" src="/stitch-assets/images/3f4e004a77eff052.jpg"/>
+</div>
+</div>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg border-t border-outline-variant/10">
+<p class="font-label-sm text-label-sm text-on-surface-variant/60">© 2025 Dra. Carolina Aguirre - Paunova. Todos los derechos reservados.</p>
+</div>
+</footer>
+<script>
+        // Simple Intersection Observer for scroll reveal animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-sm');
+                header.classList.remove('h-20');
+                header.classList.add('h-16');
+            } else {
+                header.classList.remove('shadow-sm');
+                header.classList.add('h-20');
+                header.classList.remove('h-16');
+            }
+        });
+    </script>
+<script>
+document.addEventListener("click", function(event) {
+  const link = event.target.closest && event.target.closest("a[href]");
+  if (!link) return;
+  const href = link.getAttribute("href");
+  if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:") || href.startsWith("http://wa.link")) return;
+  if (href.startsWith("/")) {
+    event.preventDefault();
+    window.top.location.href = href;
+  }
+});
+</script></body></html>
