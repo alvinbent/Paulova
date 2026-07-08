@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
   copyFile,
@@ -11,6 +12,7 @@ import {
   writeFile,
 } from "node:fs/promises";
 import path from "node:path";
+import { promisify } from "node:util";
 
 const ZIP_EXPORT_ROOT = ".stitch-cache/zip-export/stitch_paunova_premium_web";
 const PUBLIC_OUT = "public/stitch-assets";
@@ -18,6 +20,7 @@ const PAGES_OUT = path.join(PUBLIC_OUT, "pages");
 const IMAGES_OUT = path.join(PUBLIC_OUT, "images");
 const SHOTS_OUT = path.join(PUBLIC_OUT, "screenshots");
 const REFERENCE_OUT = path.join(PUBLIC_OUT, "reference-images");
+const gitShow = promisify(execFile);
 
 const pages = [
   {
@@ -119,6 +122,75 @@ document.addEventListener("click", function(event) {
 });
 </script>`;
 
+const globalInteractionStyle = `<style id="paunova-global-button-interactions">
+:where(button, a[href]) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:where(
+  button,
+  a[href][class*="bg-"],
+  a[href][class*="border"],
+  a[href][class*="rounded"],
+  a[href][class*="shadow"],
+  a[href][class*="px-"],
+  a[href][class*="py-"],
+  a[href][class*="w-10"],
+  a[href][class*="w-12"],
+  a[href][class*="w-14"]
+) {
+  transform-origin: center;
+  transition-property: transform, box-shadow, background-color, color, border-color, opacity;
+  transition-duration: 220ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+@media (hover: hover) {
+  :where(
+    button,
+    a[href][class*="bg-"],
+    a[href][class*="border"],
+    a[href][class*="rounded"],
+    a[href][class*="shadow"],
+    a[href][class*="px-"],
+    a[href][class*="py-"],
+    a[href][class*="w-10"],
+    a[href][class*="w-12"],
+    a[href][class*="w-14"]
+  ):hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 18px 42px -24px rgba(109, 88, 71, 0.55);
+  }
+}
+
+:where(
+  button,
+  a[href][class*="bg-"],
+  a[href][class*="border"],
+  a[href][class*="rounded"],
+  a[href][class*="shadow"],
+  a[href][class*="px-"],
+  a[href][class*="py-"],
+  a[href][class*="w-10"],
+  a[href][class*="w-12"],
+  a[href][class*="w-14"]
+):active {
+  transform: scale(1.10);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(button, a[href]) {
+    transition-duration: 1ms !important;
+  }
+
+  :where(button, a[href]):hover,
+  :where(button, a[href]):active {
+    transform: none !important;
+  }
+}
+</style>`;
+
 const imageUrlToLocal = new Map();
 const missingAssets = [];
 
@@ -132,6 +204,46 @@ function extensionFromContentType(contentType) {
   if (contentType?.includes("gif")) return ".gif";
   if (contentType?.includes("svg")) return ".svg";
   return ".jpg";
+}
+
+async function readGitBlob(filePath) {
+  const gitPath = filePath.replaceAll(path.sep, "/");
+  for (const ref of ["HEAD", "origin/main", "main"]) {
+    try {
+      const { stdout } = await gitShow("git", ["show", `${ref}:${gitPath}`], {
+        encoding: "buffer",
+        maxBuffer: 10 * 1024 * 1024,
+      });
+      return stdout;
+    } catch {
+      // Try the next local or remote ref before declaring the asset unavailable.
+    }
+  }
+
+  return null;
+}
+
+async function restoreCachedImage(url) {
+  const hash = hashUrl(url);
+  for (const ext of [".jpg", ".png", ".webp", ".gif", ".svg"]) {
+    const fileName = `${hash}${ext}`;
+    const outPath = path.join(IMAGES_OUT, fileName);
+    const publicPath = `/stitch-assets/images/${fileName}`;
+
+    if (await exists(outPath)) {
+      imageUrlToLocal.set(url, publicPath);
+      return publicPath;
+    }
+
+    const cached = await readGitBlob(path.join(PUBLIC_OUT, "images", fileName));
+    if (cached) {
+      await writeFile(outPath, cached);
+      imageUrlToLocal.set(url, publicPath);
+      return publicPath;
+    }
+  }
+
+  return null;
 }
 
 function normalizeName(name) {
@@ -157,6 +269,9 @@ async function downloadImage(url) {
 
   const res = await fetch(url);
   if (!res.ok) {
+    const cachedUrl = await restoreCachedImage(url);
+    if (cachedUrl) return cachedUrl;
+
     missingAssets.push({ type: "image", url, reason: `HTTP ${res.status}` });
     return url;
   }
@@ -228,6 +343,11 @@ function rewriteAnchorRoutes(html) {
     if (!route) return match;
     return `<a${before}href="${route}"${after}>${inner}</a>`;
   });
+}
+
+function injectGlobalInteractionStyle(html) {
+  if (html.includes('id="paunova-global-button-interactions"')) return html;
+  return html.replace("</head>", `${globalInteractionStyle}</head>`);
 }
 
 function rewriteLocationCopy(html) {
@@ -302,6 +422,7 @@ async function rewriteHtml(page) {
 
   html = rewriteAnchorRoutes(html);
   html = rewriteLocationCopy(html);
+  html = injectGlobalInteractionStyle(html);
   html = html.replace("</body>", `${topNavigationScript}</body>`);
   await writeFile(path.join(PAGES_OUT, page.output), html, "utf8");
 }

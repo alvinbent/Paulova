@@ -129,7 +129,74 @@
         }
         .animate-fade-in { animation: fadeIn 0.8s ease-out forwards; }
     </style>
-</head>
+<style id="paunova-global-button-interactions">
+:where(button, a[href]) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:where(
+  button,
+  a[href][class*="bg-"],
+  a[href][class*="border"],
+  a[href][class*="rounded"],
+  a[href][class*="shadow"],
+  a[href][class*="px-"],
+  a[href][class*="py-"],
+  a[href][class*="w-10"],
+  a[href][class*="w-12"],
+  a[href][class*="w-14"]
+) {
+  transform-origin: center;
+  transition-property: transform, box-shadow, background-color, color, border-color, opacity;
+  transition-duration: 220ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+@media (hover: hover) {
+  :where(
+    button,
+    a[href][class*="bg-"],
+    a[href][class*="border"],
+    a[href][class*="rounded"],
+    a[href][class*="shadow"],
+    a[href][class*="px-"],
+    a[href][class*="py-"],
+    a[href][class*="w-10"],
+    a[href][class*="w-12"],
+    a[href][class*="w-14"]
+  ):hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 18px 42px -24px rgba(109, 88, 71, 0.55);
+  }
+}
+
+:where(
+  button,
+  a[href][class*="bg-"],
+  a[href][class*="border"],
+  a[href][class*="rounded"],
+  a[href][class*="shadow"],
+  a[href][class*="px-"],
+  a[href][class*="py-"],
+  a[href][class*="w-10"],
+  a[href][class*="w-12"],
+  a[href][class*="w-14"]
+):active {
+  transform: scale(1.10);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(button, a[href]) {
+    transition-duration: 1ms !important;
+  }
+
+  :where(button, a[href]):hover,
+  :where(button, a[href]):active {
+    transform: none !important;
+  }
+}
+</style></head>
 <body class="bg-warm-white text-on-background font-body-md overflow-x-hidden">
 <nav class="fixed top-0 left-0 w-full z-50 glass-nav border-b border-outline-variant/20">
 <div class="max-w-container-max mx-auto px-margin-desktop h-20 flex justify-between items-center">

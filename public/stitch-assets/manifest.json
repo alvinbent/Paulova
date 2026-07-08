@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-05T14:40:02.034Z",
+  "generatedAt": "2026-07-08T21:55:39.516Z",
   "source": "Stitch ZIP export",
   "zipSource": "C:/Users/PC/Downloads/stitch_paunova_premium_web.zip",
   "pages": [
@@ -85,7 +85,7 @@
       "Google Fonts: Material Symbols Outlined"
     ],
     "localImages": 44,
-    "referenceImages": 11,
+    "referenceImages": 12,
     "screenshots": 9,
     "textSource": "extracted_text_from_https_www.paunova.co.md",
     "missingAssets": []
