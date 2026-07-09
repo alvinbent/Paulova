@@ -1,0 +1,55 @@
+{
+  "collection": "paunova-generated-brand-assets",
+  "createdAt": "2026-07-09",
+  "assets": [
+    {
+      "reference": "paunova-campaign-salud-ciencia-belleza-clinic",
+      "type": "image",
+      "file": "/brand-assets/generated/paunova-campaign-salud-ciencia-belleza-clinic.png",
+      "sourceName": "ChatGPT Image 9 jul 2026, 17_10_03.png",
+      "description": "Pieza horizontal de campaña con rostro en tratamiento, clínica PAUNOVA y texto Salud, ciencia y belleza en armonía."
+    },
+    {
+      "reference": "paunova-campaign-dual-face-harmony",
+      "type": "image",
+      "file": "/brand-assets/generated/paunova-campaign-dual-face-harmony.png",
+      "sourceName": "ChatGPT Image 9 jul 2026, 17_09_56.png",
+      "description": "Pieza horizontal con dos rostros, monograma CA y mensaje de salud, ciencia y belleza."
+    },
+    {
+      "reference": "paunova-campaign-ca-monogram-dual-face",
+      "type": "image",
+      "file": "/brand-assets/generated/paunova-campaign-ca-monogram-dual-face.png",
+      "sourceName": "ChatGPT Image 9 jul 2026, 17_09_50.png",
+      "description": "Imagen limpia con dos rostros y monograma CA dorado al centro."
+    },
+    {
+      "reference": "paunova-skincare-woman-spa-touch",
+      "type": "image",
+      "file": "/brand-assets/generated/paunova-skincare-woman-spa-touch.png",
+      "sourceName": "ChatGPT Image 9 jul 2026, 17_09_43.png",
+      "description": "Mujer tocando su mejilla en ambiente spa cálido, sin texto."
+    },
+    {
+      "reference": "paunova-skincare-woman-spa-touch-alt",
+      "type": "image",
+      "file": "/brand-assets/generated/paunova-skincare-woman-spa-touch-alt.png",
+      "sourceName": "ChatGPT Image 9 jul 2026, 16_32_24.png",
+      "description": "Variante de mujer tocando su mejilla en ambiente spa cálido, sin texto."
+    },
+    {
+      "reference": "paunova-video-woman-touching-cheek-smiling",
+      "type": "video",
+      "file": "/brand-assets/generated/paunova-video-woman-touching-cheek-smiling.mp4",
+      "sourceName": "Woman_touching_cheek_smiling_202607091709.mp4",
+      "description": "Video de mujer sonriendo y tocando su mejilla para uso de marca PAUNOVA."
+    },
+    {
+      "reference": "paunova-video-woman-touching-cheek-skincare",
+      "type": "video",
+      "file": "/brand-assets/generated/paunova-video-woman-touching-cheek-skincare.mp4",
+      "sourceName": "Woman_touching_cheek_skincare_202607091650.mp4",
+      "description": "Video de mujer en contexto skincare tocando su mejilla para uso de marca PAUNOVA."
+    }
+  ]
+}
