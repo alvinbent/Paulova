@@ -79,5 +79,31 @@ After AntiGravity work:
 
 ## Active Work
 
-- No active AntiGravity construction yet.
+### Completed Work - 2026-07-08 - AntiGravity
 
+**Scope**: 
+Estabilizar la navegación global, agregar modales educativos interactivos para tratamientos/trayectoria y corregir direcciones y marca en todo el contenido materializado.
+
+**Source of Truth**: 
+- Stitch ZIP Export: `C:/Users/PC/Downloads/stitch_paunova_premium_web.zip` (Materialized into HTML and images).
+- Instrucciones de marca: Dra Carolina Aguirre - Paunova Skin & Age Clinic.
+
+**Reason for Protected Areas modifications**:
+Para corregir la ubicación/marca física antigua y habilitar interacción/navegación a través de las 9 rutas, se requería regenerar los archivos HTML e imágenes mediante el script `scripts/materialize-stitch-assets.mjs`.
+
+**Exact Protected Files changed/added/deleted**:
+- `public/stitch-assets/manifest.json` (modified)
+- `public/stitch-assets/pages/*.html` (9 files generated/modified)
+- `public/stitch-assets/images/*` (images downloaded and reference-images added)
+- `public/stitch-assets/screenshots/*.png` (screenshots updated)
+
+**Rollback Path**:
+- `git restore public/stitch-assets/` to restore previous state.
+- Or rerun `git checkout main public/stitch-assets` to revert to baseline.
+
+**Verification performed**:
+- Compilación de producción con `npm run build` (Exitosa, 12 páginas generadas).
+- Análisis de código estático con `npm run lint` (Exitoso, 0 errores).
+
+**Status**:
+Listo para revisión y auditoría de integración por Codex. Handoff entregado.
