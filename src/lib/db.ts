@@ -1,7 +1,10 @@
 import { promises as fs } from "fs";
 import path from "path";
 
-const DB_DIR = path.join(process.cwd(), ".dev-db");
+const DB_DIR =
+  process.env.NODE_ENV === "production"
+    ? path.join("/tmp", "paunova-db")
+    : path.join(process.cwd(), ".dev-db");
 
 export interface Patient {
   id: string;
@@ -229,7 +232,11 @@ async function readJsonFile<T>(filename: string, defaultValue: T): Promise<T> {
     const data = await fs.readFile(filePath, "utf8");
     return JSON.parse(data);
   } catch {
-    await writeJsonFile(filename, defaultValue);
+    try {
+      await writeJsonFile(filename, defaultValue);
+    } catch {
+      return defaultValue;
+    }
     return defaultValue;
   }
 }

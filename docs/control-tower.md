@@ -234,10 +234,11 @@ Las paginas HTML de Stitch contienen el boton secreto materializado. Para que el
 - `src/app/api/auth/login/route.ts`
 - `src/app/doctor/login/page.tsx`
 - `src/components/doctor/Sidebar.tsx`
+- `src/lib/db.ts`
 
 **Rollback Path**:
 - `git restore public/stitch-assets/pages/ scripts/secret-access-template.mjs scripts/materialize-stitch-assets.mjs scripts/repair-materialized-pages.mjs`
-- `git restore src/app/api/auth/bypass/route.ts src/app/api/auth/login/route.ts src/app/doctor/login/page.tsx src/components/doctor/Sidebar.tsx`
+- `git restore src/app/api/auth/bypass/route.ts src/app/api/auth/login/route.ts src/app/doctor/login/page.tsx src/components/doctor/Sidebar.tsx src/lib/db.ts`
 
 **Verification performed**:
 - `node node_modules/eslint/bin/eslint.js` exitoso.
@@ -246,6 +247,7 @@ Las paginas HTML de Stitch contienen el boton secreto materializado. Para que el
 - Verificacion HTTP local: `POST /api/auth/login` con credenciales validas crea cookie de sesion y permite abrir `/doctor/dashboard`.
 - Verificacion HTTP local: clave incorrecta responde `401`.
 - La ruta antigua `/api/auth/bypass` fue eliminada para evitar acceso directo sin usuario y clave.
+- Verificacion de produccion: se corrigio el almacenamiento temporal de `.dev-db` para que el dashboard pueda inicializar datos en Vercel sin depender de archivos locales.
 
 **Status**:
 Listo para commit, push y despliegue en Vercel.
