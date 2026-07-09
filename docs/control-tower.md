@@ -82,6 +82,34 @@ After AntiGravity work:
 ### Active Work - 2026-07-09 - Codex
 
 **Scope**:
+Auditoría correctiva del despliegue `https://paunova.vercel.app/` después de detectar que el acceso privado no era visible/accionable y que las páginas públicas mostraban texto con mojibake.
+
+**Source of Truth**:
+- Sitio desplegado en Vercel: `https://paunova.vercel.app/`.
+- HTML materializado actual en `public/stitch-assets/pages/**`.
+- Reglas de marca fijas: Dra Carolina Aguirre - Paunova Skin & Age Clinic.
+
+**Reason for Protected Areas modifications**:
+Las páginas públicas se sirven desde HTML materializado en `public/stitch-assets/pages/**`. El botón secreto estaba inyectado con opacidad casi invisible, faltaba en dos páginas y el contenido público tenía caracteres mal decodificados.
+
+**Exact Protected Files changed**:
+- `public/stitch-assets/pages/*.html` (reparación de acentos, botón privado visible y funcional, eliminación de mensaje con exclamación en contacto).
+- `scripts/materialize-stitch-assets.mjs` (persistencia del botón corregido y reparación de codificación en futuras materializaciones).
+
+**Rollback Path**:
+- `git restore public/stitch-assets/pages/ scripts/materialize-stitch-assets.mjs scripts/repair-materialized-pages.mjs docs/control-tower.md`
+
+**Verification performed**:
+- `pnpm run lint` exitoso.
+- `pnpm run build` exitoso con advertencia no bloqueante de Next 16 sobre `middleware.ts` deprecado.
+- Verificación HTTP local: `/` responde `200`, `/api/auth/bypass` responde `307`, y `home.html` contiene acentos corregidos, botón privado y redirección a `/api/auth/bypass`.
+
+**Status**:
+Completado por Codex. Queda recomendada una pasada visual humana o con navegador conectado antes de producción final.
+
+### Active Work - 2026-07-09 - Codex
+
+**Scope**:
 Aplicar identidad visual oficial de Dra Carolina Aguirre a la web publica ya materializada desde Stitch, insertando logos y fotografias reales con criterio de contraste, jerarquia y confianza clinica.
 
 **Source of Truth**:
