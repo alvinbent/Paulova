@@ -73,6 +73,8 @@ Riesgo: Medio/Alto por integraciones futuras con datos sensibles, APIs externas,
 
 - Pulir responsive.
 - Revisar seguridad.
+- Reemplazar el acceso directo de pruebas por acceso con usuario y clave.
+- Definir credenciales finales, roles y procedimiento de recuperacion de acceso.
 - Documentar variables.
 - Preparar despliegue en Vercel.
 - Desplegar solo con autorizacion explicita.

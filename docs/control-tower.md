@@ -286,3 +286,36 @@ Las paginas HTML de Stitch contenian el logo anterior materializado. Para correg
 
 **Status**:
 Listo para lint, build, commit, push y despliegue.
+
+### Completed Work - 2026-07-09 - Codex
+
+**Scope**:
+Convertir el boton secreto en un indicador tipo reloj de 5 segundos y cambiar el modal de acceso a modo de pruebas sin usuario ni clave, con entrada directa a la aplicacion privada.
+
+**Source of Truth**:
+- Instruccion del usuario: el boton secreto debe simular un reloj que se llena durante cinco segundos.
+- Instruccion del usuario: durante etapa de pruebas/generacion no se debe pedir clave.
+
+**Reason for Protected Areas modifications**:
+El boton secreto y modal se inyectan en las paginas HTML materializadas de Stitch. Para aplicar el reloj, eliminar campos de usuario/clave y conectar el acceso directo, se repararon las 9 paginas publicas.
+
+**Exact Protected Files changed**:
+- `public/stitch-assets/pages/*.html` (9 paginas reparadas con reloj de 5 segundos y modal de pruebas sin credenciales).
+
+**Related App Files changed**:
+- `scripts/secret-access-template.mjs`
+- `src/app/api/auth/test-access/route.ts`
+- `docs/implementation_plan.md`
+
+**Rollback Path**:
+- `git restore public/stitch-assets/pages/ scripts/secret-access-template.mjs src/app/api/auth/test-access/route.ts docs/implementation_plan.md`
+
+**Verification planned**:
+- Verificar que `home.html` contiene `paunova-clock-fill`, `/api/auth/test-access` y no contiene campos `paunova-secret-password`.
+- Verificar que `/api/auth/test-access` crea sesion y permite abrir `/doctor/dashboard`.
+
+**Final Task Added**:
+- Antes de produccion final: reemplazar acceso directo de pruebas por usuario/clave, definir credenciales finales, roles y recuperacion de acceso.
+
+**Status**:
+Listo para pruebas locales, build, commit, push y despliegue.

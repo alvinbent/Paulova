@@ -368,6 +368,12 @@ document.addEventListener("click", function(event) {
   }
 });
 </script><style id="paunova-secret-access-style">
+@property --paunova-clock-progress {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
 #paunova-secret-trigger {
   position: fixed;
   top: 18px;
@@ -381,8 +387,34 @@ document.addEventListener("click", function(event) {
   box-shadow: 0 18px 44px -26px rgba(38, 25, 0, 0.78), inset 0 1px 0 rgba(255, 255, 255, 0.72);
   cursor: pointer;
   opacity: 0.64;
+  overflow: hidden;
   transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 240ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 240ms cubic-bezier(0.22, 1, 0.36, 1);
   -webkit-tap-highlight-color: transparent;
+}
+
+#paunova-secret-trigger::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: inherit;
+  background: conic-gradient(from -90deg, rgba(197, 168, 128, 0.95) var(--paunova-clock-progress), rgba(255, 255, 255, 0.64) 0);
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+#paunova-secret-trigger::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2px;
+  height: 15px;
+  border-radius: 999px;
+  background: #6d5847;
+  box-shadow: 0 0 0 3px rgba(253, 251, 247, 0.72);
+  opacity: 0;
+  transform: translate(-50%, -92%) rotate(0deg);
+  transform-origin: 50% 92%;
 }
 
 #paunova-secret-trigger:hover,
@@ -395,6 +427,41 @@ document.addEventListener("click", function(event) {
 
 #paunova-secret-trigger:active {
   transform: scale(0.96);
+}
+
+#paunova-secret-trigger.is-counting {
+  opacity: 1;
+  background-image: none;
+  cursor: wait;
+  transform: translateY(-1px) scale(1.04);
+}
+
+#paunova-secret-trigger.is-counting::before {
+  opacity: 1;
+  animation: paunova-clock-fill 5s linear forwards;
+}
+
+#paunova-secret-trigger.is-counting::after {
+  opacity: 1;
+  animation: paunova-clock-hand 5s linear forwards;
+}
+
+@keyframes paunova-clock-fill {
+  from {
+    --paunova-clock-progress: 0%;
+  }
+  to {
+    --paunova-clock-progress: 100%;
+  }
+}
+
+@keyframes paunova-clock-hand {
+  from {
+    transform: translate(-50%, -92%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -92%) rotate(360deg);
+  }
 }
 
 #paunova-secret-modal[hidden] {
@@ -443,7 +510,7 @@ document.addEventListener("click", function(event) {
 }
 
 .paunova-secret-title {
-  margin: 0 0 24px;
+  margin: 0 0 14px;
   color: #6d5847;
   font-family: EB Garamond, Georgia, serif;
   font-size: 34px;
@@ -452,37 +519,13 @@ document.addEventListener("click", function(event) {
   text-align: center;
 }
 
-.paunova-secret-field {
-  display: grid;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.paunova-secret-field label {
-  color: #6d5847;
-  font-family: Sora, Arial, sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.paunova-secret-field input {
-  width: 100%;
-  box-sizing: border-box;
-  border: 1px solid rgba(210, 196, 187, 0.78);
-  border-radius: 14px;
-  background: #ffffff;
-  color: #1b1c1c;
-  font: inherit;
-  padding: 14px 15px;
-  outline: none;
-  transition: border-color 180ms ease, box-shadow 180ms ease;
-}
-
-.paunova-secret-field input:focus {
-  border-color: #6d5847;
-  box-shadow: 0 0 0 4px rgba(109, 88, 71, 0.1);
+.paunova-secret-copy {
+  max-width: 32ch;
+  margin: 0 auto 22px;
+  color: #88705e;
+  font-size: 13px;
+  line-height: 1.55;
+  text-align: center;
 }
 
 .paunova-secret-error {
@@ -552,26 +595,27 @@ document.addEventListener("click", function(event) {
   .paunova-secret-brand {
     width: min(260px, 100%);
   }
+
+  .paunova-secret-actions {
+    flex-direction: column;
+  }
+
+  .paunova-secret-close {
+    width: 100%;
+  }
 }
 </style>
 <button id="paunova-secret-trigger" type="button" aria-label="Abrir portal privado" title="Portal privado"></button>
 <div id="paunova-secret-modal" hidden aria-hidden="true">
   <div class="paunova-secret-panel" role="dialog" aria-modal="true" aria-labelledby="paunova-secret-title">
     <img class="paunova-secret-brand" src="/brand-assets/logo-paunova-skin-age.png" alt="Paunova Skin & Age Clinic" />
-    <p class="paunova-secret-eyebrow">Portal médico privado</p>
-    <h2 class="paunova-secret-title" id="paunova-secret-title">Acceso clínico</h2>
+    <p class="paunova-secret-eyebrow">Modo de pruebas</p>
+    <h2 class="paunova-secret-title" id="paunova-secret-title">Acceso directo</h2>
+    <p class="paunova-secret-copy">La aplicación está en etapa de generación. Por ahora entrarás sin usuario ni clave.</p>
     <form id="paunova-secret-form">
-      <div class="paunova-secret-field">
-        <label for="paunova-secret-user">Usuario</label>
-        <input id="paunova-secret-user" name="username" type="text" autocomplete="username" required />
-      </div>
-      <div class="paunova-secret-field">
-        <label for="paunova-secret-password">Clave</label>
-        <input id="paunova-secret-password" name="password" type="password" autocomplete="current-password" required />
-      </div>
       <p class="paunova-secret-error" id="paunova-secret-error" aria-live="polite"></p>
       <div class="paunova-secret-actions">
-        <button class="paunova-secret-submit" type="submit">Conectar</button>
+        <button class="paunova-secret-submit" type="submit">Entrar a la aplicación</button>
         <button class="paunova-secret-close" type="button">Cerrar</button>
       </div>
     </form>
@@ -583,19 +627,38 @@ document.addEventListener("click", function(event) {
   const modal = document.getElementById('paunova-secret-modal');
   const form = document.getElementById('paunova-secret-form');
   const closeButton = modal ? modal.querySelector('.paunova-secret-close') : null;
-  const usernameInput = document.getElementById('paunova-secret-user');
-  const passwordInput = document.getElementById('paunova-secret-password');
   const errorNode = document.getElementById('paunova-secret-error');
   const submitButton = modal ? modal.querySelector('.paunova-secret-submit') : null;
+  let clockTimer = null;
 
-  if (!trigger || !modal || !form || !closeButton || !usernameInput || !passwordInput || !errorNode || !submitButton) return;
+  if (!trigger || !modal || !form || !closeButton || !errorNode || !submitButton) return;
 
   function openModal(event) {
     if (event) event.preventDefault();
     modal.hidden = false;
     modal.setAttribute('aria-hidden', 'false');
     errorNode.textContent = '';
-    setTimeout(function() { usernameInput.focus(); }, 40);
+    setTimeout(function() { submitButton.focus(); }, 40);
+  }
+
+  function resetClock() {
+    window.clearTimeout(clockTimer);
+    clockTimer = null;
+    trigger.classList.remove('is-counting');
+    trigger.disabled = false;
+    trigger.setAttribute('aria-label', 'Abrir portal privado');
+  }
+
+  function startClock(event) {
+    if (event) event.preventDefault();
+    if (trigger.classList.contains('is-counting')) return;
+    trigger.classList.add('is-counting');
+    trigger.setAttribute('aria-label', 'Preparando acceso privado');
+    trigger.disabled = true;
+    clockTimer = window.setTimeout(function() {
+      resetClock();
+      openModal();
+    }, 5000);
   }
 
   function closeModal() {
@@ -605,9 +668,9 @@ document.addEventListener("click", function(event) {
     errorNode.textContent = '';
   }
 
-  trigger.addEventListener('click', openModal);
+  trigger.addEventListener('click', startClock);
   trigger.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter' || event.key === ' ') openModal(event);
+    if (event.key === 'Enter' || event.key === ' ') startClock(event);
   });
 
   closeButton.addEventListener('click', closeModal);
@@ -616,28 +679,25 @@ document.addEventListener("click", function(event) {
   });
   document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape' && !modal.hidden) closeModal();
+    if (event.key === 'Escape' && trigger.classList.contains('is-counting')) resetClock();
   });
 
   form.addEventListener('submit', async function(event) {
     event.preventDefault();
     errorNode.textContent = '';
     submitButton.disabled = true;
-    submitButton.textContent = 'Conectando';
+    submitButton.textContent = 'Entrando';
 
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch('/api/auth/test-access', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
-        body: JSON.stringify({
-          username: usernameInput.value.trim(),
-          password: passwordInput.value
-        })
+        credentials: 'same-origin'
       });
       const data = await response.json().catch(function() { return {}; });
 
       if (!response.ok || !data.success) {
-        errorNode.textContent = data.error || 'No fue posible conectar con la aplicación. Revisa el usuario y la clave.';
+        errorNode.textContent = data.error || 'No fue posible conectar con la aplicación. Intenta nuevamente.';
         return;
       }
 
@@ -646,7 +706,7 @@ document.addEventListener("click", function(event) {
       errorNode.textContent = 'No fue posible conectar con la aplicación. Intenta nuevamente.';
     } finally {
       submitButton.disabled = false;
-      submitButton.textContent = 'Conectar';
+      submitButton.textContent = 'Entrar a la aplicación';
     }
   });
 })();
