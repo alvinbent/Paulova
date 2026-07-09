@@ -251,3 +251,38 @@ Las paginas HTML de Stitch contienen el boton secreto materializado. Para que el
 
 **Status**:
 Listo para commit, push y despliegue en Vercel.
+
+### Completed Work - 2026-07-09 - Codex
+
+**Scope**:
+Alinear la identidad visual con la referencia real de `https://www.paunova.co/`, reemplazando el monograma de Carolina Aguirre por el logo de marca `PAUNOVA / Skin & Age Clinic` en la web publica, modal de acceso, login medico y dashboard.
+
+**Source of Truth**:
+- Referencia publica: `https://www.paunova.co/`
+- Asset de referencia descargado desde Paunova: `public/stitch-assets/reference-images/image_from_https_www.paunova.co_wp_content_uploads_2024_06_paunova_id_sin_fondo.png`
+- Nuevo alias de marca: `public/brand-assets/logo-paunova-skin-age.png`
+
+**Reason for Protected Areas modifications**:
+Las paginas HTML de Stitch contenian el logo anterior materializado. Para corregir la identidad global, se repararon las 9 paginas con el logo PAUNOVA real, tamanos de header/footer mas visibles y el modal secreto actualizado.
+
+**Exact Protected Files changed**:
+- `public/stitch-assets/pages/*.html` (9 paginas reparadas con `logo-paunova-skin-age.png`).
+
+**Related App Files changed**:
+- `public/brand-assets/logo-paunova-skin-age.png`
+- `scripts/materialize-stitch-assets.mjs`
+- `scripts/repair-materialized-pages.mjs`
+- `scripts/secret-access-template.mjs`
+- `src/app/doctor/login/page.tsx`
+- `src/components/doctor/Sidebar.tsx`
+
+**Rollback Path**:
+- `git restore public/stitch-assets/pages/ public/brand-assets/logo-paunova-skin-age.png`
+- `git restore scripts/materialize-stitch-assets.mjs scripts/repair-materialized-pages.mjs scripts/secret-access-template.mjs`
+- `git restore src/app/doctor/login/page.tsx src/components/doctor/Sidebar.tsx`
+
+**Verification performed**:
+- Verificacion local de HTML: `home.html`, `contacto.html` y `blog.html` usan `logo-paunova-skin-age.png`, no usan `logo-horizontal-dorado.png`, conservan el modal secreto y no tienen mojibake.
+
+**Status**:
+Listo para lint, build, commit, push y despliegue.

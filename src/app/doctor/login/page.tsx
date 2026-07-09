@@ -45,18 +45,18 @@ export default function DoctorLogin() {
       <div className="w-full max-w-lg bg-white/78 backdrop-blur-md border border-[#d2c4bb]/35 rounded-[2rem] p-8 md:p-10 shadow-[0_34px_90px_-48px_rgba(38,25,0,0.86)] relative z-10">
         <div className="text-center mb-8">
           <Image
-            src="/brand-assets/logo-horizontal-dorado.png"
-            alt="Dra Carolina Aguirre - Paunova"
-            width={420}
-            height={148}
+            src="/brand-assets/logo-paunova-skin-age.png"
+            alt="Paunova Skin & Age Clinic"
+            width={620}
+            height={177}
             priority
-            className="mx-auto h-32 md:h-36 w-auto max-w-full object-contain drop-shadow-[0_20px_30px_rgba(109,88,71,0.2)]"
+            className="mx-auto h-auto w-full max-w-[420px] object-contain drop-shadow-[0_20px_30px_rgba(109,88,71,0.2)]"
           />
           <span className="font-sans tracking-[0.22em] uppercase text-[10px] text-[#88705e] font-semibold block mt-4 mb-2">
             Acceso médico privado
           </span>
           <p className="text-[#88705e] text-xs font-sans">
-            Dra Carolina Aguirre - Skin & Age Clinic
+            Paunova Skin & Age Clinic
           </p>
         </div>
 

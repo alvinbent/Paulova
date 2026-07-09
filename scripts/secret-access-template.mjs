@@ -188,7 +188,7 @@ export const secretAccessHtml = `<style id="paunova-secret-access-style">
 <button id="paunova-secret-trigger" type="button" aria-label="Abrir portal privado" title="Portal privado"></button>
 <div id="paunova-secret-modal" hidden aria-hidden="true">
   <div class="paunova-secret-panel" role="dialog" aria-modal="true" aria-labelledby="paunova-secret-title">
-    <img class="paunova-secret-brand" src="/brand-assets/logo-horizontal-dorado.png" alt="Dra Carolina Aguirre - Paunova" />
+    <img class="paunova-secret-brand" src="/brand-assets/logo-paunova-skin-age.png" alt="Paunova Skin & Age Clinic" />
     <p class="paunova-secret-eyebrow">Portal médico privado</p>
     <h2 class="paunova-secret-title" id="paunova-secret-title">Acceso clínico</h2>
     <form id="paunova-secret-form">

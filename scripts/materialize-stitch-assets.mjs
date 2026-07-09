@@ -366,6 +366,18 @@ function injectGlobalInteractionStyle(html) {
   return html.replace("</head>", `${globalInteractionStyle}</head>`);
 }
 
+function rewriteBrandAssets(html) {
+  return html
+    .replaceAll("/brand-assets/logo-horizontal-dorado.png", "/brand-assets/logo-paunova-skin-age.png")
+    .replaceAll("Dra Carolina Aguirre - Paunova", "Paunova Skin & Age Clinic")
+    .replaceAll("Dra Carolina Aguirre Paunova", "Paunova Skin & Age Clinic")
+    .replaceAll("alt=\"Dra Carolina Aguirre\"", "alt=\"Paunova Skin & Age Clinic\"")
+    .replaceAll("alt=\"Dra Carolina Aguirre Paunova\"", "alt=\"Paunova Skin & Age Clinic\"")
+    .replaceAll("class=\"h-10 md:h-12 w-auto object-contain\"", "class=\"h-12 md:h-14 w-auto object-contain\"")
+    .replaceAll("class=\"h-14 w-auto object-contain mb-6\"", "class=\"h-16 md:h-20 w-auto object-contain mb-6\"")
+    .replaceAll("class=\"h-12 w-auto object-contain\"", "class=\"h-14 md:h-16 w-auto object-contain\"");
+}
+
 function repairMojibake(html) {
   if (!/[\u00c3\u00c2\u00e2]/.test(html)) return html;
   return Buffer.from(html, "latin1").toString("utf8");
@@ -445,6 +457,7 @@ async function rewriteHtml(page) {
 
   html = rewriteAnchorRoutes(html);
   html = rewriteLocationCopy(html);
+  html = rewriteBrandAssets(html);
   html = injectGlobalInteractionStyle(html);
   html = html.replace(/btn\.innerHTML = '\u00a1Enviado con \u00e9xito!';/g, "btn.innerHTML = 'Solicitud enviada';");
   html = html.replace("</body>", `${secretButtonHtml}${topNavigationScript}</body>`);

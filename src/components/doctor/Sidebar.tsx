@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 
-const logoSrc = "/brand-assets/logo-horizontal-dorado.png";
+const logoSrc = "/brand-assets/logo-paunova-skin-age.png";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -37,11 +37,11 @@ export default function Sidebar() {
         <div className="flex items-center min-w-0">
           <Image
             src={logoSrc}
-            alt="Dra Carolina Aguirre - Paunova"
-            width={300}
-            height={104}
+            alt="Paunova Skin & Age Clinic"
+            width={420}
+            height={120}
             priority
-            className="h-16 w-auto max-w-[230px] object-contain drop-shadow-[0_14px_22px_rgba(109,88,71,0.18)]"
+            className="h-auto w-[220px] max-w-[62vw] object-contain drop-shadow-[0_14px_22px_rgba(109,88,71,0.18)]"
           />
         </div>
         <button
@@ -63,10 +63,10 @@ export default function Sidebar() {
               <div className="border-b border-[#d2c4bb]/20 pb-6">
                 <Image
                   src={logoSrc}
-                  alt="Dra Carolina Aguirre - Paunova"
-                  width={360}
-                  height={126}
-                  className="h-24 w-auto max-w-full object-contain drop-shadow-[0_18px_28px_rgba(109,88,71,0.2)]"
+                  alt="Paunova Skin & Age Clinic"
+                  width={520}
+                  height={148}
+                  className="h-auto w-full max-w-[260px] object-contain drop-shadow-[0_18px_28px_rgba(109,88,71,0.2)]"
                 />
                 <p className="mt-3 text-[10px] text-[#88705e] uppercase tracking-[0.22em] font-semibold">
                   Portal médico
@@ -113,11 +113,11 @@ export default function Sidebar() {
             <div className="rounded-[1.75rem] bg-white/78 px-4 py-6 shadow-[0_28px_58px_-36px_rgba(109,88,71,0.62)] ring-1 ring-[#dec1ac]/40">
               <Image
                 src={logoSrc}
-                alt="Dra Carolina Aguirre - Paunova"
-                width={420}
-                height={148}
+                alt="Paunova Skin & Age Clinic"
+                width={620}
+                height={177}
                 priority
-                className="mx-auto h-32 w-auto max-w-full object-contain drop-shadow-[0_22px_34px_rgba(109,88,71,0.22)]"
+                className="mx-auto h-auto w-full max-w-[260px] object-contain drop-shadow-[0_22px_34px_rgba(109,88,71,0.22)]"
               />
             </div>
             <div className="mt-5 flex items-center gap-2">
