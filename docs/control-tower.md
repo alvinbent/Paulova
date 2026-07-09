@@ -82,6 +82,37 @@ After AntiGravity work:
 ### Active Work - 2026-07-09 - Codex
 
 **Scope**:
+Insertar video real de skincare como fondo semitransparente full-width en el hero principal de Home, conservando el contenido y retrato frontal del diseño Stitch.
+
+**Source of Truth**:
+- Video local provisto por el usuario: `C:/dev/Paunova/videos y varios/Woman_touching_cheek_skincare_1080p_202607091814.mp4`.
+- Página materializada actual: `public/stitch-assets/pages/home.html`.
+
+**Reason for Protected Areas modifications**:
+El hero público de Home se sirve desde HTML materializado en `public/stitch-assets/pages/home.html`; para incorporar el video como fondo real en la web existente, se requiere editar ese archivo protegido de forma trazable.
+
+**Exact Protected Files changed**:
+- `public/stitch-assets/pages/home.html` (video de fondo absoluto, semitransparente, con overlays de legibilidad).
+
+**Related Files changed**:
+- `public/brand-assets/hero-skincare-background.mp4`
+- `scripts/repair-materialized-pages.mjs` (persistencia del video si se repara/regenera Home).
+
+**Rollback Path**:
+- `git restore public/stitch-assets/pages/home.html scripts/repair-materialized-pages.mjs`
+- `git rm public/brand-assets/hero-skincare-background.mp4`
+
+**Verification performed**:
+- `npm run lint` exitoso.
+- `npm run build` exitoso con advertencia no bloqueante de Next 16 sobre `middleware.ts` deprecado.
+- Verificación local de HTML: `home.html` contiene `/brand-assets/hero-skincare-background.mp4` como `<video>` absoluto dentro del hero.
+
+**Status**:
+Completado por Codex. Pendiente revisión visual en navegador para ajustar opacidad/contraste si se desea más presencia del video.
+
+### Active Work - 2026-07-09 - Codex
+
+**Scope**:
 Auditoría correctiva del despliegue `https://paunova.vercel.app/` después de detectar que el acceso privado no era visible/accionable y que las páginas públicas mostraban texto con mojibake.
 
 **Source of Truth**:

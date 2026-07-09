@@ -44,12 +44,32 @@ function polishCopy(html) {
     .replace(/>\s*\u00a1Enviado con \u00e9xito!\s*</g, ">Solicitud enviada<");
 }
 
+function injectHomeHeroVideo(html) {
+  const heroVideo = `<video aria-hidden="true" autoplay class="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none" loop muted playsinline preload="metadata">
+<source src="/brand-assets/hero-skincare-background.mp4" type="video/mp4"/>
+</video>
+<div class="absolute inset-0 bg-warm-white/65 pointer-events-none"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-warm-white via-warm-white/80 to-soft-nude/30 pointer-events-none"></div>
+`;
+
+  const withoutOldHeroVideo = html.replace(
+    /<video aria-hidden="true" autoplay class="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none"[\s\S]*?<\/video>\s*<div class="absolute inset-0 bg-warm-white\/65 pointer-events-none"><\/div>\s*<div class="absolute inset-0 bg-gradient-to-r from-warm-white via-warm-white\/80 to-soft-nude\/30 pointer-events-none"><\/div>\s*/g,
+    ""
+  );
+
+  return withoutOldHeroVideo.replace(
+    '<header class="relative min-h-[90vh] flex items-center pt-20 overflow-hidden bg-soft-nude/30">\n',
+    `<header class="relative min-h-[90vh] flex items-center pt-20 overflow-hidden bg-soft-nude/30">\n${heroVideo}`
+  );
+}
+
 const files = (await readdir(pagesDir)).filter((file) => file.endsWith(".html"));
 
 for (const file of files) {
   const filePath = path.join(pagesDir, file);
   const original = await readFile(filePath, "utf8");
-  const repaired = injectSecretAccess(rewriteBrandAssets(polishCopy(repairMojibake(original))));
+  const repairedBase = injectSecretAccess(rewriteBrandAssets(polishCopy(repairMojibake(original))));
+  const repaired = file === "home.html" ? injectHomeHeroVideo(repairedBase) : repairedBase;
   await writeFile(filePath, repaired, "utf8");
   console.log(`Repaired ${file}`);
 }
