@@ -79,7 +79,50 @@ After AntiGravity work:
 
 ## Active Work
 
+### Active Work - 2026-07-09 - Codex
+
+**Scope**:
+Aplicar identidad visual oficial de Dra Carolina Aguirre a la web publica ya materializada desde Stitch, insertando logos y fotografias reales con criterio de contraste, jerarquia y confianza clinica.
+
+**Source of Truth**:
+- Web original: `https://www.paunova.co/`.
+- Manual de identidad local: `C:/dev/Paunova/MANUAL DE IDENTIDAD DRA CAROLINA AGUIRRE 2025.pdf`.
+- Logos locales: `C:/dev/Paunova/logos paunova`.
+- Imagenes locales de Dra Carolina Aguirre: `C:/dev/Paunova/imagenes  carolina aguirre`.
+- Stitch sigue siendo la estructura visual base; esta intervencion fue solicitada explicitamente por el usuario como mejora de marca.
+
+**Reason for Protected Areas modifications**:
+Las paginas publicas se sirven desde HTML materializado en `public/stitch-assets/pages/**`; para que la web ya creada muestre la identidad oficial sin reconstruir la aplicacion, es necesario ajustar esos HTML de forma trazable.
+
+**Exact Protected Files planned for change**:
+- `public/stitch-assets/pages/*.html` (logos, algunas imagenes principales y pequenos acentos de marca).
+
+**Rollback Path**:
+- `git restore public/stitch-assets/pages/ public/brand-assets/ docs/control-tower.md`.
+
+**Status**:
+En progreso por Codex.
+
 ### Completed Work - 2026-07-08 - AntiGravity
+
+**Scope**: 
+Estabilizar la navegación global, agregar modales educativos interactivos para tratamientos/trayectoria y corregir direcciones y marca en todo el contenido materializado.
+
+**Source of Truth**: 
+- Stitch ZIP Export: `C:/Users/PC/Downloads/stitch_paunova_premium_web.zip` (Materialized into HTML and images).
+- Instrucciones de marca: Dra Carolina Aguirre - Paunova Skin & Age Clinic.
+
+**Reason for Protected Areas modifications**:
+Para corregir la ubicación/marca física antigua y habilitar interacción/navegación a través de las 9 rutas, se requería regenerar los archivos HTML e imágenes mediante el script `scripts/materialize-stitch-assets.mjs`.
+
+**Exact Protected Files changed/added/deleted**:
+- `public/stitch-assets/manifest.json` (modified)
+- `public/stitch-assets/pages/*.html` (9 files generated/modified)
+- `public/stitch-assets/images/*` (images downloaded and reference-images added)
+- `public/stitch-assets/screenshots/*.png` (screenshots updated)
+
+**Rollback Path**:
+- `git restore public/stitch-assets/` to restore previous state.
 
 **Scope**: 
 Estabilizar la navegación global, agregar modales educativos interactivos para tratamientos/trayectoria y corregir direcciones y marca en todo el contenido materializado.
@@ -107,3 +150,30 @@ Para corregir la ubicación/marca física antigua y habilitar interacción/naveg
 
 **Status**:
 Listo para revisión y auditoría de integración por Codex. Handoff entregado.
+
+### Completed Work - 2026-07-09 - AntiGravity
+
+**Scope**: 
+Construcción e integración de la aplicación médica privada para la doctora (`/doctor`), el botón de acceso secreto discreto en la cabecera de la web pública, el bypass automático de autenticación en fase de diseño (`/api/auth/bypass`) y la estabilización de tipos del compilador.
+
+**Source of Truth**: 
+- Instrucciones del usuario para Fase 3.
+- Logo de marca oficial provisto (`public/logo_secreto.jpg`).
+
+**Reason for Protected Areas modifications**:
+El botón secreto requiere interactividad y estar inyectado discreta y globalmente en la cabecera de todas las páginas de Stitch, por lo que fue necesario regenerar los archivos HTML mediante `scripts/materialize-stitch-assets.mjs`.
+
+**Exact Protected Files changed/added**:
+- `public/stitch-assets/pages/*.html` (7 páginas estáticas regeneradas con el trigger y script del botón).
+- `public/logo_secreto.jpg` (agregado logo secreto discreto).
+
+**Rollback Path**:
+- `git restore public/stitch-assets/pages/ public/logo_secreto.jpg`
+- `git restore scripts/materialize-stitch-assets.mjs`
+
+**Verification performed**:
+- Compilación de producción con `npm run build` (Exitosa, 18 rutas generadas).
+- Análisis estático con `npm run lint` (Exitoso, 0 errores).
+
+**Status**:
+Fase 3 completada y estabilizada. Listo para revisión por Codex y preparación de Fase 4 (Google Sheets y Supabase).

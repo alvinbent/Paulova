@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { createHash } from "node:crypto";
-import { copyFile, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, readdir, writeFile, stat } from "node:fs/promises";
 import path from "node:path";
 
 const HTML_IN = ".stitch-cache/html";
@@ -61,13 +61,28 @@ function extensionFromContentType(contentType) {
 async function downloadImage(url) {
   if (imageUrlToLocal.has(url)) return imageUrlToLocal.get(url);
 
+  const hashed = hashUrl(url);
+  const possibleExtensions = [".jpg", ".png", ".webp", ".gif", ".svg"];
+  for (const ext of possibleExtensions) {
+    const fileName = `${hashed}${ext}`;
+    const localPath = path.join(IMAGES_OUT, fileName);
+    try {
+      await stat(localPath);
+      const publicPath = `/stitch-assets/images/${fileName}`;
+      imageUrlToLocal.set(url, publicPath);
+      return publicPath;
+    } catch {
+      // Not found with this extension, check next
+    }
+  }
+
   const res = await fetch(url);
   if (!res.ok) {
     throw new Error(`Could not download image ${url}: ${res.status}`);
   }
 
   const ext = extensionFromContentType(res.headers.get("content-type"));
-  const fileName = `${hashUrl(url)}${ext}`;
+  const fileName = `${hashed}${ext}`;
   const publicPath = `/stitch-assets/images/${fileName}`;
   const outPath = path.join(IMAGES_OUT, fileName);
   const buffer = Buffer.from(await res.arrayBuffer());
@@ -93,7 +108,55 @@ async function rewriteHtml(fileName) {
     html = html.replaceAll(`href="${from}"`, `href="${to}"`);
   }
 
-  html = html.replace("</body>", `${topNavigationScript}</body>`);
+  const secretButtonHtml = `<div id="paunova-secret-trigger" style="position: fixed; top: 12px; right: 20px; z-index: 9999; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(197, 168, 128, 0.15); opacity: 0.08; cursor: pointer; transition: opacity 0.3s; background-image: url('/logo_secreto.jpg'); background-size: cover; background-position: center; filter: grayscale(10%);" title="Portal Privado"></div>
+<script>
+(function() {
+  const trigger = document.getElementById('paunova-secret-trigger');
+  if (!trigger) return;
+
+  // Web: 5-second long press
+  let pressTimer = null;
+
+  trigger.addEventListener('mousedown', function(e) {
+    if (e.button !== 0) return; // Only left click
+    pressTimer = setTimeout(function() {
+      window.top.location.href = '/api/auth/bypass';
+    }, 5000);
+  });
+
+  function clearTimer() {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+  }
+
+  trigger.addEventListener('mouseup', clearTimer);
+  trigger.addEventListener('mouseleave', clearTimer);
+
+  // Mobile/Tablet: 3-tap action
+  let tapCount = 0;
+  let tapTimer = null;
+
+  trigger.addEventListener('touchstart', function(e) {
+    // Avoid simulating mouse events on touch
+    e.preventDefault();
+    
+    tapCount++;
+    if (tapCount === 3) {
+      window.top.location.href = '/api/auth/bypass';
+      return;
+    }
+
+    if (tapTimer) clearTimeout(tapTimer);
+    tapTimer = setTimeout(function() {
+      tapCount = 0;
+    }, 2000); // Reset tap count after 2 seconds of inactivity
+  });
+})();
+</script>`;
+
+  html = html.replace("</body>", `${secretButtonHtml}${topNavigationScript}</body>`);
 
   await writeFile(path.join(PAGES_OUT, outputName), html, "utf8");
 }
