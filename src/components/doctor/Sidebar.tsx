@@ -38,10 +38,10 @@ export default function Sidebar() {
           <Image
             src={logoSrc}
             alt="Dra Carolina Aguirre - Paunova"
-            width={240}
-            height={80}
+            width={300}
+            height={104}
             priority
-            className="h-12 w-auto max-w-[190px] object-contain drop-shadow-[0_10px_18px_rgba(109,88,71,0.16)]"
+            className="h-16 w-auto max-w-[230px] object-contain drop-shadow-[0_14px_22px_rgba(109,88,71,0.18)]"
           />
         </div>
         <button
@@ -58,15 +58,15 @@ export default function Sidebar() {
       {mobileOpen && (
         <div className="fixed inset-0 z-40 md:hidden flex">
           <div className="fixed inset-0 bg-[#1b1c1c]/40 backdrop-blur-xs" onClick={() => setMobileOpen(false)} />
-          <nav className="relative w-72 max-w-[86vw] bg-[#FDFBF7] h-full flex flex-col justify-between p-6 shadow-xl z-50 border-r border-[#d2c4bb]/30">
+          <nav className="relative w-80 max-w-[90vw] bg-[#FDFBF7] h-full flex flex-col justify-between p-6 shadow-xl z-50 border-r border-[#d2c4bb]/30">
             <div className="space-y-8">
-              <div className="border-b border-[#d2c4bb]/20 pb-5">
+              <div className="border-b border-[#d2c4bb]/20 pb-6">
                 <Image
                   src={logoSrc}
                   alt="Dra Carolina Aguirre - Paunova"
-                  width={260}
-                  height={88}
-                  className="h-16 w-auto max-w-full object-contain drop-shadow-[0_14px_24px_rgba(109,88,71,0.18)]"
+                  width={360}
+                  height={126}
+                  className="h-24 w-auto max-w-full object-contain drop-shadow-[0_18px_28px_rgba(109,88,71,0.2)]"
                 />
                 <p className="mt-3 text-[10px] text-[#88705e] uppercase tracking-[0.22em] font-semibold">
                   Portal médico
@@ -107,20 +107,20 @@ export default function Sidebar() {
         </div>
       )}
 
-      <aside className="hidden md:flex md:w-72 bg-[#FDFBF7] h-screen border-r border-[#d2c4bb]/30 p-6 flex-col justify-between sticky top-0">
+      <aside className="hidden md:flex md:w-80 bg-[#FDFBF7] h-screen border-r border-[#d2c4bb]/30 p-6 flex-col justify-between sticky top-0">
         <div className="space-y-8">
-          <div className="border-b border-[#d2c4bb]/20 pb-7">
-            <div className="rounded-2xl bg-white/70 px-4 py-5 shadow-[0_22px_44px_-32px_rgba(109,88,71,0.52)] ring-1 ring-[#dec1ac]/35">
+          <div className="border-b border-[#d2c4bb]/20 pb-8">
+            <div className="rounded-[1.75rem] bg-white/78 px-4 py-6 shadow-[0_28px_58px_-36px_rgba(109,88,71,0.62)] ring-1 ring-[#dec1ac]/40">
               <Image
                 src={logoSrc}
                 alt="Dra Carolina Aguirre - Paunova"
-                width={300}
-                height={104}
+                width={420}
+                height={148}
                 priority
-                className="mx-auto h-20 w-auto max-w-full object-contain drop-shadow-[0_16px_24px_rgba(109,88,71,0.2)]"
+                className="mx-auto h-32 w-auto max-w-full object-contain drop-shadow-[0_22px_34px_rgba(109,88,71,0.22)]"
               />
             </div>
-            <div className="mt-4 flex items-center gap-2">
+            <div className="mt-5 flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-[10px] text-gray-500 font-sans">
                 Dra. Carolina Aguirre

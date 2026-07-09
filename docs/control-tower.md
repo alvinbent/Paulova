@@ -210,3 +210,42 @@ El botón secreto requiere interactividad y estar inyectado discreta y globalmen
 
 **Status**:
 Fase 3 completada y estabilizada. Listo para revisión por Codex y preparación de Fase 4 (Google Sheets y Supabase).
+
+### Completed Work - 2026-07-09 - Codex
+
+**Scope**:
+Corregir la apertura real de la aplicacion privada desde el boton secreto, reemplazar el bypass por una ventana emergente de usuario y clave, reforzar el logo dorado dentro del dashboard y limpiar textos visibles del acceso medico.
+
+**Source of Truth**:
+- Instrucciones del usuario sobre el flujo creado en Antigravity: boton secreto -> ventana emergente -> login/clave -> aplicacion privada.
+- Logo oficial horizontal dorado: `public/brand-assets/logo-horizontal-dorado.png`.
+
+**Reason for Protected Areas modifications**:
+Las paginas HTML de Stitch contienen el boton secreto materializado. Para que el boton abra el modal de acceso y conecte con `/api/auth/login`, se regeneraron las 9 paginas con el nuevo snippet compartido desde `scripts/secret-access-template.mjs`.
+
+**Exact Protected Files changed**:
+- `public/stitch-assets/pages/*.html` (9 paginas regeneradas con modal de acceso, formulario `Usuario`/`Clave` y conexion a `/api/auth/login`).
+
+**Related App Files changed**:
+- `scripts/secret-access-template.mjs`
+- `scripts/materialize-stitch-assets.mjs`
+- `scripts/repair-materialized-pages.mjs`
+- `src/app/api/auth/bypass/route.ts` (deleted)
+- `src/app/api/auth/login/route.ts`
+- `src/app/doctor/login/page.tsx`
+- `src/components/doctor/Sidebar.tsx`
+
+**Rollback Path**:
+- `git restore public/stitch-assets/pages/ scripts/secret-access-template.mjs scripts/materialize-stitch-assets.mjs scripts/repair-materialized-pages.mjs`
+- `git restore src/app/api/auth/bypass/route.ts src/app/api/auth/login/route.ts src/app/doctor/login/page.tsx src/components/doctor/Sidebar.tsx`
+
+**Verification performed**:
+- `node node_modules/eslint/bin/eslint.js` exitoso.
+- `node node_modules/next/dist/bin/next build` exitoso.
+- Verificacion HTTP local: `home.html` contiene `paunova-secret-modal`, `/api/auth/login`, `Usuario` y `Clave`; no contiene `/api/auth/bypass`.
+- Verificacion HTTP local: `POST /api/auth/login` con credenciales validas crea cookie de sesion y permite abrir `/doctor/dashboard`.
+- Verificacion HTTP local: clave incorrecta responde `401`.
+- La ruta antigua `/api/auth/bypass` fue eliminada para evitar acceso directo sin usuario y clave.
+
+**Status**:
+Listo para commit, push y despliegue en Vercel.
