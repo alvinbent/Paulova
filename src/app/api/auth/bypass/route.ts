@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 
-export async function GET() {
-  const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const response = NextResponse.redirect(new URL("/doctor/dashboard", redirectUrl));
+export async function GET(request: Request) {
+  const response = NextResponse.redirect(new URL("/doctor/dashboard", request.url));
   
   // Auto-authenticate during initial design phase
   response.cookies.set({
