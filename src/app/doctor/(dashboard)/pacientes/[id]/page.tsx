@@ -21,18 +21,11 @@ export default async function DoctorPacientePerfil({
   const record = await db.getPatientClinicalRecord(id);
   const inventory = await db.getInventory();
 
-  // Pick only fields required for selecting product used in treatments form
-  const inventoryOptions = inventory.map((i) => ({
-    id: i.id,
-    name: i.name,
-    unitName: i.unitName,
-  }));
-
   return (
     <PacienteClient
       patient={patient}
       record={record}
-      inventory={inventoryOptions}
+      inventory={inventory}
     />
   );
 }
