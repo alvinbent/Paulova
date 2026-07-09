@@ -100,8 +100,13 @@ Las paginas publicas se sirven desde HTML materializado en `public/stitch-assets
 **Rollback Path**:
 - `git restore public/stitch-assets/pages/ public/brand-assets/ docs/control-tower.md`.
 
+**Verification performed**:
+- `npm run lint` exitoso.
+- `npm run build` exitoso despues de limpiar un lock/caché local de `.next`.
+- Verificacion HTTP local: `/`, `/tratamientos`, `/contacto` y assets en `/brand-assets/*` responden `200`.
+
 **Status**:
-En progreso por Codex.
+Completado por Codex. Queda pendiente una revision visual humana fina en navegador para microajustes de recorte/encuadre.
 
 ### Completed Work - 2026-07-08 - AntiGravity
 
