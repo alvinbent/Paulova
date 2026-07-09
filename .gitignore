@@ -13,4 +13,4 @@ coverage/
 .DS_Store
 Thumbs.db
 .stitch-cache/
-
+.dev-db/

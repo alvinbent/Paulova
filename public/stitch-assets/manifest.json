@@ -1,100 +1,15 @@
 {
-  "generatedAt": "2026-07-08T21:55:39.516Z",
-  "source": "Stitch ZIP export",
-  "zipSource": "C:/Users/PC/Downloads/stitch_paunova_premium_web.zip",
+  "generatedAt": "2026-07-09T16:28:28.160Z",
+  "source": "Stitch MCP cache",
   "pages": [
-    {
-      "sourceDir": "home_premium_paunova",
-      "slug": "home",
-      "output": "home.html",
-      "title": "Home Premium - Paunova",
-      "route": "/",
-      "screenshot": "/stitch-assets/screenshots/home.png"
-    },
-    {
-      "sourceDir": "home_premium_con_acceso_privado_paunova",
-      "slug": "home-acceso-privado",
-      "output": "home-acceso-privado.html",
-      "title": "Home Premium con Acceso Privado - Paunova",
-      "route": "/home-acceso-privado",
-      "screenshot": "/stitch-assets/screenshots/home-acceso-privado.png"
-    },
-    {
-      "sourceDir": "tratamientos_premium_paunova",
-      "slug": "tratamientos",
-      "output": "tratamientos.html",
-      "title": "Tratamientos Premium - Paunova",
-      "route": "/tratamientos",
-      "screenshot": "/stitch-assets/screenshots/tratamientos.png"
-    },
-    {
-      "sourceDir": "hydrash_detox_facial_paquetes_exclusivos",
-      "slug": "limpieza-facial-profunda-hydrash",
-      "output": "limpieza-facial-profunda-hydrash.html",
-      "title": "Hydrash Detox Facial - Paquetes Exclusivos",
-      "route": "/limpieza-facial-profunda-hydrash",
-      "screenshot": "/stitch-assets/screenshots/limpieza-facial-profunda-hydrash.png"
-    },
-    {
-      "sourceDir": "toxina_botul_nica_detalle_de_tratamiento",
-      "slug": "toxina-botulinica",
-      "output": "toxina-botulinica.html",
-      "title": "Toxina Botulinica - Detalle de Tratamiento",
-      "route": "/toxina-botulinica",
-      "screenshot": "/stitch-assets/screenshots/toxina-botulinica.png"
-    },
-    {
-      "sourceDir": "qui_nes_somos_dra._carolina_aguirre",
-      "slug": "quienes-somos",
-      "output": "quienes-somos.html",
-      "title": "Quienes Somos - Dra. Carolina Aguirre",
-      "route": "/quienes-somos",
-      "screenshot": "/stitch-assets/screenshots/quienes-somos.png"
-    },
-    {
-      "sourceDir": "contacto_paunova",
-      "slug": "contacto",
-      "output": "contacto.html",
-      "title": "Contacto - Paunova",
-      "route": "/contacto",
-      "screenshot": "/stitch-assets/screenshots/contacto.png"
-    },
-    {
-      "sourceDir": "international_patients_paunova",
-      "slug": "international-patients",
-      "output": "international-patients.html",
-      "title": "International Patients - Paunova",
-      "route": "/international-patients",
-      "screenshot": "/stitch-assets/screenshots/international-patients.png"
-    },
-    {
-      "sourceDir": "blog_educativo_paunova",
-      "slug": "blog",
-      "output": "blog.html",
-      "title": "Blog Educativo - Paunova",
-      "route": "/blog",
-      "screenshot": "/stitch-assets/screenshots/blog.png"
-    }
+    "home.html",
+    "tratamientos.html",
+    "limpieza-facial-profunda-hydrash.html",
+    "quienes-somos.html",
+    "contacto.html",
+    "international-patients.html",
+    "blog.html"
   ],
-  "assets": {
-    "cssFiles": [],
-    "fonts": [
-      "Google Fonts: EB Garamond",
-      "Google Fonts: Hanken Grotesk",
-      "Google Fonts: Sora",
-      "Google Fonts: Material Symbols Outlined"
-    ],
-    "localImages": 44,
-    "referenceImages": 12,
-    "screenshots": 9,
-    "textSource": "extracted_text_from_https_www.paunova.co.md",
-    "missingAssets": []
-  },
-  "reusableComponents": [
-    "Navigation/header",
-    "Hero sections",
-    "Treatment cards",
-    "CTA buttons",
-    "Footer/contact blocks"
-  ]
+  "localImages": 41,
+  "screenshots": 21
 }

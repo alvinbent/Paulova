@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 
 import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -105,7 +105,7 @@ const hashRewrites = new Map([
   ["#contacto", "/contacto"],
 ]);
 
-const canonicalLocation = "Av. Principal 123, Centro Médico Especializado, Consultorio 504.";
+const canonicalLocation = "Av. Principal 123, Centro MÃ©dico Especializado, Consultorio 504.";
 const canonicalClinicName = "Paunova";
 const canonicalClinicLongName = "Paunova Skin & Age Clinic";
 
@@ -267,6 +267,21 @@ async function exists(filePath) {
 async function downloadImage(url) {
   if (imageUrlToLocal.has(url)) return imageUrlToLocal.get(url);
 
+  const hashed = hashUrl(url);
+  const possibleExtensions = [".jpg", ".png", ".webp", ".gif", ".svg"];
+  for (const ext of possibleExtensions) {
+    const fileName = `${hashed}${ext}`;
+    const localPath = path.join(IMAGES_OUT, fileName);
+    try {
+      await stat(localPath);
+      const publicPath = `/stitch-assets/images/${fileName}`;
+      imageUrlToLocal.set(url, publicPath);
+      return publicPath;
+    } catch {
+      // Not found with this extension, check next
+    }
+  }
+
   const res = await fetch(url);
   if (!res.ok) {
     const cachedUrl = await restoreCachedImage(url);
@@ -277,7 +292,7 @@ async function downloadImage(url) {
   }
 
   const ext = extensionFromContentType(res.headers.get("content-type"));
-  const fileName = `${hashUrl(url)}${ext}`;
+  const fileName = `${hashed}${ext}`;
   const publicPath = `/stitch-assets/images/${fileName}`;
   const outPath = path.join(IMAGES_OUT, fileName);
   const buffer = Buffer.from(await res.arrayBuffer());
@@ -361,7 +376,7 @@ function rewriteLocationCopy(html) {
   const oldSuite = ["Suite", " 402"].join("");
 
   return html
-    .replace(/Av\. Principal 123, Centro Médico Especializado, Consultorio 504\./g, canonicalLocation)
+    .replace(/Av\. Principal 123, Centro MÃ©dico Especializado, Consultorio 504\./g, canonicalLocation)
     .replace(new RegExp(`${oldStreetOne} # 15-32, Consultorio 504<br\\/>[^<]+, Colombia`, "g"), canonicalLocation)
     .replace(new RegExp(`${oldStreetTwo} # 13\\s*-?117<br\\/>[^<]+Valle del Cauca, Colombia\\.`, "g"), canonicalLocation)
     .replace(new RegExp(`${oldStreetTwo} # 13-117 [^,]+, Valle del Cauca, CO\\.`, "g"), canonicalLocation)
@@ -375,32 +390,32 @@ function rewriteLocationCopy(html) {
     .replace(oldCapitalAccentPattern, canonicalLocation)
     .replace(new RegExp(`${oldMedicalCenter}, ${oldSuite}`, "g"), canonicalLocation)
     .replace(new RegExp(`Paciente de ${oldCityPattern.source}`, "g"), "Paciente Paunova")
-    .replaceAll("Clínica Paunova", canonicalClinicName)
+    .replaceAll("ClÃ­nica Paunova", canonicalClinicName)
     .replaceAll("Paunova Skin &amp; Age Clinic", canonicalClinicLongName)
     .replace(
-      new RegExp(`Estamos ubicados en ${oldCityPattern.source}, ofreciendo atención premium para pacientes de todo el Valle del Cauca, incluyendo Cali, Palmira y Tuluá\\.`, "g"),
-      `Estamos ubicados en ${canonicalLocation} Ofrecemos atención premium para pacientes locales, nacionales e internacionales.`
+      new RegExp(`Estamos ubicados en ${oldCityPattern.source}, ofreciendo atenciÃ³n premium para pacientes de todo el Valle del Cauca, incluyendo Cali, Palmira y TuluÃ¡\\.`, "g"),
+      `Estamos ubicados en ${canonicalLocation} Ofrecemos atenciÃ³n premium para pacientes locales, nacionales e internacionales.`
     )
     .replace(
-      new RegExp(`Inicia tu camino hacia una belleza natural y saludable\\. Agenda una valoración personalizada en nuestra clínica de ${oldCityPattern.source}\\.`, "g"),
-      "Inicia tu camino hacia una belleza natural y saludable. Agenda una valoración personalizada en nuestra clínica."
+      new RegExp(`Inicia tu camino hacia una belleza natural y saludable\\. Agenda una valoraciÃ³n personalizada en nuestra clÃ­nica de ${oldCityPattern.source}\\.`, "g"),
+      "Inicia tu camino hacia una belleza natural y saludable. Agenda una valoraciÃ³n personalizada en nuestra clÃ­nica."
     )
     .replace(
-      new RegExp(`Recomendaciones exclusivas en ${oldCityPattern.source} y sus alrededores\\. Desde transporte privado hasta los mejores hoteles boutique para tu recuperación\\.`, "g"),
-      "Recomendaciones exclusivas para tu visita. Desde transporte privado hasta hoteles boutique seleccionados para una recuperación tranquila."
+      new RegExp(`Recomendaciones exclusivas en ${oldCityPattern.source} y sus alrededores\\. Desde transporte privado hasta los mejores hoteles boutique para tu recuperaciÃ³n\\.`, "g"),
+      "Recomendaciones exclusivas para tu visita. Desde transporte privado hasta hoteles boutique seleccionados para una recuperaciÃ³n tranquila."
     )
-    .replace(new RegExp(`${oldCityPattern.source}: Un Destino para la Renovación`, "g"), "Paunova: Un Destino para la Renovación")
+    .replace(new RegExp(`${oldCityPattern.source}: Un Destino para la RenovaciÃ³n`, "g"), "Paunova: Un Destino para la RenovaciÃ³n")
     .replace(
-      new RegExp(`Ubicada en el corazón del Valle del Cauca, ${oldCityPattern.source} no solo ofrece excelencia médica, sino también un entorno de paz y patrimonio histórico ideal para una recuperación serena\\.`, "g"),
-      "Paunova combina excelencia médica, acompañamiento humano y un entorno cuidadosamente coordinado para una recuperación serena."
-    )
-    .replace(
-      new RegExp(`Viajar desde Miami para mi tratamiento con la Dra\\. Carolina fue la mejor decisión\\. La atención virtual previa me dio toda la seguridad, y el cuidado en ${oldCityPattern.source} superó mis expectativas\\.`, "g"),
-      "Viajar desde Miami para mi tratamiento con la Dra. Carolina fue la mejor decisión. La atención virtual previa me dio toda la seguridad, y el cuidado de Paunova superó mis expectativas."
+      new RegExp(`Ubicada en el corazÃ³n del Valle del Cauca, ${oldCityPattern.source} no solo ofrece excelencia mÃ©dica, sino tambiÃ©n un entorno de paz y patrimonio histÃ³rico ideal para una recuperaciÃ³n serena\\.`, "g"),
+      "Paunova combina excelencia mÃ©dica, acompaÃ±amiento humano y un entorno cuidadosamente coordinado para una recuperaciÃ³n serena."
     )
     .replace(
-      new RegExp(`Excelencia médica y estética en ${oldCityPattern.source}, transformando vidas con discreción y naturalidad\\.`, "g"),
-      "Excelencia médica y estética, transformando vidas con discreción y naturalidad."
+      new RegExp(`Viajar desde Miami para mi tratamiento con la Dra\\. Carolina fue la mejor decisiÃ³n\\. La atenciÃ³n virtual previa me dio toda la seguridad, y el cuidado en ${oldCityPattern.source} superÃ³ mis expectativas\\.`, "g"),
+      "Viajar desde Miami para mi tratamiento con la Dra. Carolina fue la mejor decisiÃ³n. La atenciÃ³n virtual previa me dio toda la seguridad, y el cuidado de Paunova superÃ³ mis expectativas."
+    )
+    .replace(
+      new RegExp(`Excelencia mÃ©dica y estÃ©tica en ${oldCityPattern.source}, transformando vidas con discreciÃ³n y naturalidad\\.`, "g"),
+      "Excelencia mÃ©dica y estÃ©tica, transformando vidas con discreciÃ³n y naturalidad."
     )
     .replace(oldCityPattern, canonicalClinicName);
 }
@@ -420,10 +435,58 @@ async function rewriteHtml(page) {
     html = html.replaceAll(`href="${from}"`, `href="${to}"`);
   }
 
+  const secretButtonHtml = `<div id="paunova-secret-trigger" style="position: fixed; top: 12px; right: 20px; z-index: 9999; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(197, 168, 128, 0.15); opacity: 0.08; cursor: pointer; transition: opacity 0.3s; background-image: url('/logo_secreto.jpg'); background-size: cover; background-position: center; filter: grayscale(10%);" title="Portal Privado"></div>
+<script>
+(function() {
+  const trigger = document.getElementById('paunova-secret-trigger');
+  if (!trigger) return;
+
+  // Web: 5-second long press
+  let pressTimer = null;
+
+  trigger.addEventListener('mousedown', function(e) {
+    if (e.button !== 0) return; // Only left click
+    pressTimer = setTimeout(function() {
+      window.top.location.href = '/api/auth/bypass';
+    }, 5000);
+  });
+
+  function clearTimer() {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+  }
+
+  trigger.addEventListener('mouseup', clearTimer);
+  trigger.addEventListener('mouseleave', clearTimer);
+
+  // Mobile/Tablet: 3-tap action
+  let tapCount = 0;
+  let tapTimer = null;
+
+  trigger.addEventListener('touchstart', function(e) {
+    // Avoid simulating mouse events on touch
+    e.preventDefault();
+
+    tapCount++;
+    if (tapCount === 3) {
+      window.top.location.href = '/api/auth/bypass';
+      return;
+    }
+
+    if (tapTimer) clearTimeout(tapTimer);
+    tapTimer = setTimeout(function() {
+      tapCount = 0;
+    }, 2000); // Reset tap count after 2 seconds of inactivity
+  });
+})();
+</script>`;
+
   html = rewriteAnchorRoutes(html);
   html = rewriteLocationCopy(html);
   html = injectGlobalInteractionStyle(html);
-  html = html.replace("</body>", `${topNavigationScript}</body>`);
+  html = html.replace("</body>", `${secretButtonHtml}${topNavigationScript}</body>`);
   await writeFile(path.join(PAGES_OUT, page.output), html, "utf8");
 }
 

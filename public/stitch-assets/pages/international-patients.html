@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html class="light" lang="es"><head>
 <meta charset="utf-8"/>
@@ -14,7 +14,7 @@
             display: inline-block;
             vertical-align: middle;
         }
-        
+
         .glass-effect {
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -138,84 +138,17 @@
             },
         }
     </script>
-<style id="paunova-global-button-interactions">
-:where(button, a[href]) {
-  -webkit-tap-highlight-color: transparent;
-}
-
-:where(
-  button,
-  a[href][class*="bg-"],
-  a[href][class*="border"],
-  a[href][class*="rounded"],
-  a[href][class*="shadow"],
-  a[href][class*="px-"],
-  a[href][class*="py-"],
-  a[href][class*="w-10"],
-  a[href][class*="w-12"],
-  a[href][class*="w-14"]
-) {
-  transform-origin: center;
-  transition-property: transform, box-shadow, background-color, color, border-color, opacity;
-  transition-duration: 220ms;
-  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
-}
-
-@media (hover: hover) {
-  :where(
-    button,
-    a[href][class*="bg-"],
-    a[href][class*="border"],
-    a[href][class*="rounded"],
-    a[href][class*="shadow"],
-    a[href][class*="px-"],
-    a[href][class*="py-"],
-    a[href][class*="w-10"],
-    a[href][class*="w-12"],
-    a[href][class*="w-14"]
-  ):hover {
-    transform: translateY(-2px) scale(1.04);
-    box-shadow: 0 18px 42px -24px rgba(109, 88, 71, 0.55);
-  }
-}
-
-:where(
-  button,
-  a[href][class*="bg-"],
-  a[href][class*="border"],
-  a[href][class*="rounded"],
-  a[href][class*="shadow"],
-  a[href][class*="px-"],
-  a[href][class*="py-"],
-  a[href][class*="w-10"],
-  a[href][class*="w-12"],
-  a[href][class*="w-14"]
-):active {
-  transform: scale(1.10);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :where(button, a[href]) {
-    transition-duration: 1ms !important;
-  }
-
-  :where(button, a[href]):hover,
-  :where(button, a[href]):active {
-    transform: none !important;
-  }
-}
-</style></head>
+</head>
 <body class="bg-background text-on-background font-body-md overflow-x-hidden">
 <!-- Top Navigation Bar (Shared Component Strategy) -->
 <header class="docked full-width top-0 sticky z-50 bg-warm-white/80 backdrop-blur-md">
 <div class="max-w-container-max mx-auto px-margin-desktop flex justify-between items-center h-20">
-<a class="font-headline-md text-headline-md text-primary tracking-wide" href="/">Dra. Carolina Aguirre</a>
+<a class="flex items-center" href="/"><img alt="Dra Carolina Aguirre" class="h-10 md:h-12 w-auto object-contain" src="/brand-assets/logo-horizontal-dorado.png"/></a>
 <nav class="hidden md:flex items-center gap-stack-lg">
-<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="/tratamientos">Tratamientos</a>
-<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Tecnología</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Tratamientos</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">TecnologÃ­a</a>
 <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Resultados</a>
-<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="/quienes-somos">Nosotros</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Nosotros</a>
 </nav>
 <div class="flex items-center gap-stack-md">
 <span class="material-symbols-outlined text-primary cursor-pointer">public</span>
@@ -236,14 +169,14 @@
 <div class="max-w-xl">
 <span class="font-label-sm text-label-sm text-primary mb-stack-md block tracking-[0.2em] uppercase">Experiencia Global</span>
 <h1 class="font-display-lg text-display-lg text-primary mb-stack-lg leading-tight">
-                        Atención Premium para Pacientes Internacionales
+                        AtenciÃ³n Premium para Pacientes Internacionales
                     </h1>
 <p class="font-body-lg text-body-lg text-on-surface-variant mb-section-gap leading-relaxed opacity-90">
-                        Tu camino hacia la belleza consciente, sin fronteras. Ofrecemos una experiencia integral diseñada para quienes buscan la excelencia médica colombiana con estándares internacionales.
+                        Tu camino hacia la belleza consciente, sin fronteras. Ofrecemos una experiencia integral diseÃ±ada para quienes buscan la excelencia mÃ©dica colombiana con estÃ¡ndares internacionales.
                     </p>
 <div class="flex flex-col sm:flex-row gap-stack-md">
 <button class="bg-primary text-warm-white font-label-md text-label-md px-10 py-5 uppercase tracking-widest hover:bg-primary-container transition-all">
-                            Agendar Valoración Virtual
+                            Agendar ValoraciÃ³n Virtual
                         </button>
 <button class="border border-primary text-primary font-label-md text-label-md px-10 py-5 uppercase tracking-widest hover:bg-primary hover:text-warm-white transition-all">
                             Ver Tratamientos
@@ -252,11 +185,11 @@
 </div>
 <div class="hidden md:block relative h-[600px]">
 <div class="absolute inset-0 rounded-[40px] overflow-hidden shadow-2xl">
-<img alt="Dra. Carolina Aguirre" class="w-full h-full object-cover" src="/stitch-assets/images/889c97435fd1181b.jpg"/>
+<img alt="Dra. Carolina Aguirre" class="w-full h-full object-cover" src="/brand-assets/dra-retrato-profesional.jpeg"/>
 </div>
 <div class="absolute -bottom-8 -left-8 bg-warm-white p-stack-lg shadow-xl max-w-[240px]">
 <p class="font-headline-md text-headline-md text-primary mb-1">15+</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-tighter">Países atendidos anualmente con excelencia</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-tighter">PaÃ­ses atendidos anualmente con excelencia</p>
 </div>
 </div>
 </div>
@@ -275,10 +208,10 @@
 <span class="font-display-lg text-display-lg text-primary/10">01</span>
 <span class="material-symbols-outlined text-primary text-4xl">video_chat</span>
 </div>
-<h3 class="font-headline-md text-headline-md text-primary mb-stack-md">Valoración Inicial Remota</h3>
-<p class="font-body-md text-body-md text-on-surface-variant mb-stack-lg">Consulta virtual exhaustiva para diagnóstico preliminar, análisis facial/corporal mediante telemedicina y definición de objetivos estéticos desde la comodidad de tu hogar.</p>
+<h3 class="font-headline-md text-headline-md text-primary mb-stack-md">ValoraciÃ³n Inicial Remota</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-stack-lg">Consulta virtual exhaustiva para diagnÃ³stico preliminar, anÃ¡lisis facial/corporal mediante telemedicina y definiciÃ³n de objetivos estÃ©ticos desde la comodidad de tu hogar.</p>
 </div>
-<a class="font-label-md text-label-md text-primary uppercase tracking-widest flex items-center gap-2 group-hover:translate-x-2 transition-transform" href="/contacto">
+<a class="font-label-md text-label-md text-primary uppercase tracking-widest flex items-center gap-2 group-hover:translate-x-2 transition-transform" href="#">
                         Iniciar proceso <span class="material-symbols-outlined">arrow_forward</span>
 </a>
 </div>
@@ -286,8 +219,8 @@
 <div class="md:col-span-5 relative overflow-hidden bg-primary-container p-stack-lg text-warm-white treatment-card-hover">
 <div class="relative z-10">
 <span class="font-display-lg text-display-lg text-warm-white/20">02</span>
-<h3 class="font-headline-md text-headline-md mt-stack-md mb-stack-md">Planificación y Acompañamiento</h3>
-<p class="font-body-md text-body-md opacity-90">Coordinación meticulosa de fechas, protocolos pre-operatorios y asesoría personalizada para tu viaje médico.</p>
+<h3 class="font-headline-md text-headline-md mt-stack-md mb-stack-md">PlanificaciÃ³n y AcompaÃ±amiento</h3>
+<p class="font-body-md text-body-md opacity-90">CoordinaciÃ³n meticulosa de fechas, protocolos pre-operatorios y asesorÃ­a personalizada para tu viaje mÃ©dico.</p>
 </div>
 <div class="absolute bottom-0 right-0 opacity-10">
 <span class="material-symbols-outlined text-[200px]" style="font-variation-settings: 'FILL' 1;">calendar_month</span>
@@ -297,8 +230,8 @@
 <div class="md:col-span-5 bg-soft-nude p-stack-lg flex flex-col justify-between border border-primary/5 treatment-card-hover">
 <div>
 <span class="font-display-lg text-display-lg text-primary/10">03</span>
-<h3 class="font-headline-md text-headline-md text-primary mt-stack-md mb-stack-md">Guía de Viaje y Estadía</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Recomendaciones exclusivas para tu visita. Desde transporte privado hasta hoteles boutique seleccionados para una recuperación tranquila.</p>
+<h3 class="font-headline-md text-headline-md text-primary mt-stack-md mb-stack-md">GuÃ­a de Viaje y EstadÃ­a</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Recomendaciones exclusivas en Buga y sus alrededores. Desde transporte privado hasta los mejores hoteles boutique para tu recuperaciÃ³n.</p>
 </div>
 <div class="mt-stack-lg flex gap-stack-md overflow-x-auto pb-2 no-scrollbar">
 <span class="bg-warm-white px-4 py-2 text-label-sm font-label-sm text-primary border border-primary/10 shrink-0">Transporte VIP</span>
@@ -310,7 +243,7 @@
 <div class="order-2 md:order-1">
 <span class="font-display-lg text-display-lg text-primary/10">04</span>
 <h3 class="font-headline-md text-headline-md text-primary mb-stack-md">Seguimiento Post-Tratamiento</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Cuidado continuo a través de telemedicina para monitorear tu evolución y asegurar resultados duraderos una vez regreses a casa.</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Cuidado continuo a travÃ©s de telemedicina para monitorear tu evoluciÃ³n y asegurar resultados duraderos una vez regreses a casa.</p>
 </div>
 <div class="order-1 md:order-2 h-48 bg-surface-variant overflow-hidden">
 <img class="w-full h-full object-cover" data-alt="A minimalist and high-end close-up photograph of a professional medical consultation via a digital tablet. The tablet screen shows a friendly doctor and clear medical data. The lighting is soft and natural, emphasizing the premium quality of the telemedicine service. The color palette consists of soft nudes, warm whites, and subtle primary accents, consistent with a luxury clinical brand identity." src="/stitch-assets/images/42e44abf3baef9d1.jpg"/>
@@ -322,9 +255,9 @@
 <section class="bg-primary/5 py-section-gap">
 <div class="max-w-container-max mx-auto px-margin-desktop grid md:grid-cols-2 gap-section-gap items-center">
 <div>
-<h2 class="font-headline-lg text-headline-lg text-primary mb-stack-lg">Paunova: Un Destino para la Renovación</h2>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-stack-lg">Buga: Un Destino para la RenovaciÃ³n</h2>
 <p class="font-body-lg text-body-lg text-on-surface-variant mb-stack-lg leading-relaxed">
-                        Paunova combina excelencia médica, acompañamiento humano y un entorno cuidadosamente coordinado para una recuperación serena.
+                        Ubicada en el corazÃ³n del Valle del Cauca, Buga no solo ofrece excelencia mÃ©dica, sino tambiÃ©n un entorno de paz y patrimonio histÃ³rico ideal para una recuperaciÃ³n serena.
                     </p>
 <ul class="space-y-stack-md">
 <li class="flex items-center gap-stack-md text-primary">
@@ -333,20 +266,20 @@
 </li>
 <li class="flex items-center gap-stack-md text-primary">
 <span class="material-symbols-outlined">wb_sunny</span>
-<span class="font-label-md text-label-md">Clima cálido ideal para la convalecencia</span>
+<span class="font-label-md text-label-md">Clima cÃ¡lido ideal para la convalecencia</span>
 </li>
 <li class="flex items-center gap-stack-md text-primary">
 <span class="material-symbols-outlined">flight_takeoff</span>
-<span class="font-label-md text-label-md">A 45 minutos del Aeropuerto Internacional Alfonso Bonilla Aragón</span>
+<span class="font-label-md text-label-md">A 45 minutos del Aeropuerto Internacional Alfonso Bonilla AragÃ³n</span>
 </li>
 </ul>
 </div>
 <div class="relative aspect-square">
 <div class="absolute top-0 right-0 w-4/5 h-4/5 bg-surface-variant overflow-hidden shadow-2xl">
-<img class="w-full h-full object-cover" data-alt="A stunning architectural photograph of the colonial streets of Av. Principal 123, Centro Médico Especializado, Consultorio 504., at sunset. The warm, golden hour light bathes the white heritage buildings and cobblestone paths. The image is captured with a high-end editorial feel, emphasizing the tranquil and restorative atmosphere of the city. The style is minimalist and clean, matching a luxury medical tourism aesthetic." src="/stitch-assets/images/b3f9c920cfbc7dbd.jpg"/>
+<img class="w-full h-full object-cover" data-alt="A stunning architectural photograph of the colonial streets of Buga, Colombia, at sunset. The warm, golden hour light bathes the white heritage buildings and cobblestone paths. The image is captured with a high-end editorial feel, emphasizing the tranquil and restorative atmosphere of the city. The style is minimalist and clean, matching a luxury medical tourism aesthetic." src="/stitch-assets/images/b3f9c920cfbc7dbd.jpg"/>
 </div>
 <div class="absolute bottom-0 left-0 w-3/5 h-3/5 border-8 border-warm-white bg-surface-variant overflow-hidden shadow-xl">
-<img class="w-full h-full object-cover" data-alt="A stylized, minimalist architectural detail of a luxury boutique hotel in Paunova, featuring clean white walls, tropical greenery, and soft, warm shadows. The lighting is bright and ethereal, conveying a sense of premium comfort and peaceful recovery for international medical patients. The overall aesthetic is one of sober luxury and clinical precision." data-location="Av. Principal 123, Centro Médico Especializado, Consultorio 504." src="/stitch-assets/images/5097b5e09e949e42.jpg"/>
+<img class="w-full h-full object-cover" data-alt="A stylized, minimalist architectural detail of a luxury boutique hotel in Buga, featuring clean white walls, tropical greenery, and soft, warm shadows. The lighting is bright and ethereal, conveying a sense of premium comfort and peaceful recovery for international medical patients. The overall aesthetic is one of sober luxury and clinical precision." data-location="Buga, Colombia" src="/stitch-assets/images/5097b5e09e949e42.jpg"/>
 </div>
 </div>
 </div>
@@ -355,18 +288,18 @@
 <section class="py-section-gap max-w-container-max mx-auto px-margin-desktop text-center">
 <span class="material-symbols-outlined text-primary text-5xl mb-stack-lg" style="font-variation-settings: 'FILL' 1;">format_quote</span>
 <blockquote class="font-headline-lg text-headline-lg text-primary italic max-w-4xl mx-auto mb-stack-lg">
-                "Viajar desde Miami para mi tratamiento con la Dra. Carolina fue la mejor decisión. La atención virtual previa me dio toda la seguridad, y el cuidado de Paunova superó mis expectativas."
+                "Viajar desde Miami para mi tratamiento con la Dra. Carolina fue la mejor decisiÃ³n. La atenciÃ³n virtual previa me dio toda la seguridad, y el cuidado en Buga superÃ³ mis expectativas."
             </blockquote>
-<cite class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest block not-italic">— Elena V., Paciente Internacional</cite>
+<cite class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest block not-italic">â€” Elena V., Paciente Internacional</cite>
 </section>
 <!-- Final CTA -->
 <section class="relative h-[500px] flex items-center justify-center overflow-hidden">
 <img class="absolute inset-0 w-full h-full object-cover opacity-20" data-alt="A beautiful, soft-focus atmospheric image of hands held together in a gesture of care and support. The lighting is extremely soft and high-key, with a palette of warm whites and soft nudes. This visual represents trust, partnership, and the human connection in premium healthcare. The image is clean and minimalist, avoiding any clutter to maintain a luxury clinical feel." src="/stitch-assets/images/b3319d3182d26cc9.jpg"/>
 <div class="relative z-10 text-center max-w-2xl px-margin-mobile">
 <h2 class="font-headline-lg text-headline-lg text-primary mb-stack-md">Comienza tu viaje hoy mismo</h2>
-<p class="font-body-md text-body-md text-on-surface-variant mb-stack-lg">Agenda tu valoración virtual gratuita y resolvamos todas tus dudas sobre el proceso internacional.</p>
+<p class="font-body-md text-body-md text-on-surface-variant mb-stack-lg">Agenda tu valoraciÃ³n virtual gratuita y resolvamos todas tus dudas sobre el proceso internacional.</p>
 <button class="bg-primary text-warm-white font-label-md text-label-md px-12 py-6 uppercase tracking-[0.2em] hover:bg-primary-container transition-all shadow-xl">
-                    Agendar Valoración Virtual
+                    Agendar ValoraciÃ³n Virtual
                 </button>
 </div>
 </section>
@@ -375,24 +308,24 @@
 <footer class="bg-surface border-t border-primary/5">
 <div class="max-w-container-max mx-auto px-margin-desktop py-section-gap grid grid-cols-1 md:grid-cols-4 gap-gutter">
 <div class="md:col-span-1">
-<h3 class="font-headline-md text-headline-md text-primary mb-stack-md">Dra. Carolina Aguirre</h3>
+<img alt="Dra Carolina Aguirre" class="h-12 w-auto object-contain" src="/brand-assets/logo-horizontal-dorado.png"/>
 <p class="font-body-md text-body-md text-on-surface-variant opacity-80 leading-relaxed">
-                    Medicina estética con enfoque consciente y resultados naturales.
+                    Medicina estÃ©tica con enfoque consciente y resultados naturales.
                 </p>
 </div>
 <div class="flex flex-col gap-stack-sm">
-<h4 class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-stack-sm">Navegación</h4>
-<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline decoration-primary/30 transition-all" href="/tratamientos">Tratamientos</a>
-<a class="font-label-sm text-label-sm text-primary underline decoration-primary/30 transition-all" href="/international-patients">Pacientes Internacionales</a>
-<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline decoration-primary/30 transition-all" href="/contacto">Contacto</a>
+<h4 class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-stack-sm">NavegaciÃ³n</h4>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline decoration-primary/30 transition-all" href="#">Tratamientos</a>
+<a class="font-label-sm text-label-sm text-primary underline decoration-primary/30 transition-all" href="#">Pacientes Internacionales</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline decoration-primary/30 transition-all" href="#">Contacto</a>
 </div>
 <div class="flex flex-col gap-stack-sm">
 <h4 class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-stack-sm">Legal</h4>
-<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline decoration-primary/30 transition-all" href="#">Políticas de Privacidad</a>
-<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline decoration-primary/30 transition-all" href="#">Términos y Condiciones</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline decoration-primary/30 transition-all" href="#">PolÃ­ticas de Privacidad</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary underline decoration-primary/30 transition-all" href="#">TÃ©rminos y Condiciones</a>
 </div>
 <div class="flex flex-col gap-stack-sm">
-<h4 class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-stack-sm">Síguenos</h4>
+<h4 class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-stack-sm">SÃ­guenos</h4>
 <div class="flex gap-stack-md mt-2">
 <a class="text-primary hover:opacity-70 transition-opacity" href="#"><span class="material-symbols-outlined">share</span></a>
 <a class="text-primary hover:opacity-70 transition-opacity" href="#"><span class="material-symbols-outlined">favorite</span></a>
@@ -401,7 +334,7 @@
 </div>
 <div class="max-w-container-max mx-auto px-margin-desktop py-stack-lg border-t border-primary/5 text-center">
 <p class="font-label-sm text-label-sm text-on-surface-variant opacity-60">
-                © 2025 Dra. Carolina Aguirre - Paunova. Todos los derechos reservados.
+                Â© 2025 Dra. Carolina Aguirre - Paunova. Todos los derechos reservados.
             </p>
 </div>
 </footer>
@@ -430,7 +363,53 @@
             });
         });
     </script>
+<div id="paunova-secret-trigger" style="position: fixed; top: 12px; right: 20px; z-index: 9999; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(197, 168, 128, 0.15); opacity: 0.08; cursor: pointer; transition: opacity 0.3s; background-image: url('/logo_secreto.jpg'); background-size: cover; background-position: center; filter: grayscale(10%);" title="Portal Privado"></div>
 <script>
+(function() {
+  const trigger = document.getElementById('paunova-secret-trigger');
+  if (!trigger) return;
+
+  // Web: 5-second long press
+  let pressTimer = null;
+
+  trigger.addEventListener('mousedown', function(e) {
+    if (e.button !== 0) return; // Only left click
+    pressTimer = setTimeout(function() {
+      window.top.location.href = '/api/auth/bypass';
+    }, 5000);
+  });
+
+  function clearTimer() {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+  }
+
+  trigger.addEventListener('mouseup', clearTimer);
+  trigger.addEventListener('mouseleave', clearTimer);
+
+  // Mobile/Tablet: 3-tap action
+  let tapCount = 0;
+  let tapTimer = null;
+
+  trigger.addEventListener('touchstart', function(e) {
+    // Avoid simulating mouse events on touch
+    e.preventDefault();
+
+    tapCount++;
+    if (tapCount === 3) {
+      window.top.location.href = '/api/auth/bypass';
+      return;
+    }
+
+    if (tapTimer) clearTimeout(tapTimer);
+    tapTimer = setTimeout(function() {
+      tapCount = 0;
+    }, 2000); // Reset tap count after 2 seconds of inactivity
+  });
+})();
+</script><script>
 document.addEventListener("click", function(event) {
   const link = event.target.closest && event.target.closest("a[href]");
   if (!link) return;
@@ -438,7 +417,7 @@ document.addEventListener("click", function(event) {
   if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:") || href.startsWith("http://wa.link")) return;
   if (href.startsWith("/")) {
     event.preventDefault();
-    window.location.href = href;
+    window.top.location.href = href;
   }
 });
 </script></body></html>
