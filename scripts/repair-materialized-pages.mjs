@@ -45,15 +45,15 @@ function polishCopy(html) {
 }
 
 function injectHomeHeroVideo(html) {
-  const heroVideo = `<video aria-hidden="true" autoplay class="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none" loop muted playsinline preload="metadata">
+  const heroVideo = `<video aria-hidden="true" autoplay class="absolute inset-0 w-full h-full object-cover opacity-70 pointer-events-none" loop muted playsinline preload="metadata">
 <source src="/brand-assets/hero-skincare-background.mp4" type="video/mp4"/>
 </video>
-<div class="absolute inset-0 bg-warm-white/65 pointer-events-none"></div>
+<div class="absolute inset-0 bg-warm-white/30 pointer-events-none"></div>
 <div class="absolute inset-0 bg-gradient-to-r from-warm-white via-warm-white/80 to-soft-nude/30 pointer-events-none"></div>
 `;
 
   const withoutOldHeroVideo = html.replace(
-    /<video aria-hidden="true" autoplay class="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none"[\s\S]*?<\/video>\s*<div class="absolute inset-0 bg-warm-white\/65 pointer-events-none"><\/div>\s*<div class="absolute inset-0 bg-gradient-to-r from-warm-white via-warm-white\/80 to-soft-nude\/30 pointer-events-none"><\/div>\s*/g,
+    /<video aria-hidden="true" autoplay class="absolute inset-0 w-full h-full object-cover opacity-(?:30|70) pointer-events-none"[\s\S]*?<\/video>\s*<div class="absolute inset-0 bg-warm-white\/(?:65|30) pointer-events-none"><\/div>\s*<div class="absolute inset-0 bg-gradient-to-r from-warm-white via-warm-white\/80 to-soft-nude\/30 pointer-events-none"><\/div>\s*/g,
     ""
   );
 
