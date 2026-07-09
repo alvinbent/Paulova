@@ -2,7 +2,10 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+
+const logoSrc = "/brand-assets/logo-horizontal-dorado.png";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -24,22 +27,26 @@ export default function Sidebar() {
         router.refresh();
       }
     } catch {
-      // Fallback redirect
       window.location.href = "/api/auth/logout";
     }
   };
 
   return (
     <>
-      {/* Mobile Top Header */}
-      <header className="md:hidden w-full bg-[#FDFBF7] border-b border-[#d2c4bb]/30 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center gap-2">
-          <span className="font-serif text-xl font-normal text-[#6d5847] italic">Paunova</span>
-          <span className="text-[10px] uppercase tracking-wider text-[#c5a880] border border-[#c5a880]/30 rounded px-1.5 py-0.5">Dr.</span>
+      <header className="md:hidden w-full bg-[#FDFBF7] border-b border-[#d2c4bb]/30 px-5 py-4 flex items-center justify-between sticky top-0 z-50">
+        <div className="flex items-center min-w-0">
+          <Image
+            src={logoSrc}
+            alt="Dra Carolina Aguirre - Paunova"
+            width={240}
+            height={80}
+            priority
+            className="h-12 w-auto max-w-[190px] object-contain drop-shadow-[0_10px_18px_rgba(109,88,71,0.16)]"
+          />
         </div>
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="text-[#6d5847] focus:outline-none p-1"
+          className="text-[#6d5847] focus:outline-none p-2 -mr-2 rounded-full hover:bg-[#c5a880]/10 transition-colors"
           aria-label="Abrir menú"
         >
           <span className="material-symbols-outlined text-2xl">
@@ -48,17 +55,22 @@ export default function Sidebar() {
         </button>
       </header>
 
-      {/* Mobile Navigation Drawer */}
       {mobileOpen && (
         <div className="fixed inset-0 z-40 md:hidden flex">
           <div className="fixed inset-0 bg-[#1b1c1c]/40 backdrop-blur-xs" onClick={() => setMobileOpen(false)} />
-          <nav className="relative w-64 max-w-xs bg-[#FDFBF7] h-full flex flex-col justify-between p-6 shadow-xl z-50 border-r border-[#d2c4bb]/30">
+          <nav className="relative w-72 max-w-[86vw] bg-[#FDFBF7] h-full flex flex-col justify-between p-6 shadow-xl z-50 border-r border-[#d2c4bb]/30">
             <div className="space-y-8">
-              <div className="flex items-center gap-3 border-b border-[#d2c4bb]/20 pb-4">
-                <div>
-                  <h3 className="font-serif text-lg text-[#6d5847]">Dra. Carolina Aguirre</h3>
-                  <p className="text-[10px] text-[#c5a880] uppercase tracking-widest font-semibold mt-0.5">Paunova Clinic</p>
-                </div>
+              <div className="border-b border-[#d2c4bb]/20 pb-5">
+                <Image
+                  src={logoSrc}
+                  alt="Dra Carolina Aguirre - Paunova"
+                  width={260}
+                  height={88}
+                  className="h-16 w-auto max-w-full object-contain drop-shadow-[0_14px_24px_rgba(109,88,71,0.18)]"
+                />
+                <p className="mt-3 text-[10px] text-[#88705e] uppercase tracking-[0.22em] font-semibold">
+                  Portal médico
+                </p>
               </div>
               <ul className="space-y-2">
                 {menuItems.map((item) => {
@@ -95,17 +107,20 @@ export default function Sidebar() {
         </div>
       )}
 
-      {/* Desktop Sidebar */}
-      <aside className="hidden md:flex md:w-64 bg-[#FDFBF7] h-screen border-r border-[#d2c4bb]/30 p-6 flex-col justify-between sticky top-0">
+      <aside className="hidden md:flex md:w-72 bg-[#FDFBF7] h-screen border-r border-[#d2c4bb]/30 p-6 flex-col justify-between sticky top-0">
         <div className="space-y-8">
-          <div className="flex flex-col gap-1 border-b border-[#d2c4bb]/20 pb-6">
-            <span className="font-sans tracking-[0.25em] uppercase text-[9px] text-[#c5a880] font-semibold">
-              Portal Médico
-            </span>
-            <h1 className="font-serif text-2xl text-[#6d5847] font-normal italic tracking-wide">
-              Paunova
-            </h1>
-            <div className="flex items-center gap-2 mt-2">
+          <div className="border-b border-[#d2c4bb]/20 pb-7">
+            <div className="rounded-2xl bg-white/70 px-4 py-5 shadow-[0_22px_44px_-32px_rgba(109,88,71,0.52)] ring-1 ring-[#dec1ac]/35">
+              <Image
+                src={logoSrc}
+                alt="Dra Carolina Aguirre - Paunova"
+                width={300}
+                height={104}
+                priority
+                className="mx-auto h-20 w-auto max-w-full object-contain drop-shadow-[0_16px_24px_rgba(109,88,71,0.2)]"
+              />
+            </div>
+            <div className="mt-4 flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-[10px] text-gray-500 font-sans">
                 Dra. Carolina Aguirre
