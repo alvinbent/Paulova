@@ -5,30 +5,23 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function DoctorLogin() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleTestAccess = async () => {
     setError("");
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
+      const res = await fetch("/api/auth/test-access", { method: "POST" });
       const data = await res.json();
+
       if (data.success) {
         router.push("/doctor/dashboard");
         router.refresh();
       } else {
-        setError(data.error || "Usuario o clave incorrectos");
+        setError(data.error || "No fue posible abrir la aplicación.");
       }
     } catch {
       setError("No fue posible conectar con la aplicación. Intenta nuevamente.");
@@ -38,95 +31,52 @@ export default function DoctorLogin() {
   };
 
   return (
-    <main className="min-h-screen bg-[#FDFBF7] relative flex items-center justify-center p-4 overflow-hidden">
-      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-[#6d5847]/5 rounded-full blur-[100px]" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-[#c5a880]/10 rounded-full blur-[120px]" />
-
-      <div className="w-full max-w-lg bg-white/78 backdrop-blur-md border border-[#d2c4bb]/35 rounded-[2rem] p-8 md:p-10 shadow-[0_34px_90px_-48px_rgba(38,25,0,0.86)] relative z-10">
-        <div className="text-center mb-8">
+    <main className="paunova-app-shell relative flex min-h-[100dvh] items-center justify-center overflow-hidden p-4">
+      <div className="paunova-card relative z-10 w-full max-w-xl rounded-[2.25rem] p-8 md:p-10">
+        <div className="text-center">
           <Image
             src="/brand-assets/logo-paunova-skin-age.png"
             alt="Paunova Skin & Age Clinic"
-            width={620}
-            height={177}
+            width={680}
+            height={194}
             priority
-            className="mx-auto h-auto w-full max-w-[420px] object-contain drop-shadow-[0_20px_30px_rgba(109,88,71,0.2)]"
+            className="mx-auto h-auto w-full max-w-[460px] object-contain drop-shadow-[0_24px_36px_rgba(95,79,66,0.2)]"
           />
-          <span className="font-sans tracking-[0.22em] uppercase text-[10px] text-[#88705e] font-semibold block mt-4 mb-2">
-            Acceso médico privado
-          </span>
-          <p className="text-[#88705e] text-xs font-sans">
-            Paunova Skin & Age Clinic
+          <p className="paunova-kicker mt-7">Modo de pruebas</p>
+          <h1 className="paunova-title mt-3 text-3xl md:text-4xl">
+            Acceso directo a la aplicación
+          </h1>
+          <p className="mx-auto mt-4 max-w-md text-sm leading-6 text-[#746b61]">
+            Durante la etapa de generación no se solicitará usuario ni clave.
+            El acceso con credenciales queda reservado para la configuración final.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label
-              htmlFor="username"
-              className="block text-xs uppercase tracking-wider text-[#6d5847] font-semibold mb-2"
-            >
-              Usuario
-            </label>
-            <input
-              type="text"
-              id="username"
-              required
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              autoComplete="username"
-              className="w-full bg-[#FDFBF7] border border-[#d2c4bb]/45 rounded-xl px-4 py-3.5 text-sm text-[#1b1c1c] placeholder-gray-400 focus:outline-none focus:border-[#6d5847] focus:ring-1 focus:ring-[#6d5847] transition-all"
-            />
+        {error && (
+          <div className="mt-6 rounded-2xl border border-[#9b3f36]/18 bg-[#fff7f4] px-4 py-3 text-xs font-medium text-[#9b3f36]">
+            {error}
           </div>
+        )}
 
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-xs uppercase tracking-wider text-[#6d5847] font-semibold mb-2"
-            >
-              Clave de acceso
-            </label>
-            <input
-              type="password"
-              id="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              autoComplete="current-password"
-              className="w-full bg-[#FDFBF7] border border-[#d2c4bb]/45 rounded-xl px-4 py-3.5 text-sm text-[#1b1c1c] placeholder-gray-400 focus:outline-none focus:border-[#6d5847] focus:ring-1 focus:ring-[#6d5847] transition-all"
-            />
-          </div>
-
-          {error && (
-            <div className="bg-red-50 border border-red-200/50 rounded-xl px-4 py-3 text-xs text-red-600 flex items-center gap-2">
-              <span className="material-symbols-outlined text-sm">
-                error
-              </span>
-              <span>{error}</span>
-            </div>
+        <button
+          type="button"
+          disabled={loading}
+          onClick={handleTestAccess}
+          className="paunova-button-primary mt-8 flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-xs font-semibold uppercase tracking-[0.18em] transition-all duration-300 active:scale-[0.98] disabled:opacity-50"
+        >
+          {loading ? (
+            <span>Abriendo aplicación...</span>
+          ) : (
+            <>
+              <span>Entrar ahora</span>
+              <span className="material-symbols-outlined text-sm">login</span>
+            </>
           )}
+        </button>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#6d5847] hover:bg-[#88705e] text-[#FDFBF7] py-3.5 rounded-xl font-sans text-xs uppercase tracking-widest font-semibold transition-all shadow-md shadow-[#6d5847]/10 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            {loading ? (
-              <span>Conectando...</span>
-            ) : (
-              <>
-                <span>Entrar a la aplicación</span>
-                <span className="material-symbols-outlined text-sm">login</span>
-              </>
-            )}
-          </button>
-        </form>
-
-        <div className="mt-8 text-center border-t border-[#d2c4bb]/20 pt-6">
-          <p className="text-[10px] text-gray-400 font-sans">
-            Para recuperar el acceso, contacte a soporte técnico.
-          </p>
+        <div className="paunova-inner mt-8 rounded-[1.5rem] p-4 text-center text-[11px] leading-5 text-[#746b61]">
+          Próxima tarea final: activar acceso con usuario, clave y roles
+          definidos para producción.
         </div>
       </div>
     </main>

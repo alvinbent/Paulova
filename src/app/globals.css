@@ -1,6 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1&family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap");
+
 :root {
-  --background: #fbf9f8;
-  --foreground: #1b1c1c;
+  --background: #fbf8f3;
+  --foreground: #1d1c19;
+  --paunova-ink: #1d1c19;
+  --paunova-espresso: #5f4f42;
+  --paunova-mocha: #7c6756;
+  --paunova-gold: #b99862;
+  --paunova-sand: #eadfce;
+  --paunova-porcelain: #fffdf8;
+  --paunova-muted: #746b61;
+  --paunova-line: rgba(185, 152, 98, 0.22);
+  --paunova-shadow: 0 28px 70px -46px rgba(95, 79, 66, 0.78);
 }
 
 html,
@@ -12,10 +23,125 @@ body {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 iframe {
   min-height: 100vh;
+}
+
+::selection {
+  background: rgba(185, 152, 98, 0.28);
+  color: var(--paunova-ink);
+}
+
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
+}
+
+.paunova-app-shell {
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at 12% 6%, rgba(185, 152, 98, 0.18), transparent 30rem),
+    radial-gradient(circle at 92% 18%, rgba(95, 79, 66, 0.09), transparent 34rem),
+    linear-gradient(135deg, #fffdf8 0%, #fbf8f3 42%, #f5eee4 100%);
+  color: var(--paunova-ink);
+  position: relative;
+}
+
+.paunova-app-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.22;
+  background-image:
+    linear-gradient(rgba(95, 79, 66, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(95, 79, 66, 0.035) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, black, transparent 72%);
+}
+
+.paunova-title {
+  font-family: "Playfair Display", Georgia, serif;
+  color: var(--paunova-espresso);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.paunova-card {
+  background: rgba(255, 253, 248, 0.86);
+  border: 1px solid var(--paunova-line);
+  box-shadow: var(--paunova-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.78);
+}
+
+.paunova-inner {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(185, 152, 98, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+}
+
+.paunova-button-primary {
+  background: linear-gradient(135deg, #5f4f42, #806a55);
+  color: #fffdf8;
+  box-shadow: 0 18px 36px -24px rgba(95, 79, 66, 0.9);
+}
+
+.paunova-button-primary:hover {
+  background: linear-gradient(135deg, #54463b, #705d4c);
+}
+
+.paunova-button-secondary {
+  border: 1px solid rgba(95, 79, 66, 0.22);
+  color: var(--paunova-espresso);
+  background: rgba(255, 253, 248, 0.68);
+}
+
+.paunova-button-secondary:hover {
+  background: rgba(185, 152, 98, 0.11);
+}
+
+.paunova-input {
+  width: 100%;
+  background: rgba(255, 253, 248, 0.92);
+  border: 1px solid rgba(185, 152, 98, 0.32);
+  border-radius: 1rem;
+  color: var(--paunova-ink);
+  transition: border-color 220ms cubic-bezier(0.32, 0.72, 0, 1), box-shadow 220ms cubic-bezier(0.32, 0.72, 0, 1), transform 220ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.paunova-input:focus {
+  outline: none;
+  border-color: rgba(95, 79, 66, 0.76);
+  box-shadow: 0 0 0 4px rgba(185, 152, 98, 0.14);
+}
+
+.paunova-table-wrap {
+  background: rgba(255, 253, 248, 0.84);
+  border: 1px solid var(--paunova-line);
+  box-shadow: var(--paunova-shadow);
+}
+
+.paunova-kicker {
+  color: var(--paunova-gold);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
 }
 

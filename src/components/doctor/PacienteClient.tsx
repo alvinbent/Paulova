@@ -101,6 +101,7 @@ export default function PacienteClient({
   const [treatmentModalOpen, setTreatmentModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState<"treatments" | "supplies">("treatments");
+  const [notice, setNotice] = useState("");
 
   // Voice dictation states
   const [dictationMode, setDictationMode] = useState(false);
@@ -121,6 +122,7 @@ export default function PacienteClient({
 
   const handleUpdateInfo = async (e: React.FormEvent) => {
     e.preventDefault();
+    setNotice("");
     setLoading(true);
 
     try {
@@ -134,10 +136,10 @@ export default function PacienteClient({
         setRecord(data);
         setEditInfoMode(false);
       } else {
-        alert(data.error || "Error al actualizar");
+        setNotice(data.error || "Error al actualizar");
       }
     } catch {
-      alert("Error de conexión");
+      setNotice("Error de conexión");
     } finally {
       setLoading(false);
     }
@@ -145,6 +147,7 @@ export default function PacienteClient({
 
   const handleAddTreatment = async (e: React.FormEvent) => {
     e.preventDefault();
+    setNotice("");
     setLoading(true);
 
     try {
@@ -171,10 +174,10 @@ export default function PacienteClient({
         setDictationMode(false);
         setTranscriptionText("");
       } else {
-        alert(data.error || "Error al registrar tratamiento");
+        setNotice(data.error || "Error al registrar tratamiento");
       }
     } catch {
-      alert("Error de conexión");
+      setNotice("Error de conexión");
     } finally {
       setLoading(false);
     }
@@ -185,7 +188,7 @@ export default function PacienteClient({
     const speechWindow = window as WindowWithSpeechRecognition;
     const SpeechRecognition = speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert("El dictado por voz no está soportado en este navegador. Por favor usa Chrome, Edge o Safari.");
+      setNotice("El dictado por voz no está soportado en este navegador. Usa Chrome, Edge o Safari.");
       return;
     }
 
@@ -223,7 +226,7 @@ export default function PacienteClient({
       setTranscriptionText("");
     } catch (err) {
       console.error(err);
-      alert("No se pudo iniciar el dictado.");
+      setNotice("No se pudo iniciar el dictado.");
     }
   };
 
@@ -242,9 +245,10 @@ export default function PacienteClient({
   // AI completions processing handler
   const processDictation = async () => {
     if (!transcriptionText.trim()) {
-      alert("Por favor realiza un dictado de voz antes de procesar.");
+      setNotice("Realiza un dictado de voz antes de procesar.");
       return;
     }
+    setNotice("");
     setAiLoading(true);
 
     try {
@@ -261,10 +265,10 @@ export default function PacienteClient({
         setDetails(data.clinicalReport || "");
         setDictationMode(false); // Switch to review in form editor
       } else {
-        alert(data.error || "Error al procesar con IA");
+        setNotice(data.error || "Error al procesar con IA");
       }
     } catch {
-      alert("Error de conexión al procesar dictado");
+      setNotice("Error de conexión al procesar dictado");
     } finally {
       setAiLoading(false);
     }
@@ -307,22 +311,22 @@ export default function PacienteClient({
           <span>Volver a Pacientes</span>
         </Link>
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#d2c4bb]/20 pb-6">
+        <div className="paunova-card rounded-[2rem] p-6 md:p-7 flex flex-col md:flex-row md:items-end justify-between gap-5">
           <div className="space-y-1">
-            <span className="text-[9px] uppercase tracking-wider text-[#c5a880] font-semibold bg-[#c5a880]/10 rounded px-1.5 py-0.5">
-              Expediente Clínico
+            <span className="paunova-kicker">
+              Expediente clínico
             </span>
-            <h1 className="font-serif text-3xl text-[#6d5847] font-normal italic">
+            <h1 className="paunova-title text-3xl md:text-4xl italic">
               {patient.name}
             </h1>
-            <p className="text-xs text-gray-400 font-sans">
-              Fecha de Registro: {new Date(patient.createdAt).toLocaleDateString()}
+            <p className="text-xs text-[#746b61]">
+              Fecha de registro: {new Date(patient.createdAt).toLocaleDateString()}
             </p>
           </div>
           <div className="flex gap-3">
             <button
               onClick={() => setTreatmentModalOpen(true)}
-              className="bg-[#6d5847] hover:bg-[#88705e] text-[#FDFBF7] px-4 py-2.5 rounded-xl font-sans text-xs uppercase tracking-wider font-semibold transition-all flex items-center gap-2 active:scale-[0.98] shadow-md shadow-[#6d5847]/10"
+              className="paunova-button-primary px-4 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold transition-all flex items-center gap-2 active:scale-[0.98]"
             >
               <span className="material-symbols-outlined text-sm">vaccines</span>
               <span>Registrar Tratamiento</span>
@@ -331,13 +335,19 @@ export default function PacienteClient({
         </div>
       </div>
 
+      {notice && (
+        <div className="rounded-2xl border border-[#9b3f36]/18 bg-[#fff7f4] px-4 py-3 text-xs font-medium text-[#9b3f36]">
+          {notice}
+        </div>
+      )}
+
       {/* Main Grid Details */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Personal and Medical Details */}
         <div className="space-y-8 lg:col-span-1">
           {/* Card: Personal Info */}
-          <div className="bg-white border border-[#d2c4bb]/30 rounded-3xl p-6 shadow-sm space-y-4">
-            <h3 className="font-serif text-base text-[#6d5847] border-b border-[#d2c4bb]/10 pb-2 font-semibold">
+          <div className="paunova-card rounded-[1.75rem] p-6 space-y-4">
+            <h3 className="paunova-title text-lg border-b border-[#d2c4bb]/10 pb-2">
               Datos Personales
             </h3>
             <ul className="space-y-3 text-xs font-sans text-gray-600">
@@ -367,9 +377,9 @@ export default function PacienteClient({
           </div>
 
           {/* Card: Clinical Information */}
-          <div className="bg-white border border-[#d2c4bb]/30 rounded-3xl p-6 shadow-sm space-y-4">
+          <div className="paunova-card rounded-[1.75rem] p-6 space-y-4">
             <div className="flex justify-between items-center border-b border-[#d2c4bb]/10 pb-2">
-              <h3 className="font-serif text-base text-[#6d5847] font-semibold">Ficha Médica</h3>
+              <h3 className="paunova-title text-lg">Ficha médica</h3>
               {!editInfoMode && (
                 <button
                   onClick={() => setEditInfoMode(true)}
@@ -465,7 +475,7 @@ export default function PacienteClient({
         </div>
 
         {/* Right Column: Treatments Applied history and Supplies Consumed */}
-        <div className="lg:col-span-2 bg-white border border-[#d2c4bb]/30 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
+        <div className="paunova-card lg:col-span-2 rounded-[2rem] p-6 md:p-8 space-y-6">
           {/* Tab Selection */}
           <div className="flex gap-4 border-b border-[#d2c4bb]/20 pb-3">
             <button
@@ -587,11 +597,11 @@ export default function PacienteClient({
       {/* Log Treatment Modal */}
       {treatmentModalOpen && (
         <div className="fixed inset-0 z-50 flex justify-end">
-          <div className="fixed inset-0 bg-[#1b1c1c]/40 backdrop-blur-xs" onClick={() => setTreatmentModalOpen(false)} />
-          <div className="relative w-full max-w-md bg-[#FDFBF7] h-full shadow-2xl p-8 flex flex-col justify-between overflow-y-auto border-l border-[#d2c4bb]/30">
+          <div className="fixed inset-0 bg-[#1d1c19]/42 backdrop-blur-sm" onClick={() => setTreatmentModalOpen(false)} />
+          <div className="relative w-full max-w-md bg-[#fffdf8] h-full shadow-2xl p-8 flex flex-col justify-between overflow-y-auto border-l border-[#b99862]/22">
             <div className="space-y-6">
               <div className="flex justify-between items-center border-b border-[#d2c4bb]/20 pb-4">
-                <h3 className="font-serif text-xl text-[#6d5847]">Registrar Tratamiento</h3>
+                <h3 className="paunova-title text-2xl">Registrar tratamiento</h3>
                 <button onClick={() => setTreatmentModalOpen(false)} className="text-[#6d5847] hover:text-[#c5a880]">
                   <span className="material-symbols-outlined text-2xl">close</span>
                 </button>

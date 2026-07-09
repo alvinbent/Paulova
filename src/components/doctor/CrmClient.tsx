@@ -68,20 +68,20 @@ export default function CrmClient({ initialPatients }: { initialPatients: Patien
 
   return (
     <div className="space-y-8">
-      {/* Header Panel */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#d2c4bb]/20 pb-6">
+      <div className="paunova-card rounded-[2rem] p-6 md:p-7 flex flex-col md:flex-row md:items-end justify-between gap-5">
         <div>
-          <h1 className="font-serif text-3xl text-[#6d5847] font-normal">
+          <p className="paunova-kicker mb-2">Relación paciente</p>
+          <h1 className="paunova-title text-3xl md:text-4xl">
             Expedientes de <span className="italic">Pacientes (CRM)</span>
           </h1>
-          <p className="text-xs text-gray-500 font-sans mt-1">
+          <p className="text-sm text-[#746b61] mt-3 max-w-2xl leading-6">
             Gestión y seguimiento de fichas clínicas, consentimientos e historial estético.
           </p>
         </div>
         <div>
           <button
             onClick={() => setModalOpen(true)}
-            className="w-full bg-[#6d5847] hover:bg-[#88705e] text-[#FDFBF7] px-5 py-3 rounded-xl font-sans text-xs uppercase tracking-widest font-semibold transition-all flex items-center justify-center gap-2 active:scale-[0.98] shadow-md shadow-[#6d5847]/10"
+            className="paunova-button-primary w-full px-5 py-3 rounded-full text-xs uppercase tracking-widest font-semibold transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
           >
             <span className="material-symbols-outlined text-sm">person_add</span>
             <span>Registrar Paciente</span>
@@ -90,7 +90,7 @@ export default function CrmClient({ initialPatients }: { initialPatients: Patien
       </div>
 
       {/* Search Input */}
-      <div className="max-w-md w-full relative">
+      <div className="max-w-lg w-full relative">
         <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-[#c5a880] pointer-events-none">
           <span className="material-symbols-outlined text-lg">search</span>
         </span>
@@ -99,28 +99,29 @@ export default function CrmClient({ initialPatients }: { initialPatients: Patien
           placeholder="Buscar por nombre, teléfono o correo..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full bg-white border border-[#d2c4bb]/30 rounded-2xl pl-11 pr-4 py-3.5 text-xs text-[#1b1c1c] placeholder-gray-400 focus:outline-none focus:border-[#6d5847] focus:ring-1 focus:ring-[#6d5847] shadow-sm transition-all"
+          className="paunova-input pl-11 pr-4 py-3.5 text-sm placeholder:text-[#9b8a76]"
         />
       </div>
 
       {/* Patients Grid */}
       {filteredPatients.length === 0 ? (
-        <div className="bg-white border border-[#d2c4bb]/30 rounded-3xl p-12 text-center text-gray-400">
-          <span className="material-symbols-outlined text-4xl block mb-2">person_search</span>
-          <p className="text-xs font-sans">No se encontraron pacientes que coincidan con la búsqueda.</p>
+        <div className="paunova-card rounded-[2rem] p-12 text-center">
+          <span className="material-symbols-outlined text-4xl block mb-3 text-[#b99862]">person_search</span>
+          <p className="text-sm font-medium text-[#5f4f42]">No se encontraron pacientes que coincidan con la búsqueda.</p>
+          <p className="mt-1 text-xs text-[#746b61]">Ajusta el texto o registra un nuevo paciente.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPatients.map((patient) => (
             <div
               key={patient.id}
-              className="bg-white border border-[#d2c4bb]/30 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between"
+              className="paunova-card rounded-[1.75rem] p-6 transition-all duration-300 hover:-translate-y-0.5 flex flex-col justify-between"
             >
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-serif text-lg text-[#6d5847] font-semibold">{patient.name}</h3>
+                  <h3 className="paunova-title text-xl">{patient.name}</h3>
                   <span className="text-[9px] uppercase tracking-wider text-[#c5a880] font-semibold bg-[#c5a880]/10 rounded px-1.5 py-0.5 mt-1 inline-block">
-                    Paciente Activo
+                    Paciente activo
                   </span>
                 </div>
                 <div className="space-y-2 text-xs font-sans text-gray-600">
@@ -145,10 +146,10 @@ export default function CrmClient({ initialPatients }: { initialPatients: Patien
               <div className="border-t border-[#d2c4bb]/10 pt-4 mt-6 flex justify-between items-center">
                 <Link
                   href={`/doctor/pacientes/${patient.id}`}
-                  className="w-full text-center bg-[#6d5847] hover:bg-[#88705e] text-[#FDFBF7] py-2.5 rounded-xl font-sans text-[10px] uppercase tracking-widest font-semibold transition-all flex items-center justify-center gap-1 active:scale-[0.98]"
+                  className="paunova-button-primary w-full text-center py-2.5 rounded-full text-[10px] uppercase tracking-widest font-semibold transition-all flex items-center justify-center gap-1 active:scale-[0.98]"
                 >
                   <span className="material-symbols-outlined text-xs">clinical_notes</span>
-                  <span>Ver Expediente</span>
+                  <span>Ver expediente</span>
                 </Link>
               </div>
             </div>
@@ -159,11 +160,11 @@ export default function CrmClient({ initialPatients }: { initialPatients: Patien
       {/* Registration Slide-over / Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex justify-end">
-          <div className="fixed inset-0 bg-[#1b1c1c]/40 backdrop-blur-xs" onClick={() => setModalOpen(false)} />
-          <div className="relative w-full max-w-md bg-[#FDFBF7] h-full shadow-2xl p-8 flex flex-col justify-between overflow-y-auto border-l border-[#d2c4bb]/30">
+          <div className="fixed inset-0 bg-[#1d1c19]/42 backdrop-blur-sm" onClick={() => setModalOpen(false)} />
+          <div className="relative w-full max-w-md bg-[#fffdf8] h-full shadow-2xl p-8 flex flex-col justify-between overflow-y-auto border-l border-[#b99862]/22">
             <div className="space-y-6">
               <div className="flex justify-between items-center border-b border-[#d2c4bb]/20 pb-4">
-                <h3 className="font-serif text-xl text-[#6d5847]">Registrar Nuevo Paciente</h3>
+                <h3 className="paunova-title text-2xl">Registrar nuevo paciente</h3>
                 <button onClick={() => setModalOpen(false)} className="text-[#6d5847] hover:text-[#c5a880]">
                   <span className="material-symbols-outlined text-2xl">close</span>
                 </button>
@@ -179,7 +180,7 @@ export default function CrmClient({ initialPatients }: { initialPatients: Patien
               <form onSubmit={handleSubmit} className="space-y-4 text-xs font-sans">
                 <div>
                   <label className="block text-[10px] uppercase tracking-wider text-[#6d5847] font-semibold mb-1.5">
-                    Nombre Completo *
+                    Nombre completo *
                   </label>
                   <input
                     type="text"
@@ -187,7 +188,7 @@ export default function CrmClient({ initialPatients }: { initialPatients: Patien
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Ej. María Camila Restrepo"
-                    className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-4 py-2.5 text-xs text-[#1b1c1c] focus:outline-none focus:border-[#6d5847]"
+                    className="paunova-input px-4 py-2.5 text-xs"
                   />
                 </div>
 
@@ -201,45 +202,45 @@ export default function CrmClient({ initialPatients }: { initialPatients: Patien
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="Ej. +57 300 123 4567"
-                    className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-4 py-2.5 text-xs text-[#1b1c1c] focus:outline-none focus:border-[#6d5847]"
+                    className="paunova-input px-4 py-2.5 text-xs"
                   />
                 </div>
 
                 <div>
                   <label className="block text-[10px] uppercase tracking-wider text-[#6d5847] font-semibold mb-1.5">
-                    Correo Electrónico
+                    Correo electrónico
                   </label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Ej. maria@ejemplo.com"
-                    className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-4 py-2.5 text-xs text-[#1b1c1c] focus:outline-none focus:border-[#6d5847]"
+                    className="paunova-input px-4 py-2.5 text-xs"
                   />
                 </div>
 
                 <div>
                   <label className="block text-[10px] uppercase tracking-wider text-[#6d5847] font-semibold mb-1.5">
-                    Fecha de Nacimiento
+                    Fecha de nacimiento
                   </label>
                   <input
                     type="date"
                     value={birthday}
                     onChange={(e) => setBirthday(e.target.value)}
-                    className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-4 py-2.5 text-xs text-[#1b1c1c] focus:outline-none focus:border-[#6d5847]"
+                    className="paunova-input px-4 py-2.5 text-xs"
                   />
                 </div>
 
                 <div>
                   <label className="block text-[10px] uppercase tracking-wider text-[#6d5847] font-semibold mb-1.5">
-                    Notas Iniciales
+                    Notas iniciales
                   </label>
                   <textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     rows={4}
                     placeholder="Antecedentes médicos, tipo de piel, alergias o motivos de consulta."
-                    className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-4 py-2.5 text-xs text-[#1b1c1c] focus:outline-none focus:border-[#6d5847] resize-none"
+                    className="paunova-input px-4 py-2.5 text-xs resize-none"
                   />
                 </div>
 
@@ -247,9 +248,9 @@ export default function CrmClient({ initialPatients }: { initialPatients: Patien
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-[#6d5847] hover:bg-[#88705e] text-[#FDFBF7] py-3 rounded-xl font-sans text-xs uppercase tracking-widest font-semibold transition-all active:scale-[0.98] disabled:opacity-50"
+                    className="paunova-button-primary w-full py-3 rounded-full text-xs uppercase tracking-widest font-semibold transition-all active:scale-[0.98] disabled:opacity-50"
                   >
-                    {loading ? "Registrando..." : "Guardar Paciente"}
+                    {loading ? "Registrando..." : "Guardar paciente"}
                   </button>
                 </div>
               </form>

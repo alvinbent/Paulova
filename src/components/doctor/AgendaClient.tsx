@@ -43,6 +43,7 @@ export default function AgendaClient({
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [statusError, setStatusError] = useState("");
 
   // Form State
   const [selectedPatientId, setSelectedPatientId] = useState("");
@@ -54,6 +55,7 @@ export default function AgendaClient({
   const todayStr = new Date().toISOString().split("T")[0];
 
   const handleStatusChange = async (id: string, newStatus: Appointment["status"]) => {
+    setStatusError("");
     try {
       const res = await fetch(`/api/doctor/appointments/${id}`, {
         method: "PATCH",
@@ -66,7 +68,7 @@ export default function AgendaClient({
         );
       }
     } catch {
-      alert("Error al actualizar estado");
+      setStatusError("No fue posible actualizar el estado de la cita.");
     }
   };
 
@@ -113,20 +115,20 @@ export default function AgendaClient({
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#d2c4bb]/20 pb-6">
+      <div className="paunova-card rounded-[2rem] p-6 md:p-7 flex flex-col md:flex-row md:items-end justify-between gap-5">
         <div>
-          <h1 className="font-serif text-3xl text-[#6d5847] font-normal">
+          <p className="paunova-kicker mb-2">Planificación clínica</p>
+          <h1 className="paunova-title text-3xl md:text-4xl">
             Agenda y <span className="italic">Citas Programadas</span>
           </h1>
-          <p className="text-xs text-gray-500 font-sans mt-1">
+          <p className="text-sm text-[#746b61] mt-3 max-w-2xl leading-6">
             Programación de citas de valoración, tratamientos estéticos y controles.
           </p>
         </div>
         <div>
           <button
             onClick={() => setModalOpen(true)}
-            className="w-full bg-[#6d5847] hover:bg-[#88705e] text-[#FDFBF7] px-5 py-3 rounded-xl font-sans text-xs uppercase tracking-widest font-semibold transition-all flex items-center justify-center gap-2 active:scale-[0.98] shadow-md shadow-[#6d5847]/10"
+            className="paunova-button-primary w-full px-5 py-3 rounded-full text-xs uppercase tracking-widest font-semibold transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
           >
             <span className="material-symbols-outlined text-sm">edit_calendar</span>
             <span>Programar Cita</span>
@@ -135,15 +137,21 @@ export default function AgendaClient({
       </div>
 
       {/* Tabs Filter */}
-      <div className="flex flex-wrap gap-2 border-b border-[#d2c4bb]/10 pb-4 text-xs font-sans">
+      {statusError && (
+        <div className="rounded-2xl border border-[#9b3f36]/18 bg-[#fff7f4] px-4 py-3 text-xs font-medium text-[#9b3f36]">
+          {statusError}
+        </div>
+      )}
+
+      <div className="flex flex-wrap gap-2 text-xs">
         {(["Todas", "Hoy", "Próximas", "Completadas", "Canceladas"] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setFilter(tab)}
             className={`px-4 py-2 rounded-xl transition-all font-semibold ${
               filter === tab
-                ? "bg-[#6d5847] text-[#FDFBF7] shadow-sm shadow-[#6d5847]/10"
-                : "bg-white text-[#6d5847] border border-[#d2c4bb]/20 hover:bg-[#6d5847]/5"
+                ? "paunova-button-primary"
+                : "paunova-button-secondary"
             }`}
           >
             {tab}
@@ -153,12 +161,13 @@ export default function AgendaClient({
 
       {/* Appointments List */}
       {filteredAppointments.length === 0 ? (
-        <div className="bg-white border border-[#d2c4bb]/30 rounded-3xl p-12 text-center text-gray-400">
-          <span className="material-symbols-outlined text-4xl block mb-2">event_busy</span>
-          <p className="text-xs font-sans">No hay citas en este rango de selección.</p>
+        <div className="paunova-card rounded-[2rem] p-12 text-center">
+          <span className="material-symbols-outlined text-4xl block mb-3 text-[#b99862]">event_busy</span>
+          <p className="text-sm font-medium text-[#5f4f42]">No hay citas en este rango de selección.</p>
+          <p className="mt-1 text-xs text-[#746b61]">Cambia el filtro o programa una nueva cita.</p>
         </div>
       ) : (
-        <div className="bg-white border border-[#d2c4bb]/30 rounded-3xl overflow-hidden shadow-sm">
+        <div className="paunova-table-wrap rounded-[2rem] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -232,11 +241,11 @@ export default function AgendaClient({
       {/* Form Appointment Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex justify-end">
-          <div className="fixed inset-0 bg-[#1b1c1c]/40 backdrop-blur-xs" onClick={() => setModalOpen(false)} />
-          <div className="relative w-full max-w-md bg-[#FDFBF7] h-full shadow-2xl p-8 flex flex-col justify-between overflow-y-auto border-l border-[#d2c4bb]/30">
+          <div className="fixed inset-0 bg-[#1d1c19]/42 backdrop-blur-sm" onClick={() => setModalOpen(false)} />
+          <div className="relative w-full max-w-md bg-[#fffdf8] h-full shadow-2xl p-8 flex flex-col justify-between overflow-y-auto border-l border-[#b99862]/22">
             <div className="space-y-6">
               <div className="flex justify-between items-center border-b border-[#d2c4bb]/20 pb-4">
-                <h3 className="font-serif text-xl text-[#6d5847]">Programar Nueva Cita</h3>
+                <h3 className="paunova-title text-2xl">Programar nueva cita</h3>
                 <button onClick={() => setModalOpen(false)} className="text-[#6d5847] hover:text-[#c5a880]">
                   <span className="material-symbols-outlined text-2xl">close</span>
                 </button>
@@ -258,7 +267,7 @@ export default function AgendaClient({
                     required
                     value={selectedPatientId}
                     onChange={(e) => setSelectedPatientId(e.target.value)}
-                    className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-4 py-2.5 text-xs text-[#1b1c1c] focus:outline-none focus:border-[#6d5847]"
+                    className="paunova-input px-4 py-2.5 text-xs"
                   >
                     <option value="">Seleccione un paciente...</option>
                     {patients.map((p) => (
@@ -279,7 +288,7 @@ export default function AgendaClient({
                       required
                       value={date}
                       onChange={(e) => setDate(e.target.value)}
-                      className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-4 py-2.5 text-xs text-[#1b1c1c] focus:outline-none focus:border-[#6d5847]"
+                      className="paunova-input px-4 py-2.5 text-xs"
                     />
                   </div>
 
@@ -292,7 +301,7 @@ export default function AgendaClient({
                       required
                       value={time}
                       onChange={(e) => setTime(e.target.value)}
-                      className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-4 py-2.5 text-xs text-[#1b1c1c] focus:outline-none focus:border-[#6d5847]"
+                      className="paunova-input px-4 py-2.5 text-xs"
                     />
                   </div>
                 </div>
@@ -305,7 +314,7 @@ export default function AgendaClient({
                     required
                     value={treatment}
                     onChange={(e) => setTreatment(e.target.value)}
-                    className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-4 py-2.5 text-xs text-[#1b1c1c] focus:outline-none focus:border-[#6d5847]"
+                    className="paunova-input px-4 py-2.5 text-xs"
                   >
                     {treatmentOptions.map((opt) => (
                       <option key={opt} value={opt}>
@@ -324,7 +333,7 @@ export default function AgendaClient({
                     onChange={(e) => setNotes(e.target.value)}
                     rows={4}
                     placeholder="Instrucciones previas, tipo de sesión, etc."
-                    className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-4 py-2.5 text-xs text-[#1b1c1c] focus:outline-none focus:border-[#6d5847] resize-none"
+                    className="paunova-input px-4 py-2.5 text-xs resize-none"
                   />
                 </div>
 
@@ -332,7 +341,7 @@ export default function AgendaClient({
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-[#6d5847] hover:bg-[#88705e] text-[#FDFBF7] py-3 rounded-xl font-sans text-xs uppercase tracking-widest font-semibold transition-all active:scale-[0.98] disabled:opacity-50"
+                    className="paunova-button-primary w-full py-3 rounded-full text-xs uppercase tracking-widest font-semibold transition-all active:scale-[0.98] disabled:opacity-50"
                   >
                     {loading ? "Programando..." : "Programar Cita"}
                   </button>
