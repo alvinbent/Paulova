@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { DashboardData } from "./types";
+import Icon from "./Icon";
 
 export default function NextAppointmentCard({ data }: { data: DashboardData }) {
   const next = data.nextAppointments[0];
@@ -15,8 +16,8 @@ export default function NextAppointmentCard({ data }: { data: DashboardData }) {
             {next ? next.patientName : "Agenda libre"}
           </h3>
         </div>
-        <span className="material-symbols-outlined rounded-2xl bg-[#593c28] p-3 text-2xl text-[#fffaf4]">
-          calendar_today
+        <span className="rounded-2xl bg-[#593c28] p-3 text-[#fffaf4]">
+          <Icon name="calendar" className="h-6 w-6" />
         </span>
       </div>
 
@@ -38,7 +39,7 @@ export default function NextAppointmentCard({ data }: { data: DashboardData }) {
               className="mt-5 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#986b54]"
             >
               Abrir expediente
-              <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              <Icon name="arrow" className="h-4 w-4" />
             </Link>
           </div>
         </div>

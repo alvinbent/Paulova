@@ -57,7 +57,7 @@ export default async function DoctorDashboard() {
           label="Pacientes de hoy"
           value={todayAppointments.length}
           detail="Atención programada y controles activos."
-          icon="groups"
+          icon="patients"
           href="/doctor/pacientes"
           tone="gold"
         />
@@ -65,7 +65,7 @@ export default async function DoctorDashboard() {
           label="Citas pendientes"
           value={nextAppointments.length}
           detail="Agenda próxima con estado programado."
-          icon="pending_actions"
+          icon="calendar"
           href="/doctor/agenda"
           tone="rose"
         />
@@ -73,7 +73,7 @@ export default async function DoctorDashboard() {
           label="Ingresos del mes"
           value={monthRevenue}
           detail="Resumen financiero estimado de cabina."
-          icon="payments"
+          icon="money"
           href="/doctor/torre-control"
           tone="taupe"
         />

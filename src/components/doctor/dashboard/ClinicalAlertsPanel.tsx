@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { DashboardData } from "./types";
+import Icon from "./Icon";
 
 export default function ClinicalAlertsPanel({ data }: { data: DashboardData }) {
   return (
@@ -11,8 +12,8 @@ export default function ClinicalAlertsPanel({ data }: { data: DashboardData }) {
           </p>
           <h3 className="mt-2 font-serif text-3xl font-medium">Prioridad clínica</h3>
         </div>
-        <span className="material-symbols-outlined rounded-full bg-[#593c28] p-3 text-[#fffaf4]">
-          priority_high
+        <span className="rounded-full bg-[#593c28] p-3 text-[#fffaf4]">
+          <Icon name="warning" className="h-5 w-5" />
         </span>
       </div>
 
@@ -35,7 +36,7 @@ function AlertRow({ title, detail, href }: { title: string; detail: string; href
         <span className="block text-sm font-semibold">{title}</span>
         <span className="mt-1 block text-xs leading-5 text-[#7b6052]">{detail}</span>
       </span>
-      <span className="material-symbols-outlined text-base">arrow_forward</span>
+      <Icon name="arrow" className="h-4 w-4" />
     </Link>
   );
 }

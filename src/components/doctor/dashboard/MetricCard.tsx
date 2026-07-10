@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { MetricTone } from "./types";
+import Icon from "./Icon";
 
 const tones: Record<MetricTone, string> = {
   gold: "bg-[#f3e7d8] text-[#593c28] ring-[#dcc6ad]",
@@ -19,7 +20,7 @@ export default function MetricCard({
   label: string;
   value: string | number;
   detail: string;
-  icon: string;
+  icon: "patients" | "calendar" | "money";
   href: string;
   tone: MetricTone;
 }) {
@@ -33,7 +34,7 @@ export default function MetricCard({
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] opacity-70">
             {label}
           </p>
-          <span className="material-symbols-outlined text-2xl">{icon}</span>
+          <Icon name={icon} className="h-6 w-6" />
         </div>
         <div>
           <p className="font-mono text-5xl font-semibold leading-none">{value}</p>

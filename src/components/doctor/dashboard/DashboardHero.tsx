@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { DashboardData } from "./types";
+import Icon from "./Icon";
 
 export default function DashboardHero({ data }: { data: DashboardData }) {
   const completion = Math.min(92, 58 + data.todayAppointments.length * 8);
@@ -35,7 +36,7 @@ export default function DashboardHero({ data }: { data: DashboardData }) {
             href="/doctor/pacientes"
             className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#fffaf4] px-5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#593c28] transition hover:bg-[#eadbd2]"
           >
-            <span className="material-symbols-outlined text-base">mic</span>
+            <Icon name="mic" className="h-4 w-4" />
             Dictar consulta
           </Link>
         </div>

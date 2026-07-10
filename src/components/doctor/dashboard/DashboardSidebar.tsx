@@ -4,16 +4,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import Icon from "./Icon";
 
 const navigation = [
-  { name: "Inicio", href: "/doctor/dashboard", icon: "dashboard" },
-  { name: "Agenda", href: "/doctor/agenda", icon: "calendar_today" },
-  { name: "Pacientes", href: "/doctor/pacientes", icon: "group" },
-  { name: "Tratamientos", href: "/doctor/productos", icon: "spa" },
-  { name: "Historia clínica", href: "/doctor/historias-clinicas", icon: "clinical_notes" },
-  { name: "Reportes", href: "/doctor/torre-control", icon: "monitoring" },
-  { name: "Finanzas", href: "/doctor/torre-control", icon: "payments" },
-  { name: "Configuración", href: "/doctor/torre-control", icon: "settings" },
+  { name: "Inicio", href: "/doctor/dashboard", icon: "dashboard" as const },
+  { name: "Agenda", href: "/doctor/agenda", icon: "calendar" as const },
+  { name: "Pacientes", href: "/doctor/pacientes", icon: "patients" as const },
+  { name: "Tratamientos", href: "/doctor/productos", icon: "spa" as const },
+  { name: "Historia clínica", href: "/doctor/historias-clinicas", icon: "notes" as const },
+  { name: "Reportes", href: "/doctor/torre-control", icon: "chart" as const },
+  { name: "Finanzas", href: "/doctor/torre-control", icon: "money" as const },
+  { name: "Configuración", href: "/doctor/torre-control", icon: "settings" as const },
 ];
 
 export default function DashboardSidebar() {
@@ -48,7 +49,7 @@ export default function DashboardSidebar() {
                 : "text-[#d8ccc0] hover:bg-white/8 hover:text-[#fffaf4]"
             }`}
           >
-            <span className="material-symbols-outlined text-lg">{item.icon}</span>
+            <Icon name={item.icon} className="h-5 w-5 shrink-0" />
             <span>{item.name}</span>
           </Link>
         );
@@ -72,7 +73,7 @@ export default function DashboardSidebar() {
           className="flex h-11 w-11 items-center justify-center rounded-full bg-[#2b2520] text-[#fffaf4]"
           aria-label="Abrir menú"
         >
-          <span className="material-symbols-outlined">{open ? "close" : "menu"}</span>
+          <span className="block h-4 w-5 border-y-2 border-current" />
         </button>
       </header>
 
@@ -132,7 +133,7 @@ function SidebarContent({
           onClick={onLogout}
           className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-white/8 px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#eadbd2] transition hover:bg-white/12"
         >
-          <span className="material-symbols-outlined text-sm">logout</span>
+          <Icon name="logout" className="h-4 w-4" />
           Salir
         </button>
       </div>

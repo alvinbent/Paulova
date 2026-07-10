@@ -1,3 +1,5 @@
+import Icon from "./Icon";
+
 export default function RecentActivityPanel() {
   return (
     <section className="col-span-12 rounded-[28px] bg-[#fffaf4] p-6 ring-1 ring-[#ded2c6] lg:col-span-7">
@@ -10,8 +12,8 @@ export default function RecentActivityPanel() {
             Movimiento clínico
           </h3>
         </div>
-        <span className="material-symbols-outlined rounded-full bg-[#f3e7d8] p-3 text-[#593c28]">
-          timeline
+        <span className="rounded-full bg-[#f3e7d8] p-3 text-[#593c28]">
+          <Icon name="chart" className="h-5 w-5" />
         </span>
       </div>
 
