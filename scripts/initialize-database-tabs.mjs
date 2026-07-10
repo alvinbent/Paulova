@@ -80,7 +80,7 @@ const headersMap = {
     data: mockPatients
   },
   Citas: {
-    headers: ['id', 'patientId', 'patientName', 'date', 'time', 'treatment', 'status', 'notes'],
+    headers: ['id', 'patientId', 'patientName', 'date', 'time', 'treatment', 'status', 'notes', 'googleCalendarEventId', 'googleMeetUrl'],
     data: mockAppointments
   },
   Inventario: {
@@ -92,8 +92,40 @@ const headersMap = {
     data: mockClinicalInfo
   },
   Tratamientos_Aplicados: {
-    headers: ['id', 'patientId', 'treatmentName', 'productUsedId', 'productNameUsed', 'productQuantityUsed', 'details', 'date'],
+    headers: ['id', 'patientId', 'treatmentName', 'productUsedId', 'productNameUsed', 'productQuantityUsed', 'details', 'date', 'lotUsedId', 'adverseEvent', 'consentStatus', 'priceChargedCop'],
     data: mockTreatmentsApplied
+  },
+  Lotes: {
+    headers: ['id', 'productId', 'lotNumber', 'expiryDate', 'serialNumber', 'providerId', 'costUnitCop', 'initialQty', 'currentQty', 'physicalLocation', 'status'],
+    data: [
+      ['l1', 'i1', 'L-AH9832', '2026-12-31', 'SN-90823', 'prov1', '400000', '10', '8', 'Nevera 1', 'activo'],
+      ['l2', 'i2', 'L-TB2204', '2026-08-15', 'SN-11029', 'prov2', '350000', '200', '180', 'Nevera 1', 'activo']
+    ]
+  },
+  Proveedores: {
+    headers: ['id', 'companyName', 'nit', 'contactName', 'phone', 'email', 'city', 'country', 'actorType'],
+    data: [
+      ['prov1', 'Galderma Colombia', '800.123.456-1', 'Representante Galderma', '+57 312 999 8888', 'contacto@galderma.com.co', 'Bogotá', 'Colombia', 'Distribuidor Oficial'],
+      ['prov2', 'Merz Aesthetic Colombia', '900.987.654-2', 'Representante Merz', '+57 310 777 6666', 'pedidos@merz.com', 'Bogotá', 'Colombia', 'Fabricante']
+    ]
+  },
+  Protocolos: {
+    headers: ['id', 'name', 'indications', 'contraindications', 'recommendedSessions', 'notes', 'active'],
+    data: [
+      ['prot1', 'Toxina tercio superior', 'Líneas en frente, entrecejo y patas de gallo.', 'Embarazo, miastenia gravis, lactancia.', '1', 'Control de retoque a los 15 días.', 'TRUE'],
+      ['prot2', 'Perfilado de Labios Premium', 'Pérdida de volumen labial o asimetrías.', 'Herpes activo, rellenos permanentes previos.', '1', 'Evitar morder alimentos duros primeras 24 horas.', 'TRUE']
+    ]
+  },
+  Protocolo_Items: {
+    headers: ['id', 'protocolId', 'productId', 'standardQuantity', 'unitName', 'optional'],
+    data: [
+      ['pi1', 'prot1', 'i2', '50', 'unidades', 'FALSE'],
+      ['pi2', 'prot2', 'i1', '1', 'viales', 'FALSE']
+    ]
+  },
+  Conversaciones: {
+    headers: ['whatsappUserId', 'patientId', 'state', 'preferredName', 'fullName', 'serviceInterest', 'appointmentMode', 'consentStatus', 'lastMessageAt'],
+    data: []
   },
   Claves_Acceso: {
     headers: ['username', 'password', 'role'],

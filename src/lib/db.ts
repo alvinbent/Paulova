@@ -159,6 +159,18 @@ export interface TreatmentApplied {
   priceChargedCop?: number;
 }
 
+export interface Conversation {
+  whatsappUserId: string;
+  patientId: string;
+  state: string;
+  preferredName: string;
+  fullName: string;
+  serviceInterest: string;
+  appointmentMode: string;
+  consentStatus: "Autorizado" | "No Autorizado" | "Pendiente";
+  lastMessageAt: string;
+}
+
 export interface ClinicalRecord {
   patientId: string;
   allergies: string;
@@ -1725,6 +1737,137 @@ export const db = {
       record.treatmentsApplied[index] = updatedTreatment;
       await writeJsonFile("clinical_records.json", records);
       return record;
+    }
+  },
+
+  // --- CHATBOT CONVERSACIONES ---
+  async getConversations(): Promise<Conversation[]> {
+    const client = getSheetsClient();
+    if (!client) {
+      return readJsonFile<Conversation[]>("conversations.json", []);
+    }
+    try {
+      const response = await client.spreadsheets.values.get({
+        spreadsheetId,
+        range: "Conversaciones!A2:I1000",
+      });
+      const rows = normalizeRows(response.data.values);
+      return rows.map((row) => ({
+        whatsappUserId: row[0] || "",
+        patientId: row[1] || "",
+        state: row[2] || "greeting",
+        preferredName: row[3] || "",
+        fullName: row[4] || "",
+        serviceInterest: row[5] || "",
+        appointmentMode: row[6] || "",
+        consentStatus: (row[7] as Conversation["consentStatus"]) || "Pendiente",
+        lastMessageAt: row[8] || "",
+      }));
+    } catch (err) {
+      console.error("Error reading conversations from Sheets:", err);
+      return readJsonFile<Conversation[]>("conversations.json", []);
+    }
+  },
+
+  async getConversation(whatsappUserId: string): Promise<Conversation | undefined> {
+    const list = await this.getConversations();
+    return list.find((c) => c.whatsappUserId === whatsappUserId);
+  },
+
+  async saveConversation(conv: Conversation): Promise<Conversation> {
+    const client = getSheetsClient();
+    if (!client) {
+      const list = await this.getConversations();
+      const idx = list.findIndex((c) => c.whatsappUserId === conv.whatsappUserId);
+      if (idx !== -1) {
+        list[idx] = conv;
+      } else {
+        list.push(conv);
+      }
+      await writeJsonFile("conversations.json", list);
+      return conv;
+    }
+
+    try {
+      const list = await this.getConversations();
+      const idx = list.findIndex((c) => c.whatsappUserId === conv.whatsappUserId);
+
+      const rowValues = [
+        conv.whatsappUserId,
+        conv.patientId || "",
+        conv.state || "",
+        conv.preferredName || "",
+        conv.fullName || "",
+        conv.serviceInterest || "",
+        conv.appointmentMode || "",
+        conv.consentStatus || "Pendiente",
+        conv.lastMessageAt || new Date().toISOString(),
+      ];
+
+      if (idx !== -1) {
+        // Update existing row
+        const rowNum = idx + 2;
+        await client.spreadsheets.values.update({
+          spreadsheetId,
+          range: `Conversaciones!A${rowNum}:I${rowNum}`,
+          valueInputOption: "RAW",
+          requestBody: {
+            values: [rowValues],
+          },
+        });
+      } else {
+        // Append new row
+        await client.spreadsheets.values.append({
+          spreadsheetId,
+          range: "Conversaciones!A2",
+          valueInputOption: "RAW",
+          requestBody: {
+            values: [rowValues],
+          },
+        });
+      }
+      return conv;
+    } catch (err) {
+      console.error("Error writing conversation to Sheets, using fallback:", err);
+      const list = await readJsonFile<Conversation[]>("conversations.json", []);
+      const idx = list.findIndex((c) => c.whatsappUserId === conv.whatsappUserId);
+      if (idx !== -1) {
+        list[idx] = conv;
+      } else {
+        list.push(conv);
+      }
+      await writeJsonFile("conversations.json", list);
+      return conv;
+    }
+  },
+
+  async deleteConversation(whatsappUserId: string): Promise<boolean> {
+    const client = getSheetsClient();
+    if (!client) {
+      const list = await this.getConversations();
+      const filtered = list.filter((c) => c.whatsappUserId !== whatsappUserId);
+      await writeJsonFile("conversations.json", filtered);
+      return true;
+    }
+
+    try {
+      const list = await this.getConversations();
+      const idx = list.findIndex((c) => c.whatsappUserId === whatsappUserId);
+      if (idx === -1) return false;
+
+      const rowNum = idx + 2;
+      // Clear row values in Sheets
+      await client.spreadsheets.values.clear({
+        spreadsheetId,
+        range: `Conversaciones!A${rowNum}:I${rowNum}`,
+      });
+      return true;
+    } catch (err) {
+      console.error("Error deleting conversation in Sheets:", err);
+      const list = await readJsonFile<Conversation[]>("conversations.json", []);
+      const filtered = list.filter((c) => c.whatsappUserId !== whatsappUserId);
+      await writeJsonFile("conversations.json", filtered);
+      return true;
     }
   },
 };
