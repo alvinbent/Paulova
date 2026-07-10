@@ -141,31 +141,49 @@ export async function createPaunovaAppointment({
   endDateTime,
   timeZone = "America/Bogota",
 }: CreatePaunovaAppointmentInput) {
-  const response = await getGoogleCalendarClient().events.insert({
-    calendarId: getGoogleCalendarId(),
-    conferenceDataVersion: 1,
-    sendUpdates: "all",
-    requestBody: {
-      summary,
-      description,
-      start: {
-        dateTime: startDateTime,
-        timeZone,
-      },
-      end: {
-        dateTime: endDateTime,
-        timeZone,
-      },
-      attendees: patientEmail ? [{ email: patientEmail }] : undefined,
-      conferenceData: {
-        createRequest: {
-          requestId: randomUUID(),
-          conferenceSolutionKey: {
-            type: "hangoutsMeet",
-          },
+  const calendar = getGoogleCalendarClient();
+  const calendarId = getGoogleCalendarId();
+
+  // Query metadata to check allowed solutions
+  let supportsMeet = false;
+  try {
+    const metadata = await calendar.calendars.get({ calendarId });
+    const allowedTypes = metadata.data.conferenceProperties?.allowedConferenceSolutionTypes || [];
+    supportsMeet = allowedTypes.includes("hangoutsMeet");
+  } catch (err) {
+    console.warn("Could not retrieve calendar metadata for allowedSolutions check, defaulting to standard event:", err);
+  }
+
+  const requestBody: any = {
+    summary,
+    description,
+    start: {
+      dateTime: startDateTime,
+      timeZone,
+    },
+    end: {
+      dateTime: endDateTime,
+      timeZone,
+    },
+    attendees: patientEmail ? [{ email: patientEmail }] : undefined,
+  };
+
+  if (supportsMeet) {
+    requestBody.conferenceData = {
+      createRequest: {
+        requestId: randomUUID(),
+        conferenceSolutionKey: {
+          type: "hangoutsMeet",
         },
       },
-    },
+    };
+  }
+
+  const response = await calendar.events.insert({
+    calendarId,
+    conferenceDataVersion: supportsMeet ? 1 : 0,
+    sendUpdates: "all",
+    requestBody,
   });
 
   const meetUrl =
@@ -174,7 +192,7 @@ export async function createPaunovaAppointment({
 
   return {
     eventId: response.data.id,
-    meetUrl,
+    meetUrl: meetUrl || null,
     event: response.data,
   };
 }

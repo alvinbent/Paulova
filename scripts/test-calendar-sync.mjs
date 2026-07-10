@@ -5,9 +5,8 @@ import { readFileSync } from "fs";
 // Load environment variables from .env.local
 try {
   process.loadEnvFile(".env.local");
-  console.log("Loaded .env.local successfully using process.loadEnvFile.");
+  console.log("Loaded .env.local successfully.");
 } catch {
-  console.warn("process.loadEnvFile failed or is not available. Reading file manually.");
   try {
     const envText = readFileSync(".env.local", "utf8");
     for (const line of envText.split("\n")) {
@@ -47,33 +46,46 @@ const calendar = google.calendar({
 async function runTest() {
   console.log(`Connecting to Google Calendar: ${calendarId}...`);
   try {
-    const startDateTime = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 mins from now
-    const endDateTime = new Date(Date.now() + 70 * 60 * 1000).toISOString(); // 70 mins from now
+    const calendarMetadata = await calendar.calendars.get({ calendarId });
+    const allowedTypes = calendarMetadata.data.conferenceProperties?.allowedConferenceSolutionTypes || [];
+    console.log("Allowed solution types on this calendar:", allowedTypes);
 
-    console.log("Inserting test appointment with Google Meet conference...");
-    const response = await calendar.events.insert({
-      calendarId,
-      conferenceDataVersion: 1,
-      requestBody: {
-        summary: "Test Sync - Paunova Clinic Integration",
-        description: "Esta es una cita automatica de prueba creada por el asistente de Paunova.",
-        start: {
-          dateTime: startDateTime,
-          timeZone: "America/Bogota",
-        },
-        end: {
-          dateTime: endDateTime,
-          timeZone: "America/Bogota",
-        },
-        conferenceData: {
-          createRequest: {
-            requestId: randomUUID(),
-            conferenceSolutionKey: {
-              type: "hangoutsMeet",
-            },
+    const supportsMeet = allowedTypes.includes("hangoutsMeet");
+    const startDateTime = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+    const endDateTime = new Date(Date.now() + 70 * 60 * 1000).toISOString();
+
+    const eventPayload = {
+      summary: "Test Sync - Paunova Clinic Integration",
+      description: "Esta es una cita automatica de prueba creada por el asistente de Paunova.",
+      start: {
+        dateTime: startDateTime,
+        timeZone: "America/Bogota",
+      },
+      end: {
+        dateTime: endDateTime,
+        timeZone: "America/Bogota",
+      },
+    };
+
+    if (supportsMeet) {
+      console.log("This calendar supports Meet. Requesting conference data...");
+      eventPayload.conferenceData = {
+        createRequest: {
+          requestId: randomUUID(),
+          conferenceSolutionKey: {
+            type: "hangoutsMeet",
           },
         },
-      },
+      };
+    } else {
+      console.warn("⚠️ Warning: Google Meet (hangoutsMeet) is NOT allowed on this secondary calendar config. Creating standard calendar event instead...");
+    }
+
+    console.log("Inserting test event...");
+    const response = await calendar.events.insert({
+      calendarId,
+      conferenceDataVersion: supportsMeet ? 1 : 0,
+      requestBody: eventPayload,
     });
 
     const eventId = response.data.id;
@@ -84,7 +96,7 @@ async function runTest() {
     console.log("------------------------------------------------");
     console.log("✅ EXITOSO!");
     console.log("ID del Evento:", eventId);
-    console.log("Enlace de Google Meet:", meetUrl || "NO GENERADO");
+    console.log("Enlace de Google Meet:", meetUrl || "NO ADMITIDO / NO GENERADO EN ESTE CALENDARIO");
     console.log("------------------------------------------------");
 
     if (eventId) {
@@ -97,7 +109,8 @@ async function runTest() {
     }
   } catch (err) {
     console.error("❌ Falló la conexión o creación en Google Calendar:");
-    console.error(err);
+    console.error("Código de Estado:", err.status || err.code || "Desconocido");
+    console.error("Mensaje Completo:", err.message || err);
     process.exit(1);
   }
 }
