@@ -2,99 +2,22 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-
-interface Patient {
-  id: string;
-  name: string;
-  phone: string;
-  email: string;
-  birthday: string;
-  notes: string;
-  createdAt: string;
-}
-
-interface InventoryItem {
-  id: string;
-  name: string;
-  category: string;
-  units: number;
-  minUnits: number;
-  unitName: string;
-}
-
-interface TreatmentApplied {
-  id: string;
-  treatmentName: string;
-  productUsedId?: string;
-  productNameUsed?: string;
-  productQuantityUsed?: number;
-  details: string;
-  date: string;
-}
-
-interface ClinicalRecord {
-  patientId: string;
-  allergies: string;
-  skinType: string;
-  notes: string;
-  treatmentsApplied: TreatmentApplied[];
-}
-
-const treatmentOptions = [
-  "Limpieza Facial Hydrash Profunda",
-  "Toxina Botulínica",
-  "Ácido Hialurónico",
-  "Bioestimuladores de Colágeno",
-  "Láser Nd YAG Q-Switched",
-  "Micropunción Nanopore",
-  "Spectrum Mask (Terapia LED)",
-  "Revitalización Profunda",
-];
-
-interface SpeechRecognitionResultEventLike {
-  resultIndex: number;
-  results: ArrayLike<{
-    isFinal: boolean;
-    0: {
-      transcript: string;
-    };
-  }>;
-}
-
-interface SpeechRecognitionErrorEventLike {
-  error: string;
-}
-
-interface SpeechRecognitionLike {
-  lang: string;
-  continuous: boolean;
-  interimResults: boolean;
-  onresult: ((event: SpeechRecognitionResultEventLike) => void) | null;
-  onerror: ((event: SpeechRecognitionErrorEventLike) => void) | null;
-  onend: (() => void) | null;
-  start: () => void;
-  stop: () => void;
-}
-
-interface SpeechRecognitionConstructor {
-  new (): SpeechRecognitionLike;
-}
-
-type WindowWithSpeechRecognition = Window &
-  typeof globalThis & {
-    SpeechRecognition?: SpeechRecognitionConstructor;
-    webkitSpeechRecognition?: SpeechRecognitionConstructor;
-    _recognitionInstance?: SpeechRecognitionLike | null;
-  };
+import { Patient, ClinicalRecord, InventoryItem, Lot, Protocol, ProtocolItem, TreatmentApplied } from "@/lib/db";
 
 export default function PacienteClient({
   patient,
   record: initialRecord,
   inventory,
+  lots,
+  protocols,
+  protocolItems,
 }: {
   patient: Patient;
   record: ClinicalRecord;
   inventory: InventoryItem[];
+  lots: Lot[];
+  protocols: Protocol[];
+  protocolItems: ProtocolItem[];
 }) {
   const [record, setRecord] = useState<ClinicalRecord>(initialRecord);
   const [editInfoMode, setEditInfoMode] = useState(false);
@@ -114,12 +37,46 @@ export default function PacienteClient({
   const [skinType, setSkinType] = useState(record.skinType);
   const [notes, setNotes] = useState(record.notes);
 
-  // New treatment state
-  const [treatmentName, setTreatmentName] = useState(treatmentOptions[0]);
+  // Editing state for past treatments
+  const [editingTreatmentId, setEditingTreatmentId] = useState<string | null>(null);
+
+  // New treatment / edit treatment states
+  const [selectedProtocolId, setSelectedProtocolId] = useState<string>("");
+  const [treatmentName, setTreatmentName] = useState("");
   const [productUsedId, setProductUsedId] = useState("");
+  const [lotUsedId, setLotUsedId] = useState("");
   const [productQuantityUsed, setProductQuantityUsed] = useState(1);
   const [details, setDetails] = useState("");
+  const [priceChargedCop, setPriceChargedCop] = useState<number>(0);
+  const [adverseEvent, setAdverseEvent] = useState("");
+  const [consentStatus, setConsentStatus] = useState<TreatmentApplied["consentStatus"]>("No Aplica");
 
+  const activeLots = lots.filter((lot) => lot.productId === productUsedId && lot.status === "activo" && lot.currentQty > 0);
+
+  // Patient allergy safety check
+  const getSafetyWarning = () => {
+    if (!selectedProtocolId) return null;
+    const proto = protocols.find((p) => p.id === selectedProtocolId);
+    if (!proto || !patient) return null;
+
+    const patientAllergies = record.allergies.toLowerCase();
+    if (!patientAllergies || patientAllergies === "ninguna" || patientAllergies === "ninguna conocida") return null;
+
+    const contraindications = proto.contraindications.toLowerCase();
+    
+    // Check if any word from patient allergies matches words in contraindications
+    const keywords = patientAllergies.split(/[\s,.]+/).filter((w) => w.length > 3);
+    const matches = keywords.filter((word) => contraindications.includes(word));
+
+    if (matches.length > 0) {
+      return `⚠️ Alerta de Seguridad: El paciente presenta alergias a "${matches.join(", ")}" que coinciden con contraindicaciones de este protocolo (${proto.contraindications})`;
+    }
+    return null;
+  };
+
+  const safetyWarning = getSafetyWarning();
+
+  // Handle clinical record general info updates (allergies, skin type, notes)
   const handleUpdateInfo = async (e: React.FormEvent) => {
     e.preventDefault();
     setNotice("");
@@ -145,36 +102,126 @@ export default function PacienteClient({
     }
   };
 
-  const handleAddTreatment = async (e: React.FormEvent) => {
+  // Open modal for registration
+  const openNewTreatmentModal = () => {
+    setEditingTreatmentId(null);
+    setSelectedProtocolId("");
+    setTreatmentName("");
+    setProductUsedId("");
+    setLotUsedId("");
+    setProductQuantityUsed(1);
+    setDetails("");
+    setPriceChargedCop(0);
+    setAdverseEvent("");
+    setConsentStatus("No Aplica");
+    setDictationMode(false);
+    setTranscriptionText("");
+    setNotice("");
+    setTreatmentModalOpen(true);
+  };
+
+  // Open modal for editing past entries
+  const openEditTreatmentModal = (treatment: TreatmentApplied) => {
+    setNotice("");
+    setEditingTreatmentId(treatment.id);
+    setSelectedProtocolId(""); // Not linked to active selection dropdown on edit
+    setTreatmentName(treatment.treatmentName);
+    setProductUsedId(treatment.productUsedId || "");
+    setLotUsedId(treatment.lotUsedId || "");
+    setProductQuantityUsed(treatment.productQuantityUsed || 1);
+    setDetails(treatment.details);
+    setPriceChargedCop(treatment.priceChargedCop || 0);
+    setAdverseEvent(treatment.adverseEvent || "");
+    setConsentStatus(treatment.consentStatus || "No Aplica");
+    setDictationMode(false);
+    setTranscriptionText("");
+    setTreatmentModalOpen(true);
+  };
+
+  // Handle Protocol change
+  const handleProtocolChange = (protoId: string) => {
+    setSelectedProtocolId(protoId);
+    if (!protoId) {
+      setTreatmentName("");
+      setProductUsedId("");
+      setLotUsedId("");
+      setDetails("");
+      return;
+    }
+
+    const proto = protocols.find((p) => p.id === protoId);
+    if (proto) {
+      setTreatmentName(proto.name);
+      
+      // Fetch standard item mapped to this protocol
+      const items = protocolItems.filter((i) => i.protocolId === protoId);
+      const mainItem = items.find((i) => !i.optional) || items[0];
+
+      if (mainItem) {
+        setProductUsedId(mainItem.productId);
+        setProductQuantityUsed(mainItem.standardQuantity || 1);
+        
+        // Auto select first active lot if available
+        const matchingLots = lots.filter((l) => l.productId === mainItem.productId && l.status === "activo" && l.currentQty > 0);
+        if (matchingLots.length > 0) {
+          setLotUsedId(matchingLots[0].id);
+        } else {
+          setLotUsedId("");
+        }
+      } else {
+        setProductUsedId("");
+        setLotUsedId("");
+      }
+
+      setDetails(`Tratamiento: ${proto.name}\nIndicaciones: ${proto.indications}\n\nCuidados Recomendados:\n- ${proto.notes}`);
+    }
+  };
+
+  // Handle Product change to reset Lot dropdown
+  const handleProductChange = (prodId: string) => {
+    setProductUsedId(prodId);
+    const matchingLots = lots.filter((l) => l.productId === prodId && l.status === "activo" && l.currentQty > 0);
+    if (matchingLots.length > 0) {
+      setLotUsedId(matchingLots[0].id);
+    } else {
+      setLotUsedId("");
+    }
+  };
+
+  // Submit form (both adding and editing)
+  const handleSaveTreatment = async (e: React.FormEvent) => {
     e.preventDefault();
     setNotice("");
     setLoading(true);
 
     try {
+      const isEdit = !!editingTreatmentId;
+      const type = isEdit ? "edit-treatment" : "treatment";
+      const payload = {
+        type,
+        treatmentId: editingTreatmentId || undefined,
+        treatmentName,
+        productUsedId: productUsedId || undefined,
+        productQuantityUsed: productUsedId ? productQuantityUsed : undefined,
+        lotUsedId: (productUsedId && lotUsedId) ? lotUsedId : undefined,
+        details,
+        priceChargedCop: priceChargedCop || 0,
+        adverseEvent: adverseEvent || "",
+        consentStatus: consentStatus || "No Aplica",
+      };
+
       const res = await fetch(`/api/doctor/patients/${patient.id}/clinical-record`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "treatment",
-          treatmentName,
-          productUsedId: productUsedId || undefined,
-          productQuantityUsed: productUsedId ? productQuantityUsed : undefined,
-          details,
-        }),
+        body: JSON.stringify(payload),
       });
+
       const data = await res.json();
       if (res.ok) {
         setRecord(data);
-        // Reset form
-        setTreatmentName(treatmentOptions[0]);
-        setProductUsedId("");
-        setProductQuantityUsed(1);
-        setDetails("");
         setTreatmentModalOpen(false);
-        setDictationMode(false);
-        setTranscriptionText("");
       } else {
-        setNotice(data.error || "Error al registrar tratamiento");
+        setNotice(data.error || "Error al guardar tratamiento");
       }
     } catch {
       setNotice("Error de conexión");
@@ -183,12 +230,11 @@ export default function PacienteClient({
     }
   };
 
-  // Start voice recording handler
+  // Voice dictation handlers
   const startRecording = () => {
-    const speechWindow = window as WindowWithSpeechRecognition;
-    const SpeechRecognition = speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      setNotice("El dictado por voz no está soportado en este navegador. Usa Chrome, Edge o Safari.");
+      setNotice("El dictado por voz no está soportado en este navegador. Usa Chrome o Edge.");
       return;
     }
 
@@ -198,7 +244,7 @@ export default function PacienteClient({
       rec.continuous = true;
       rec.interimResults = true;
 
-      rec.onresult = (event) => {
+      rec.onresult = (event: any) => {
         let interimTranscript = "";
         let finalTranscript = "";
         for (let i = event.resultIndex; i < event.results.length; ++i) {
@@ -211,8 +257,7 @@ export default function PacienteClient({
         setTranscriptionText(finalTranscript || interimTranscript);
       };
 
-      rec.onerror = (event) => {
-        console.error("Speech recognition error", event.error);
+      rec.onerror = () => {
         setRecording(false);
       };
 
@@ -221,28 +266,24 @@ export default function PacienteClient({
       };
 
       rec.start();
-      speechWindow._recognitionInstance = rec;
+      (window as any)._recognitionInstance = rec;
       setRecording(true);
       setTranscriptionText("");
     } catch (err) {
-      console.error(err);
       setNotice("No se pudo iniciar el dictado.");
     }
   };
 
-  // Stop voice recording handler
   const stopRecording = () => {
-    const speechWindow = window as WindowWithSpeechRecognition;
-    if (speechWindow._recognitionInstance) {
+    if ((window as any)._recognitionInstance) {
       try {
-        speechWindow._recognitionInstance.stop();
+        (window as any)._recognitionInstance.stop();
       } catch {}
-      speechWindow._recognitionInstance = null;
+      (window as any)._recognitionInstance = null;
     }
     setRecording(false);
   };
 
-  // AI completions processing handler
   const processDictation = async () => {
     if (!transcriptionText.trim()) {
       setNotice("Realiza un dictado de voz antes de procesar.");
@@ -259,11 +300,18 @@ export default function PacienteClient({
       });
       const data = await res.json();
       if (res.ok) {
-        setTreatmentName(data.treatmentName || treatmentOptions[0]);
+        setTreatmentName(data.treatmentName || "");
         setProductUsedId(data.productUsedId || "");
         setProductQuantityUsed(data.productQuantityUsed || 1);
         setDetails(data.clinicalReport || "");
-        setDictationMode(false); // Switch to review in form editor
+        
+        if (data.productUsedId) {
+          const matchingLots = lots.filter((l) => l.productId === data.productUsedId && l.status === "activo" && l.currentQty > 0);
+          if (matchingLots.length > 0) {
+            setLotUsedId(matchingLots[0].id);
+          }
+        }
+        setDictationMode(false);
       } else {
         setNotice(data.error || "Error al procesar con IA");
       }
@@ -274,24 +322,25 @@ export default function PacienteClient({
     }
   };
 
-  // Aggregate consumed supplies map for this patient
+  // Aggregate consumed supplies
   const consumedSuppliesMap = new Map<string, { name: string; quantity: number; unitName: string }>();
-  record.treatmentsApplied.forEach((treatment) => {
-    if (treatment.productUsedId && treatment.productNameUsed && treatment.productQuantityUsed) {
-      const existing = consumedSuppliesMap.get(treatment.productUsedId);
-      const matchingProduct = inventory.find((i) => i.id === treatment.productUsedId);
+  record.treatmentsApplied.forEach((t) => {
+    if (t.productUsedId && t.productNameUsed && t.productQuantityUsed) {
+      const existing = consumedSuppliesMap.get(t.productUsedId);
+      const matchingProduct = inventory.find((i) => i.id === t.productUsedId);
       const unit = matchingProduct ? matchingProduct.unitName : "unidades";
       if (existing) {
-        existing.quantity += treatment.productQuantityUsed;
+        existing.quantity += t.productQuantityUsed;
       } else {
-        consumedSuppliesMap.set(treatment.productUsedId, {
-          name: treatment.productNameUsed,
-          quantity: treatment.productQuantityUsed,
+        consumedSuppliesMap.set(t.productUsedId, {
+          name: t.productNameUsed,
+          quantity: t.productQuantityUsed,
           unitName: unit,
         });
       }
     }
   });
+
   const consumedSupplies = Array.from(consumedSuppliesMap.entries()).map(([id, info]) => ({
     id,
     name: info.name,
@@ -313,12 +362,8 @@ export default function PacienteClient({
 
         <div className="paunova-card rounded-[2rem] p-6 md:p-7 flex flex-col md:flex-row md:items-end justify-between gap-5">
           <div className="space-y-1">
-            <span className="paunova-kicker">
-              Expediente clínico
-            </span>
-            <h1 className="paunova-title text-3xl md:text-4xl italic">
-              {patient.name}
-            </h1>
+            <span className="paunova-kicker">Expediente clínico</span>
+            <h1 className="paunova-title text-3xl md:text-4xl italic">{patient.name}</h1>
             <p className="text-xs text-[#746b61]">
               Fecha de registro: {new Date(patient.createdAt).toLocaleDateString()}
             </p>
@@ -332,7 +377,7 @@ export default function PacienteClient({
               <span>Nueva consulta</span>
             </Link>
             <button
-              onClick={() => setTreatmentModalOpen(true)}
+              onClick={openNewTreatmentModal}
               className="paunova-button-primary px-4 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold transition-all flex items-center gap-2 active:scale-[0.98]"
             >
               <span className="material-symbols-outlined text-sm">vaccines</span>
@@ -348,38 +393,13 @@ export default function PacienteClient({
         </div>
       )}
 
-      <div className="paunova-card rounded-[1.75rem] p-3">
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-4 xl:grid-cols-7">
-          {[
-            ["Consultas", "history", `/doctor/pacientes/${patient.id}/consultas`],
-            ["Tratamientos", "spa", `/doctor/pacientes/${patient.id}/tratamientos`],
-            ["Productos", "science", `/doctor/pacientes/${patient.id}/productos`],
-            ["Insumos", "vaccines", `/doctor/pacientes/${patient.id}/insumos`],
-            ["Fotos", "photo_camera", `/doctor/pacientes/${patient.id}/fotografias`],
-            ["Consent.", "fact_check", `/doctor/pacientes/${patient.id}/consentimientos`],
-            ["Nueva", "add_circle", `/doctor/pacientes/${patient.id}/consultas/nueva`],
-          ].map(([label, icon, href]) => (
-            <Link
-              key={href}
-              href={href}
-              className="flex items-center justify-center gap-2 rounded-[1rem] px-3 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#5f4f42] transition-all hover:bg-[#b99862]/10"
-            >
-              <span className="material-symbols-outlined text-sm">{icon}</span>
-              <span>{label}</span>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Main Grid Details */}
+      {/* Main Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Personal and Medical Details */}
+        {/* Left Column: Personal info and clinical record */}
         <div className="space-y-8 lg:col-span-1">
-          {/* Card: Personal Info */}
+          {/* Datos Personales */}
           <div className="paunova-card rounded-[1.75rem] p-6 space-y-4">
-            <h3 className="paunova-title text-lg border-b border-[#d2c4bb]/10 pb-2">
-              Datos Personales
-            </h3>
+            <h3 className="paunova-title text-lg border-b border-[#d2c4bb]/10 pb-2">Datos Personales</h3>
             <ul className="space-y-3 text-xs font-sans text-gray-600">
               <li className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-sm text-[#c5a880]">phone</span>
@@ -406,7 +426,7 @@ export default function PacienteClient({
             </ul>
           </div>
 
-          {/* Card: Clinical Information */}
+          {/* Ficha Médica */}
           <div className="paunova-card rounded-[1.75rem] p-6 space-y-4">
             <div className="flex justify-between items-center border-b border-[#d2c4bb]/10 pb-2">
               <h3 className="paunova-title text-lg">Ficha médica</h3>
@@ -504,9 +524,8 @@ export default function PacienteClient({
           </div>
         </div>
 
-        {/* Right Column: Treatments Applied history and Supplies Consumed */}
+        {/* Right Column: Treatment log and history tabs */}
         <div className="paunova-card lg:col-span-2 rounded-[2rem] p-6 md:p-8 space-y-6">
-          {/* Tab Selection */}
           <div className="flex gap-4 border-b border-[#d2c4bb]/20 pb-3">
             <button
               onClick={() => setTab("treatments")}
@@ -545,31 +564,61 @@ export default function PacienteClient({
                   .map((treatment) => (
                     <div
                       key={treatment.id}
-                      className="border border-[#d2c4bb]/20 hover:border-[#6d5847]/40 rounded-2xl p-5 hover:bg-[#FDFBF7]/30 transition-all duration-200 space-y-3"
+                      className="border border-[#d2c4bb]/20 hover:border-[#6d5847]/40 rounded-2xl p-5 hover:bg-[#FDFBF7]/30 transition-all duration-200 space-y-3 relative group"
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-[#d2c4bb]/10 pb-2">
-                        <h4 className="font-serif text-base text-[#6d5847] font-semibold">
-                          {treatment.treatmentName}
-                        </h4>
-                        <span className="text-[10px] text-gray-400 font-sans font-semibold">
-                          {treatment.date}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-serif text-base text-[#6d5847] font-semibold">
+                            {treatment.treatmentName}
+                          </h4>
+                          {treatment.priceChargedCop ? (
+                            <span className="text-[10px] font-sans font-bold bg-[#c5a880]/10 text-[#6d5847] px-2 py-0.5 rounded">
+                              ${treatment.priceChargedCop.toLocaleString()} COP
+                            </span>
+                          ) : null}
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-[10px] text-gray-400 font-sans font-semibold">
+                            {treatment.date}
+                          </span>
+                          <button
+                            onClick={() => openEditTreatmentModal(treatment)}
+                            className="opacity-0 group-hover:opacity-100 text-[#c5a880] hover:text-[#6d5847] font-semibold text-[10px] transition-all flex items-center gap-0.5 active:scale-[0.95]"
+                          >
+                            <span className="material-symbols-outlined text-xs">edit</span>
+                            <span>Editar</span>
+                          </button>
+                        </div>
                       </div>
 
                       <p className="text-xs text-gray-700 leading-relaxed font-sans whitespace-pre-line">
                         {treatment.details}
                       </p>
 
-                      {treatment.productNameUsed && (
-                        <div className="pt-2 flex items-center gap-1.5 text-[10px] font-sans">
-                          <span className="px-2 py-0.5 rounded bg-[#c5a880]/10 text-[#c5a880] font-semibold uppercase tracking-wider">
-                            Insumo Descontado
-                          </span>
-                          <span className="text-gray-500">
-                            {treatment.productNameUsed} ({treatment.productQuantityUsed} {inventory.find(i => i.id === treatment.productUsedId)?.unitName || "unidades"})
-                          </span>
+                      {treatment.adverseEvent && (
+                        <div className="rounded-xl border border-red-100 bg-red-50/50 px-3.5 py-2 text-xs text-red-700 font-sans mt-2">
+                          <strong className="block font-bold">Evento Adverso:</strong>
+                          <span className="italic">{treatment.adverseEvent}</span>
                         </div>
                       )}
+
+                      <div className="pt-2 flex flex-wrap gap-2 text-[9px] font-mono">
+                        {treatment.productNameUsed && (
+                          <div className="flex items-center gap-1 px-2.5 py-0.5 rounded bg-[#c5a880]/10 text-[#c5a880] font-semibold uppercase tracking-wider">
+                            <span>Insumo: {treatment.productNameUsed} ({treatment.productQuantityUsed} {inventory.find(i => i.id === treatment.productUsedId)?.unitName || "unidades"})</span>
+                          </div>
+                        )}
+                        {treatment.lotNumberUsed && (
+                          <div className="flex items-center gap-1 px-2.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-semibold uppercase tracking-wider">
+                            <span>Lote INVIMA: {treatment.lotNumberUsed}</span>
+                          </div>
+                        )}
+                        <div className={`flex items-center gap-1 px-2.5 py-0.5 rounded font-semibold uppercase tracking-wider ${
+                          treatment.consentStatus === "Firmado" ? "bg-emerald-50 text-emerald-700" : treatment.consentStatus === "Pendiente" ? "bg-amber-50 text-amber-700" : "bg-gray-100 text-gray-400"
+                        }`}>
+                          <span>Consentimiento: {treatment.consentStatus || "No Aplica"}</span>
+                        </div>
+                      </div>
                     </div>
                   ))}
               </div>
@@ -598,17 +647,11 @@ export default function PacienteClient({
 
                     return (
                       <tr key={supply.id} className="hover:bg-[#FDFBF7]/40 transition-colors">
-                        <td className="px-4 py-3 font-semibold text-[#1b1c1c]">
-                          {supply.name}
-                        </td>
-                        <td className="px-4 py-3 font-semibold text-[#6d5847]">
-                          {supply.quantity} {supply.unitName}
-                        </td>
+                        <td className="px-4 py-3 font-semibold text-[#1b1c1c]">{supply.name}</td>
+                        <td className="px-4 py-3 font-semibold text-[#6d5847]">{supply.quantity} {supply.unitName}</td>
                         <td className="px-4 py-3">
                           <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] uppercase tracking-wider font-semibold ${
-                            isLow
-                              ? "bg-red-50 text-red-600 border border-red-100"
-                              : "bg-emerald-50 text-emerald-600 border border-emerald-100"
+                            isLow ? "bg-red-50 text-red-600 border border-red-100" : "bg-emerald-50 text-emerald-600 border border-emerald-100"
                           }`}>
                             <span>{countLeft} {unitsLeft} en stock</span>
                             {isLow && <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />}
@@ -624,37 +667,41 @@ export default function PacienteClient({
         </div>
       </div>
 
-      {/* Log Treatment Modal */}
+      {/* Log / Edit Treatment Slide-over Modal */}
       {treatmentModalOpen && (
         <div className="fixed inset-0 z-50 flex justify-end">
           <div className="fixed inset-0 bg-[#1d1c19]/42 backdrop-blur-sm" onClick={() => setTreatmentModalOpen(false)} />
           <div className="relative w-full max-w-md bg-[#fffdf8] h-full shadow-2xl p-8 flex flex-col justify-between overflow-y-auto border-l border-[#b99862]/22">
             <div className="space-y-6">
               <div className="flex justify-between items-center border-b border-[#d2c4bb]/20 pb-4">
-                <h3 className="paunova-title text-2xl">Registrar tratamiento</h3>
+                <h3 className="paunova-title text-2xl">
+                  {editingTreatmentId ? "Editar Tratamiento" : "Registrar Tratamiento"}
+                </h3>
                 <button onClick={() => setTreatmentModalOpen(false)} className="text-[#6d5847] hover:text-[#c5a880]">
                   <span className="material-symbols-outlined text-2xl">close</span>
                 </button>
               </div>
 
               {/* Mode Toggle: Manual vs Voice Dictation */}
-              <div className="flex bg-[#c5a880]/10 p-1 rounded-xl gap-1 text-[10px] font-sans font-semibold uppercase tracking-wider">
-                <button
-                  type="button"
-                  onClick={() => setDictationMode(false)}
-                  className={`flex-1 py-2 rounded-lg text-center transition-all ${!dictationMode ? "bg-[#6d5847] text-[#FDFBF7] shadow-xs" : "text-[#6d5847] hover:bg-[#c5a880]/5"}`}
-                >
-                  Registro Manual
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setDictationMode(true)}
-                  className={`flex-1 py-2 rounded-lg text-center transition-all flex items-center justify-center gap-1 ${dictationMode ? "bg-[#6d5847] text-[#FDFBF7] shadow-xs" : "text-[#6d5847] hover:bg-[#c5a880]/5"}`}
-                >
-                  <span className="material-symbols-outlined text-xs">mic</span>
-                  <span>Dictado por Voz (IA)</span>
-                </button>
-              </div>
+              {!editingTreatmentId && (
+                <div className="flex bg-[#c5a880]/10 p-1 rounded-xl gap-1 text-[10px] font-sans font-semibold uppercase tracking-wider">
+                  <button
+                    type="button"
+                    onClick={() => setDictationMode(false)}
+                    className={`flex-1 py-2 rounded-lg text-center transition-all ${!dictationMode ? "bg-[#6d5847] text-[#FDFBF7] shadow-xs" : "text-[#6d5847] hover:bg-[#c5a880]/5"}`}
+                  >
+                    Registro Manual
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDictationMode(true)}
+                    className={`flex-1 py-2 rounded-lg text-center transition-all flex items-center justify-center gap-1 ${dictationMode ? "bg-[#6d5847] text-[#FDFBF7] shadow-xs" : "text-[#6d5847] hover:bg-[#c5a880]/5"}`}
+                  >
+                    <span className="material-symbols-outlined text-xs">mic</span>
+                    <span>Dictado por Voz (IA)</span>
+                  </button>
+                </div>
+              )}
 
               {dictationMode ? (
                 /* Dictation AI Interface */
@@ -697,21 +744,17 @@ export default function PacienteClient({
                     </div>
                   </div>
 
-                  {/* Transcript Area */}
                   <div className="space-y-1">
                     <label className="block text-[10px] uppercase tracking-wider text-[#6d5847] font-semibold">
-                      Transcripción del Dictado (En Tiempo Real)
+                      Transcripción del Dictado (Tiempo Real)
                     </label>
                     <textarea
                       readOnly
-                      placeholder="La transcripción de tu voz aparecerá aquí de forma temporal para procesamiento de IA..."
+                      placeholder="La transcripción de tu voz aparecerá aquí de forma temporal..."
                       value={transcriptionText}
                       rows={5}
                       className="w-full bg-[#FDFBF7]/60 border border-[#d2c4bb]/30 rounded-xl px-4 py-2.5 text-xs text-[#1b1c1c] focus:outline-none resize-none italic"
                     />
-                    <p className="text-[9px] text-gray-400">
-                      * Por motivos de privacidad médica, ni el audio ni este texto crudo serán guardados en la base de datos.
-                    </p>
                   </div>
 
                   <div>
@@ -736,38 +779,62 @@ export default function PacienteClient({
                   </div>
                 </div>
               ) : (
-                /* Standard Manual Form Review */
-                <form onSubmit={handleAddTreatment} className="space-y-4 text-xs font-sans">
+                /* Manual Review & Registration Form */
+                <form onSubmit={handleSaveTreatment} className="space-y-4 text-xs font-sans">
+                  {/* Protocol Selector */}
+                  {!editingTreatmentId && (
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-wider text-[#6d5847] font-semibold mb-1.5">
+                        Protocolo de Tratamiento
+                      </label>
+                      <select
+                        value={selectedProtocolId}
+                        onChange={(e) => handleProtocolChange(e.target.value)}
+                        className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-4 py-2.5 text-xs text-[#1b1c1c] focus:outline-none focus:border-[#6d5847]"
+                      >
+                        <option value="">Personalizado (Sin pre-cargar insumos)</option>
+                        {protocols.map((proto) => (
+                          <option key={proto.id} value={proto.id}>
+                            {proto.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Safety alerts banner */}
+                  {safetyWarning && (
+                    <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-xs text-red-800 font-sans font-semibold">
+                      {safetyWarning}
+                    </div>
+                  )}
+
                   <div>
                     <label className="block text-[10px] uppercase tracking-wider text-[#6d5847] font-semibold mb-1.5">
-                      Tratamiento Realizado *
+                      Nombre del Tratamiento *
                     </label>
-                    <select
+                    <input
+                      type="text"
                       required
                       value={treatmentName}
                       onChange={(e) => setTreatmentName(e.target.value)}
+                      placeholder="Ej. Toxina Tercio Superior"
                       className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-4 py-2.5 text-xs text-[#1b1c1c] focus:outline-none focus:border-[#6d5847]"
-                    >
-                      {treatmentOptions.map((opt) => (
-                        <option key={opt} value={opt}>
-                          {opt}
-                        </option>
-                      ))}
-                    </select>
+                    />
                   </div>
 
                   <div className="border-t border-[#d2c4bb]/10 pt-4 mt-2">
                     <span className="block text-[10px] uppercase tracking-wider text-[#6d5847] font-semibold mb-2">
-                      Uso de Insumos (Descuento Automático de Inventario)
+                      Insumo Médico / Sustancia
                     </span>
                     <div className="grid grid-cols-3 gap-3">
                       <div className="col-span-2">
                         <label className="block text-[9px] uppercase tracking-wider text-gray-400 font-semibold mb-1">
-                          Producto Usado
+                          Producto
                         </label>
                         <select
                           value={productUsedId}
-                          onChange={(e) => setProductUsedId(e.target.value)}
+                          onChange={(e) => handleProductChange(e.target.value)}
                           className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-3 py-2 text-[11px] text-[#1b1c1c] focus:outline-none focus:border-[#6d5847]"
                         >
                           <option value="">Ninguno / No descuenta stock</option>
@@ -793,17 +860,84 @@ export default function PacienteClient({
                         />
                       </div>
                     </div>
+
+                    {/* Specific Lot Selector */}
+                    {productUsedId && (
+                      <div className="mt-3">
+                        <label className="block text-[9px] uppercase tracking-wider text-gray-400 font-semibold mb-1">
+                          Lote Activo de Insumo *
+                        </label>
+                        <select
+                          required
+                          value={lotUsedId}
+                          onChange={(e) => setLotUsedId(e.target.value)}
+                          className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-3 py-2 text-[11px] text-[#1b1c1c] focus:outline-none focus:border-[#6d5847]"
+                        >
+                          <option value="">Seleccione Lote...</option>
+                          {lots
+                            .filter((l) => l.productId === productUsedId && (l.status === "activo" || l.id === lotUsedId))
+                            .map((l) => (
+                              <option key={l.id} value={l.id}>
+                                Lote {l.lotNumber} (vence {l.expiryDate}) — {l.currentQty} en stock
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 border-t border-[#d2c4bb]/10 pt-4 mt-2">
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-wider text-[#6d5847] font-semibold mb-1.5">
+                        Precio Cobrado (COP)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={priceChargedCop}
+                        onChange={(e) => setPriceChargedCop(Number(e.target.value))}
+                        className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-3 py-2 text-xs text-[#1b1c1c] focus:outline-none focus:border-[#6d5847] font-mono"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-wider text-[#6d5847] font-semibold mb-1.5">
+                        Consentimiento Informado
+                      </label>
+                      <select
+                        value={consentStatus}
+                        onChange={(e) => setConsentStatus(e.target.value as any)}
+                        className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-3 py-2 text-xs text-[#1b1c1c] focus:outline-none focus:border-[#6d5847]"
+                      >
+                        <option value="No Aplica">No Aplica</option>
+                        <option value="Firmado">Firmado / Aprobado</option>
+                        <option value="Pendiente">Pendiente por Firmar</option>
+                      </select>
+                    </div>
                   </div>
 
                   <div>
                     <label className="block text-[10px] uppercase tracking-wider text-[#6d5847] font-semibold mb-1.5">
-                      Detalles y Observaciones Clínicas *
+                      Eventos Adversos / Complicaciones (Opcional)
+                    </label>
+                    <input
+                      type="text"
+                      value={adverseEvent}
+                      onChange={(e) => setAdverseEvent(e.target.value)}
+                      placeholder="Ej. Eritema leve, Ninguno"
+                      className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-4 py-2 text-xs text-[#1b1c1c] focus:outline-none focus:border-[#6d5847]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] uppercase tracking-wider text-[#6d5847] font-semibold mb-1.5">
+                      Detalles y Notas Clínicas *
                     </label>
                     <textarea
                       required
                       value={details}
                       onChange={(e) => setDetails(e.target.value)}
-                      rows={6}
+                      rows={4}
                       placeholder="Escriba la dosificación, zona de aplicación, evolución, y cualquier detalle médico importante..."
                       className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-4 py-2.5 text-xs text-[#1b1c1c] focus:outline-none focus:border-[#6d5847] resize-none"
                     />
@@ -815,7 +949,7 @@ export default function PacienteClient({
                       disabled={loading}
                       className="w-full bg-[#6d5847] hover:bg-[#88705e] text-[#FDFBF7] py-3 rounded-xl font-sans text-xs uppercase tracking-widest font-semibold transition-all active:scale-[0.98] disabled:opacity-50"
                     >
-                      {loading ? "Guardando..." : "Registrar Tratamiento"}
+                      {loading ? "Guardando..." : editingTreatmentId ? "Guardar Cambios" : "Registrar Tratamiento"}
                     </button>
                   </div>
                 </form>

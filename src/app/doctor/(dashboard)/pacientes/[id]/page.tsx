@@ -20,12 +20,18 @@ export default async function DoctorPacientePerfil({
 
   const record = await db.getPatientClinicalRecord(id);
   const inventory = await db.getInventory();
+  const lots = await db.getLots();
+  const protocols = await db.getProtocols();
+  const protocolItems = await db.getProtocolItems();
 
   return (
     <PacienteClient
       patient={patient}
       record={record}
       inventory={inventory}
+      lots={lots}
+      protocols={protocols}
+      protocolItems={protocolItems}
     />
   );
 }

@@ -91,6 +91,54 @@ export interface InventoryItem {
   units: number;
   minUnits: number;
   unitName: string;
+  brand?: string;
+  presentation?: string;
+  invimaRef?: string;
+}
+
+export interface Provider {
+  id: string;
+  companyName: string;
+  nit: string;
+  contactName: string;
+  phone: string;
+  email: string;
+  city: string;
+  country: string;
+  actorType: string;
+}
+
+export interface Lot {
+  id: string;
+  productId: string;
+  lotNumber: string;
+  expiryDate: string;
+  serialNumber?: string;
+  providerId: string;
+  costUnitCop: number;
+  initialQty: number;
+  currentQty: number;
+  physicalLocation: string;
+  status: "activo" | "agotado" | "bloqueo";
+}
+
+export interface Protocol {
+  id: string;
+  name: string;
+  indications: string;
+  contraindications: string;
+  recommendedSessions: number;
+  notes: string;
+  active: boolean;
+}
+
+export interface ProtocolItem {
+  id: string;
+  protocolId: string;
+  productId: string;
+  standardQuantity: number;
+  unitName: string;
+  optional: boolean;
 }
 
 export interface TreatmentApplied {
@@ -101,6 +149,11 @@ export interface TreatmentApplied {
   productQuantityUsed?: number;
   details: string;
   date: string;
+  lotUsedId?: string;
+  lotNumberUsed?: string;
+  adverseEvent?: string;
+  consentStatus?: "Firmado" | "Pendiente" | "No Aplica";
+  priceChargedCop?: number;
 }
 
 export interface ClinicalRecord {
@@ -505,7 +558,7 @@ export const db = {
     try {
       const response = await client.spreadsheets.values.get({
         spreadsheetId,
-        range: "Inventario!A2:F1000",
+        range: "Inventario!A2:I1000",
       });
       const rows = normalizeRows(response.data.values);
       return rows.map((row) => ({
@@ -515,6 +568,9 @@ export const db = {
         units: Number(row[3]) || 0,
         minUnits: Number(row[4]) || 0,
         unitName: row[5] || "",
+        brand: row[6] || "",
+        presentation: row[7] || "",
+        invimaRef: row[8] || "",
       }));
     } catch (err) {
       console.error("Error reading inventory from Sheets, using local fallback:", err);
@@ -605,6 +661,609 @@ export const db = {
     }
   },
 
+  async addProduct(product: Omit<InventoryItem, "units">): Promise<InventoryItem> {
+    const client = getSheetsClient();
+    const newItem: InventoryItem = {
+      ...product,
+      units: 0,
+      brand: product.brand || "",
+      presentation: product.presentation || "",
+      invimaRef: product.invimaRef || "",
+    };
+
+    if (!client) {
+      const list = await this.getInventory();
+      list.push(newItem);
+      await writeJsonFile("inventory.json", list);
+      return newItem;
+    }
+
+    try {
+      await client.spreadsheets.values.append({
+        spreadsheetId,
+        range: "Inventario!A2",
+        valueInputOption: "RAW",
+        requestBody: {
+          values: [[
+            newItem.id,
+            newItem.name,
+            newItem.category,
+            0,
+            newItem.minUnits,
+            newItem.unitName,
+            newItem.brand,
+            newItem.presentation,
+            newItem.invimaRef
+          ]]
+        }
+      });
+      return newItem;
+    } catch (err) {
+      console.error("Error adding product to Sheets, using local fallback:", err);
+      const list = await this.getInventory();
+      list.push(newItem);
+      await writeJsonFile("inventory.json", list);
+      return newItem;
+    }
+  },
+
+  async updateProduct(id: string, product: Omit<InventoryItem, "units">): Promise<InventoryItem | undefined> {
+    const client = getSheetsClient();
+    const list = await this.getInventory();
+    const index = list.findIndex((i) => i.id === id);
+    if (index === -1) return undefined;
+
+    const currentItem = list[index];
+    const updatedItem = {
+      ...currentItem,
+      name: product.name,
+      category: product.category,
+      minUnits: product.minUnits,
+      unitName: product.unitName,
+      brand: product.brand || "",
+      presentation: product.presentation || "",
+      invimaRef: product.invimaRef || "",
+    };
+
+    if (!client) {
+      list[index] = updatedItem;
+      await writeJsonFile("inventory.json", list);
+      return updatedItem;
+    }
+
+    try {
+      const rowNum = index + 2;
+      await client.spreadsheets.values.update({
+        spreadsheetId,
+        range: `Inventario!A${rowNum}:I${rowNum}`,
+        valueInputOption: "RAW",
+        requestBody: {
+          values: [[
+            updatedItem.id,
+            updatedItem.name,
+            updatedItem.category,
+            updatedItem.units,
+            updatedItem.minUnits,
+            updatedItem.unitName,
+            updatedItem.brand,
+            updatedItem.presentation,
+            updatedItem.invimaRef
+          ]]
+        }
+      });
+      return updatedItem;
+    } catch (err) {
+      console.error("Error updating product in Sheets, using local fallback:", err);
+      list[index] = updatedItem;
+      await writeJsonFile("inventory.json", list);
+      return updatedItem;
+    }
+  },
+
+  // --- LOTES ---
+  async getLots(): Promise<Lot[]> {
+    const client = getSheetsClient();
+    if (!client) {
+      return readJsonFile<Lot[]>("lots.json", []);
+    }
+    try {
+      const response = await client.spreadsheets.values.get({
+        spreadsheetId,
+        range: "Lotes!A2:K1000",
+      });
+      const rows = normalizeRows(response.data.values);
+      return rows.map((row) => ({
+        id: row[0] || "",
+        productId: row[1] || "",
+        lotNumber: row[2] || "",
+        expiryDate: row[3] || "",
+        serialNumber: row[4] || "",
+        providerId: row[5] || "",
+        costUnitCop: Number(row[6]) || 0,
+        initialQty: Number(row[7]) || 0,
+        currentQty: Number(row[8]) || 0,
+        physicalLocation: row[9] || "",
+        status: (row[10] as Lot["status"]) || "activo",
+      }));
+    } catch (err) {
+      console.error("Error reading lots from Sheets:", err);
+      return readJsonFile<Lot[]>("lots.json", []);
+    }
+  },
+
+  async addLot(lot: Lot): Promise<Lot> {
+    const client = getSheetsClient();
+
+    if (!client) {
+      const list = await this.getLots();
+      list.push(lot);
+      await writeJsonFile("lots.json", list);
+
+      // Update inventory total units
+      const inventory = await this.getInventory();
+      const product = inventory.find((p) => p.id === lot.productId);
+      if (product) {
+        product.units += lot.initialQty;
+        await writeJsonFile("inventory.json", inventory);
+      }
+      return lot;
+    }
+
+    try {
+      await client.spreadsheets.values.append({
+        spreadsheetId,
+        range: "Lotes!A2",
+        valueInputOption: "RAW",
+        requestBody: {
+          values: [[
+            lot.id,
+            lot.productId,
+            lot.lotNumber,
+            lot.expiryDate,
+            lot.serialNumber || "",
+            lot.providerId,
+            lot.costUnitCop,
+            lot.initialQty,
+            lot.currentQty,
+            lot.physicalLocation,
+            lot.status
+          ]]
+        }
+      });
+
+      // Update the product's units in Inventario
+      const inventory = await this.getInventory();
+      const index = inventory.findIndex((p) => p.id === lot.productId);
+      if (index !== -1) {
+        const product = inventory[index];
+        const newUnits = product.units + lot.initialQty;
+        product.units = newUnits;
+        const rowNum = index + 2;
+        await client.spreadsheets.values.update({
+          spreadsheetId,
+          range: `Inventario!D${rowNum}`,
+          valueInputOption: "RAW",
+          requestBody: {
+            values: [[newUnits]]
+          }
+        });
+      }
+      return lot;
+    } catch (err) {
+      console.error("Error writing lot to Sheets:", err);
+      const list = await this.getLots();
+      list.push(lot);
+      await writeJsonFile("lots.json", list);
+      return lot;
+    }
+  },
+
+  async deductLotStock(lotId: string, quantity: number): Promise<Lot | undefined> {
+    const client = getSheetsClient();
+    const lots = await this.getLots();
+    const lotIndex = lots.findIndex((l) => l.id === lotId);
+    if (lotIndex === -1) return undefined;
+
+    const lot = lots[lotIndex];
+    const newQty = Math.max(0, lot.currentQty - quantity);
+    const difference = lot.currentQty - newQty;
+    lot.currentQty = newQty;
+
+    if (lot.currentQty === 0) {
+      lot.status = "agotado";
+    }
+
+    if (!client) {
+      await writeJsonFile("lots.json", lots);
+
+      // Update inventory total units
+      const inventory = await this.getInventory();
+      const product = inventory.find((p) => p.id === lot.productId);
+      if (product) {
+        product.units = Math.max(0, product.units - difference);
+        await writeJsonFile("inventory.json", inventory);
+      }
+      return lot;
+    }
+
+    try {
+      const rowNum = lotIndex + 2;
+      await client.spreadsheets.values.update({
+        spreadsheetId,
+        range: `Lotes!I${rowNum}`,
+        valueInputOption: "RAW",
+        requestBody: {
+          values: [[newQty]]
+        }
+      });
+
+      if (lot.currentQty === 0) {
+        await client.spreadsheets.values.update({
+          spreadsheetId,
+          range: `Lotes!K${rowNum}`,
+          valueInputOption: "RAW",
+          requestBody: {
+            values: [["agotado"]]
+          }
+        });
+      }
+
+      // Update general product units in Inventario
+      const inventory = await this.getInventory();
+      const index = inventory.findIndex((p) => p.id === lot.productId);
+      if (index !== -1) {
+        const product = inventory[index];
+        const newUnits = Math.max(0, product.units - difference);
+        product.units = newUnits;
+        const pRowNum = index + 2;
+        await client.spreadsheets.values.update({
+          spreadsheetId,
+          range: `Inventario!D${pRowNum}`,
+          valueInputOption: "RAW",
+          requestBody: {
+            values: [[newUnits]]
+          }
+        });
+      }
+      return lot;
+    } catch (err) {
+      console.error("Error deducting lot stock in Sheets:", err);
+      await writeJsonFile("lots.json", lots);
+      return lot;
+    }
+  },
+
+  async adjustLotStockDirect(lotId: string, quantity: number): Promise<Lot | undefined> {
+    const client = getSheetsClient();
+    const lots = await this.getLots();
+    const lotIndex = lots.findIndex((l) => l.id === lotId);
+    if (lotIndex === -1) return undefined;
+
+    const lot = lots[lotIndex];
+    lot.currentQty = lot.currentQty + quantity;
+    if (lot.currentQty > 0 && lot.status === "agotado") {
+      lot.status = "activo";
+    }
+
+    if (!client) {
+      await writeJsonFile("lots.json", lots);
+      const inventory = await this.getInventory();
+      const product = inventory.find((p) => p.id === lot.productId);
+      if (product) {
+        product.units = product.units + quantity;
+        await writeJsonFile("inventory.json", inventory);
+      }
+      return lot;
+    }
+
+    try {
+      const rowNum = lotIndex + 2;
+      await client.spreadsheets.values.update({
+        spreadsheetId,
+        range: `Lotes!I${rowNum}`,
+        valueInputOption: "RAW",
+        requestBody: {
+          values: [[lot.currentQty]]
+        }
+      });
+      await client.spreadsheets.values.update({
+        spreadsheetId,
+        range: `Lotes!K${rowNum}`,
+        valueInputOption: "RAW",
+        requestBody: {
+          values: [[lot.status]]
+        }
+      });
+
+      // Update general product units in Inventario
+      const inventory = await this.getInventory();
+      const index = inventory.findIndex((p) => p.id === lot.productId);
+      if (index !== -1) {
+        const product = inventory[index];
+        const newUnits = product.units + quantity;
+        product.units = newUnits;
+        const pRowNum = index + 2;
+        await client.spreadsheets.values.update({
+          spreadsheetId,
+          range: `Inventario!D${pRowNum}`,
+          valueInputOption: "RAW",
+          requestBody: {
+            values: [[newUnits]]
+          }
+        });
+      }
+      return lot;
+    } catch (err) {
+      console.error("Error adjusting lot stock directly:", err);
+      await writeJsonFile("lots.json", lots);
+      return lot;
+    }
+  },
+
+  async updateLotDirect(id: string, updated: Omit<Lot, "id" | "productId" | "initialQty" | "lotNumber">): Promise<Lot | undefined> {
+    const client = getSheetsClient();
+    const lots = await this.getLots();
+    const index = lots.findIndex((l) => l.id === id);
+    if (index === -1) return undefined;
+
+    const current = lots[index];
+    const oldQty = current.currentQty;
+    const newQty = updated.currentQty;
+    const difference = newQty - oldQty;
+
+    const updatedLot = {
+      ...current,
+      expiryDate: updated.expiryDate,
+      serialNumber: updated.serialNumber || "",
+      providerId: updated.providerId,
+      costUnitCop: Number(updated.costUnitCop),
+      currentQty: Number(updated.currentQty),
+      physicalLocation: updated.physicalLocation,
+      status: updated.status,
+    };
+
+    if (!client) {
+      lots[index] = updatedLot;
+      await writeJsonFile("lots.json", lots);
+
+      const inventory = await this.getInventory();
+      const product = inventory.find((p) => p.id === current.productId);
+      if (product) {
+        product.units = Math.max(0, product.units + difference);
+        await writeJsonFile("inventory.json", inventory);
+      }
+      return updatedLot;
+    }
+
+    try {
+      const rowNum = index + 2;
+      await client.spreadsheets.values.update({
+        spreadsheetId,
+        range: `Lotes!D${rowNum}:K${rowNum}`,
+        valueInputOption: "RAW",
+        requestBody: {
+          values: [[
+            updatedLot.expiryDate,
+            updatedLot.serialNumber || "",
+            updatedLot.providerId,
+            updatedLot.costUnitCop,
+            updatedLot.initialQty,
+            updatedLot.currentQty,
+            updatedLot.physicalLocation,
+            updatedLot.status
+          ]]
+        }
+      });
+
+      const inventory = await this.getInventory();
+      const pIndex = inventory.findIndex((p) => p.id === current.productId);
+      if (pIndex !== -1) {
+        const product = inventory[pIndex];
+        const newUnits = Math.max(0, product.units + difference);
+        product.units = newUnits;
+        const pRowNum = pIndex + 2;
+        await client.spreadsheets.values.update({
+          spreadsheetId,
+          range: `Inventario!D${pRowNum}`,
+          valueInputOption: "RAW",
+          requestBody: {
+            values: [[newUnits]]
+          }
+        });
+      }
+
+      return updatedLot;
+    } catch (err) {
+      console.error("Error updating lot directly:", err);
+      lots[index] = updatedLot;
+      await writeJsonFile("lots.json", lots);
+      return updatedLot;
+    }
+  },
+
+  // --- PROVEEDORES ---
+  async getProviders(): Promise<Provider[]> {
+    const client = getSheetsClient();
+    if (!client) {
+      return readJsonFile<Provider[]>("providers.json", []);
+    }
+    try {
+      const response = await client.spreadsheets.values.get({
+        spreadsheetId,
+        range: "Proveedores!A2:I1000",
+      });
+      const rows = normalizeRows(response.data.values);
+      return rows.map((row) => ({
+        id: row[0] || "",
+        companyName: row[1] || "",
+        nit: row[2] || "",
+        contactName: row[3] || "",
+        phone: row[4] || "",
+        email: row[5] || "",
+        city: row[6] || "",
+        country: row[7] || "",
+        actorType: row[8] || "",
+      }));
+    } catch (err) {
+      console.error("Error reading providers from Sheets:", err);
+      return readJsonFile<Provider[]>("providers.json", []);
+    }
+  },
+
+  async addProvider(provider: Provider): Promise<Provider> {
+    const client = getSheetsClient();
+    if (!client) {
+      const list = await this.getProviders();
+      list.push(provider);
+      await writeJsonFile("providers.json", list);
+      return provider;
+    }
+    try {
+      await client.spreadsheets.values.append({
+        spreadsheetId,
+        range: "Proveedores!A2",
+        valueInputOption: "RAW",
+        requestBody: {
+          values: [[
+            provider.id,
+            provider.companyName,
+            provider.nit,
+            provider.contactName,
+            provider.phone,
+            provider.email,
+            provider.city,
+            provider.country,
+            provider.actorType
+          ]]
+        }
+      });
+      return provider;
+    } catch (err) {
+      console.error("Error writing provider to Sheets:", err);
+      const list = await this.getProviders();
+      list.push(provider);
+      await writeJsonFile("providers.json", list);
+      return provider;
+    }
+  },
+
+  // --- PROTOCOLOS ---
+  async getProtocols(): Promise<Protocol[]> {
+    const client = getSheetsClient();
+    if (!client) {
+      return readJsonFile<Protocol[]>("protocols.json", []);
+    }
+    try {
+      const response = await client.spreadsheets.values.get({
+        spreadsheetId,
+        range: "Protocolos!A2:G1000",
+      });
+      const rows = normalizeRows(response.data.values);
+      return rows.map((row) => ({
+        id: row[0] || "",
+        name: row[1] || "",
+        indications: row[2] || "",
+        contraindications: row[3] || "",
+        recommendedSessions: Number(row[4]) || 1,
+        notes: row[5] || "",
+        active: row[6] === "TRUE",
+      }));
+    } catch (err) {
+      console.error("Error reading protocols from Sheets:", err);
+      return readJsonFile<Protocol[]>("protocols.json", []);
+    }
+  },
+
+  async getProtocolItems(): Promise<ProtocolItem[]> {
+    const client = getSheetsClient();
+    if (!client) {
+      return readJsonFile<ProtocolItem[]>("protocol_items.json", []);
+    }
+    try {
+      const response = await client.spreadsheets.values.get({
+        spreadsheetId,
+        range: "Protocolo_Items!A2:F1000",
+      });
+      const rows = normalizeRows(response.data.values);
+      return rows.map((row) => ({
+        id: row[0] || "",
+        protocolId: row[1] || "",
+        productId: row[2] || "",
+        standardQuantity: Number(row[3]) || 0,
+        unitName: row[4] || "",
+        optional: row[5] === "TRUE",
+      }));
+    } catch (err) {
+      console.error("Error reading protocol items from Sheets:", err);
+      return readJsonFile<ProtocolItem[]>("protocol_items.json", []);
+    }
+  },
+
+  async addProtocol(protocol: Protocol, items: Omit<ProtocolItem, "id" | "protocolId">[]): Promise<Protocol> {
+    const client = getSheetsClient();
+
+    if (!client) {
+      const protocols = await this.getProtocols();
+      protocols.push(protocol);
+      await writeJsonFile("protocols.json", protocols);
+
+      const allItems = await this.getProtocolItems();
+      const newItems = items.map((item, idx) => ({
+        ...item,
+        id: `pi_${protocol.id}_${idx}`,
+        protocolId: protocol.id,
+      }));
+      allItems.push(...newItems);
+      await writeJsonFile("protocol_items.json", allItems);
+      return protocol;
+    }
+
+    try {
+      await client.spreadsheets.values.append({
+        spreadsheetId,
+        range: "Protocolos!A2",
+        valueInputOption: "RAW",
+        requestBody: {
+          values: [[
+            protocol.id,
+            protocol.name,
+            protocol.indications,
+            protocol.contraindications,
+            protocol.recommendedSessions,
+            protocol.notes,
+            protocol.active ? "TRUE" : "FALSE"
+          ]]
+        }
+      });
+
+      if (items.length > 0) {
+        const values = items.map((item, idx) => [
+          `pi_${protocol.id}_${idx}`,
+          protocol.id,
+          item.productId,
+          item.standardQuantity,
+          item.unitName,
+          item.optional ? "TRUE" : "FALSE"
+        ]);
+        await client.spreadsheets.values.append({
+          spreadsheetId,
+          range: "Protocolo_Items!A2",
+          valueInputOption: "RAW",
+          requestBody: {
+            values
+          }
+        });
+      }
+      return protocol;
+    } catch (err) {
+      console.error("Error writing protocol to Sheets:", err);
+      const protocols = await this.getProtocols();
+      protocols.push(protocol);
+      await writeJsonFile("protocols.json", protocols);
+      return protocol;
+    }
+  },
+
   // --- HISTORIAL CLÍNICO ---
   async getClinicalRecords(): Promise<ClinicalRecord[]> {
     const client = getSheetsClient();
@@ -612,17 +1271,15 @@ export const db = {
       return readJsonFile<ClinicalRecord[]>("clinical_records.json", mockClinicalRecords);
     }
     try {
-      // 1. Fetch Fichas_Medicas
       const responseSheets = await client.spreadsheets.values.get({
         spreadsheetId,
         range: "Fichas_Medicas!A2:D1000",
       });
       const sheetRows = normalizeRows(responseSheets.data.values);
 
-      // 2. Fetch Tratamientos_Aplicados
       const responseTreatments = await client.spreadsheets.values.get({
         spreadsheetId,
-        range: "Tratamientos_Aplicados!A2:H1000",
+        range: "Tratamientos_Aplicados!A2:M1000",
       });
       const treatmentRows = normalizeRows(responseTreatments.data.values);
 
@@ -635,6 +1292,11 @@ export const db = {
         productQuantityUsed: row[5] ? Number(row[5]) : undefined,
         details: row[6] || "",
         date: row[7] || "",
+        lotUsedId: row[8] || undefined,
+        lotNumberUsed: row[9] || undefined,
+        adverseEvent: row[10] || "",
+        consentStatus: (row[11] as TreatmentApplied["consentStatus"]) || "No Aplica",
+        priceChargedCop: row[12] ? Number(row[12]) : 0,
       }));
 
       return sheetRows.map((row) => {
@@ -684,7 +1346,6 @@ export const db = {
           treatmentsApplied: [],
         };
 
-        // Append empty row for patient in Fichas_Medicas
         await client.spreadsheets.values.append({
           spreadsheetId,
           range: "Fichas_Medicas!A2",
@@ -741,7 +1402,6 @@ export const db = {
     }
 
     try {
-      // Find row number in Fichas_Medicas
       const responseSheets = await client.spreadsheets.values.get({
         spreadsheetId,
         range: "Fichas_Medicas!A2:A1000",
@@ -750,7 +1410,6 @@ export const db = {
       const index = ids.indexOf(patientId);
 
       if (index === -1) {
-        // Append row
         await client.spreadsheets.values.append({
           spreadsheetId,
           range: "Fichas_Medicas!A2",
@@ -760,7 +1419,6 @@ export const db = {
           }
         });
       } else {
-        // Update row (B to D columns)
         const rowNum = index + 2;
         await client.spreadsheets.values.update({
           spreadsheetId,
@@ -807,8 +1465,16 @@ export const db = {
       const product = inventory.find((p) => p.id === treatment.productUsedId);
       if (product) {
         productNameUsed = product.name;
-        // Descontamos de inventario
-        await this.deductInventoryStock(treatment.productUsedId, treatment.productQuantityUsed || 1);
+      }
+    }
+
+    let lotNumberUsed: string | undefined = undefined;
+    if (treatment.lotUsedId) {
+      const lots = await this.getLots();
+      const lot = lots.find((l) => l.id === treatment.lotUsedId);
+      if (lot) {
+        lotNumberUsed = lot.lotNumber;
+        await this.deductLotStock(treatment.lotUsedId, treatment.productQuantityUsed || 1);
       }
     }
 
@@ -831,6 +1497,7 @@ export const db = {
         id: treatmentId,
         date: dateStr,
         productNameUsed,
+        lotNumberUsed,
       };
 
       record.treatmentsApplied.push(newTreatment);
@@ -839,7 +1506,6 @@ export const db = {
     }
 
     try {
-      // Append row to Tratamientos_Aplicados
       await client.spreadsheets.values.append({
         spreadsheetId,
         range: "Tratamientos_Aplicados!A2",
@@ -853,7 +1519,12 @@ export const db = {
             productNameUsed || "",
             treatment.productQuantityUsed || 0,
             treatment.details,
-            dateStr
+            dateStr,
+            treatment.lotUsedId || "",
+            lotNumberUsed || "",
+            treatment.adverseEvent || "",
+            treatment.consentStatus || "No Aplica",
+            treatment.priceChargedCop || 0
           ]]
         }
       });
@@ -879,9 +1550,112 @@ export const db = {
         id: treatmentId,
         date: dateStr,
         productNameUsed,
+        lotNumberUsed,
       };
 
       record.treatmentsApplied.push(newTreatment);
+      await writeJsonFile("clinical_records.json", records);
+      return record;
+    }
+  },
+
+  async updateTreatmentApplied(
+    patientId: string,
+    treatmentId: string,
+    updated: Omit<TreatmentApplied, "id" | "date">
+  ): Promise<ClinicalRecord> {
+    const client = getSheetsClient();
+    const records = await this.getClinicalRecords();
+    const record = records.find((r) => r.patientId === patientId);
+    if (!record) throw new Error("Record not found");
+
+    const index = record.treatmentsApplied.findIndex((t) => t.id === treatmentId);
+    if (index === -1) throw new Error("Treatment not found");
+
+    const oldTreatment = record.treatmentsApplied[index];
+
+    // Return old stock if it was used
+    if (oldTreatment.lotUsedId && oldTreatment.productQuantityUsed) {
+      await this.adjustLotStockDirect(oldTreatment.lotUsedId, oldTreatment.productQuantityUsed);
+    }
+
+    // Deduct new stock
+    let productNameUsed: string | undefined = undefined;
+    if (updated.productUsedId) {
+      const inventory = await this.getInventory();
+      const product = inventory.find((p) => p.id === updated.productUsedId);
+      if (product) {
+        productNameUsed = product.name;
+      }
+    }
+
+    let lotNumberUsed: string | undefined = undefined;
+    if (updated.lotUsedId) {
+      const lots = await this.getLots();
+      const lot = lots.find((l) => l.id === updated.lotUsedId);
+      if (lot) {
+        lotNumberUsed = lot.lotNumber;
+        await this.deductLotStock(updated.lotUsedId, updated.productQuantityUsed || 1);
+      }
+    }
+
+    const updatedTreatment: TreatmentApplied = {
+      ...oldTreatment,
+      treatmentName: updated.treatmentName,
+      productUsedId: updated.productUsedId || undefined,
+      productNameUsed,
+      productQuantityUsed: updated.productUsedId ? updated.productQuantityUsed : undefined,
+      details: updated.details,
+      lotUsedId: updated.lotUsedId || undefined,
+      lotNumberUsed,
+      adverseEvent: updated.adverseEvent || "",
+      consentStatus: updated.consentStatus || "No Aplica",
+      priceChargedCop: updated.priceChargedCop || 0,
+    };
+
+    if (!client) {
+      record.treatmentsApplied[index] = updatedTreatment;
+      await writeJsonFile("clinical_records.json", records);
+      return record;
+    }
+
+    try {
+      const response = await client.spreadsheets.values.get({
+        spreadsheetId,
+        range: "Tratamientos_Aplicados!A2:A2000",
+      });
+      const ids = normalizeRows(response.data.values).map((r) => r[0]);
+      const sheetIndex = ids.indexOf(treatmentId);
+
+      if (sheetIndex !== -1) {
+        const rowNum = sheetIndex + 2;
+        await client.spreadsheets.values.update({
+          spreadsheetId,
+          range: `Tratamientos_Aplicados!A${rowNum}:M${rowNum}`,
+          valueInputOption: "RAW",
+          requestBody: {
+            values: [[
+              treatmentId,
+              patientId,
+              updatedTreatment.treatmentName,
+              updatedTreatment.productUsedId || "",
+              updatedTreatment.productNameUsed || "",
+              updatedTreatment.productQuantityUsed || 0,
+              updatedTreatment.details,
+              updatedTreatment.date,
+              updatedTreatment.lotUsedId || "",
+              updatedTreatment.lotNumberUsed || "",
+              updatedTreatment.adverseEvent || "",
+              updatedTreatment.consentStatus || "No Aplica",
+              updatedTreatment.priceChargedCop || 0
+            ]]
+          }
+        });
+      }
+      return this.getPatientClinicalRecord(patientId);
+    } catch (err) {
+      console.error("Error updating treatment in Sheets:", err);
+      record.treatmentsApplied[index] = updatedTreatment;
       await writeJsonFile("clinical_records.json", records);
       return record;
     }

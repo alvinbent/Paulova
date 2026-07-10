@@ -9,6 +9,8 @@ export default async function DoctorDashboard() {
   const patients = await db.getPatients();
   const appointments = await db.getAppointments();
   const inventory = await db.getInventory();
+  const lots = await db.getLots();
+  const clinicalRecords = await db.getClinicalRecords();
 
   const todayStr = new Date().toISOString().split("T")[0];
   const todayAppointments = appointments.filter((a) => a.date === todayStr);
@@ -17,6 +19,36 @@ export default async function DoctorDashboard() {
     .sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`))
     .slice(0, 6);
   const lowStockItems = inventory.filter((item) => item.units <= item.minUnits);
+
+  // Expiring lots alerts (Vencen en <= 90 días o bloqueados)
+  const today = new Date();
+  const ninetyDaysFromNow = new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000);
+  const expiringLots = lots.filter((lot) => {
+    if (lot.status === "bloqueo") return true;
+    if (lot.currentQty === 0 || lot.status === "agotado") return false;
+    const expiry = new Date(lot.expiryDate);
+    return expiry <= ninetyDaysFromNow;
+  });
+
+  // Calculate profitability and margins
+  const allTreatments = clinicalRecords.flatMap((r) => r.treatmentsApplied || []);
+  const treatmentsWithMargin = allTreatments.map((t) => {
+    let cost = 0;
+    if (t.lotUsedId && t.productQuantityUsed) {
+      const lot = lots.find((l) => l.id === t.lotUsedId);
+      if (lot) {
+        cost = lot.costUnitCop * t.productQuantityUsed;
+      }
+    }
+    const price = t.priceChargedCop || 0;
+    const profit = price - cost;
+    const marginPercent = price > 0 ? (profit / price) * 100 : 0;
+    return { ...t, cost, profit, marginPercent };
+  }).filter((t) => t.priceChargedCop !== undefined && t.priceChargedCop > 0);
+
+  const totalRevenue = treatmentsWithMargin.reduce((sum, t) => sum + (t.priceChargedCop || 0), 0);
+  const totalCost = treatmentsWithMargin.reduce((sum, t) => sum + t.cost, 0);
+  const avgMargin = totalRevenue > 0 ? ((totalRevenue - totalCost) / totalRevenue) * 100 : 0;
 
   const patientAlerts = [
     {
@@ -51,11 +83,18 @@ export default async function DoctorDashboard() {
       note: "Insumos por revisar",
     },
     {
-      label: "Seguimientos",
-      value: patientAlerts.length,
-      href: "/doctor/dashboard",
-      icon: "forum",
-      note: "Pacientes con alerta",
+      label: "Margen Clínico",
+      value: `${avgMargin.toFixed(0)}%`,
+      href: "/doctor/inventario",
+      icon: "trending_up",
+      note: `Utilidad: $${(totalRevenue - totalCost).toLocaleString()} COP`,
+    },
+    {
+      label: "Lotes Alertas",
+      value: expiringLots.length,
+      href: "/doctor/inventario",
+      icon: "warning",
+      note: "Vencimiento o bloqueos",
     },
   ];
 
@@ -95,7 +134,7 @@ export default async function DoctorDashboard() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {metrics.map((metric) => (
           <Link
             key={metric.label}
@@ -343,7 +382,115 @@ export default async function DoctorDashboard() {
               </ul>
             )}
           </div>
+
+          {/* Widget: Alertas de Lotes y Vencimientos (INVIMA) */}
+          <div className="paunova-card rounded-[2rem] p-5 md:p-6">
+            <div className="mb-5 border-b border-[#b99862]/16 pb-5">
+              <p className="paunova-kicker text-red-600 font-bold">Trazabilidad INVIMA</p>
+              <h2 className="paunova-title mt-1 text-2xl">Lotes y Vencimientos</h2>
+            </div>
+
+            {expiringLots.length === 0 ? (
+              <div className="paunova-inner rounded-[1.35rem] p-5 text-center bg-emerald-50/50 border border-emerald-100">
+                <span className="material-symbols-outlined mx-auto mb-2 block text-3xl text-emerald-600">
+                  check_circle
+                </span>
+                <p className="text-xs font-semibold text-emerald-700">
+                  Todos los lotes se encuentran activos y vigentes.
+                </p>
+              </div>
+            ) : (
+              <ul className="space-y-3">
+                {expiringLots.slice(0, 5).map((lot) => {
+                  const prod = inventory.find((p) => p.id === lot.productId);
+                  const isBlocked = lot.status === "bloqueo";
+                  
+                  const expiry = new Date(lot.expiryDate);
+                  const daysDiff = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 3600 * 24));
+                  
+                  let label = `Vence en ${daysDiff} días`;
+                  let badgeCss = "bg-amber-50 text-amber-700 border border-amber-200";
+                  
+                  if (isBlocked) {
+                    label = "Bloqueado";
+                    badgeCss = "bg-red-100 text-red-800 border border-red-200";
+                  } else if (daysDiff <= 0) {
+                    label = "Vencido";
+                    badgeCss = "bg-red-50 text-red-700 border border-red-200 animate-pulse";
+                  } else if (daysDiff <= 30) {
+                    label = `Urgente: ${daysDiff}d`;
+                    badgeCss = "bg-red-50 text-red-600 border border-red-100 font-bold";
+                  }
+
+                  return (
+                    <li
+                      key={lot.id}
+                      className="flex items-center justify-between gap-3 rounded-[1.15rem] bg-white p-3 ring-1 ring-[#b99862]/16"
+                    >
+                      <div>
+                        <p className="text-sm font-semibold text-[#1d1c19]">{prod ? prod.name : lot.productId}</p>
+                        <p className="mt-1 font-mono text-[9px] text-[#9b8a76]">
+                          LOTE: {lot.lotNumber} | Stock: {lot.currentQty}
+                        </p>
+                      </div>
+                      <span className={`rounded-full px-2.5 py-1 text-[9px] uppercase tracking-wider font-semibold ${badgeCss}`}>
+                        {label}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
         </div>
+      </section>
+
+      {/* New Section: Margins and Profitability */}
+      <section className="paunova-card rounded-[2rem] p-5 md:p-6">
+        <div className="mb-5 border-b border-[#b99862]/16 pb-5">
+          <p className="paunova-kicker font-bold">Análisis Financiero</p>
+          <h2 className="paunova-title mt-1 text-2xl">Rentabilidad por Procedimiento Aplicado</h2>
+        </div>
+        
+        {treatmentsWithMargin.length === 0 ? (
+          <div className="paunova-inner rounded-[1.5rem] px-6 py-10 text-center">
+            <span className="material-symbols-outlined mx-auto mb-2 block text-3xl text-gray-400">payments</span>
+            <p className="text-xs text-gray-500 font-medium">No hay registros financieros de tratamientos con cobro aún.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px] border-collapse text-left text-xs">
+              <thead>
+                <tr className="text-[10px] font-semibold uppercase tracking-wider text-[#9b8a76] border-b border-[#b99862]/16 pb-2">
+                  <th className="py-2">Procedimiento</th>
+                  <th className="py-2">Fecha</th>
+                  <th className="py-2 text-right">Precio Cobrado</th>
+                  <th className="py-2 text-right">Costo Insumos</th>
+                  <th className="py-2 text-right">Utilidad Bruta</th>
+                  <th className="py-2 text-right">Margen</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#b99862]/12">
+                {treatmentsWithMargin.slice(0, 8).map((t) => (
+                  <tr key={t.id} className="hover:bg-[#b99862]/6 transition-all">
+                    <td className="py-3 font-semibold text-[#1d1c19]">{t.treatmentName}</td>
+                    <td className="py-3 font-mono text-gray-500">{t.date}</td>
+                    <td className="py-3 text-right font-mono font-bold text-gray-700">${(t.priceChargedCop || 0).toLocaleString()} COP</td>
+                    <td className="py-3 text-right font-mono text-red-600">${t.cost.toLocaleString()} COP</td>
+                    <td className="py-3 text-right font-mono text-emerald-700 font-bold">${t.profit.toLocaleString()} COP</td>
+                    <td className="py-3 text-right font-mono">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                        t.marginPercent > 70 ? "bg-emerald-50 text-emerald-700" : t.marginPercent > 40 ? "bg-amber-50 text-amber-700" : "bg-red-50 text-red-700"
+                      }`}>
+                        {t.marginPercent.toFixed(0)}%
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
     </div>
   );

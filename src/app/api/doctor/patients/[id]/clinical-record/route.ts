@@ -41,13 +41,40 @@ export async function POST(
         productUsedId: body.productUsedId || undefined,
         productQuantityUsed: body.productQuantityUsed ? Number(body.productQuantityUsed) : undefined,
         details: body.details || "",
+        lotUsedId: body.lotUsedId || undefined,
+        adverseEvent: body.adverseEvent || "",
+        consentStatus: body.consentStatus || "No Aplica",
+        priceChargedCop: body.priceChargedCop ? Number(body.priceChargedCop) : 0,
+      });
+
+      return NextResponse.json(updated);
+    }
+
+    if (body.type === "edit-treatment") {
+      if (!body.treatmentId) {
+        return NextResponse.json({ error: "treatmentId es requerido para editar" }, { status: 400 });
+      }
+      if (!body.treatmentName) {
+        return NextResponse.json({ error: "Nombre del tratamiento es requerido" }, { status: 400 });
+      }
+
+      const updated = await db.updateTreatmentApplied(id, body.treatmentId, {
+        treatmentName: body.treatmentName,
+        productUsedId: body.productUsedId || undefined,
+        productQuantityUsed: body.productQuantityUsed ? Number(body.productQuantityUsed) : undefined,
+        details: body.details || "",
+        lotUsedId: body.lotUsedId || undefined,
+        adverseEvent: body.adverseEvent || "",
+        consentStatus: body.consentStatus || "No Aplica",
+        priceChargedCop: body.priceChargedCop ? Number(body.priceChargedCop) : 0,
       });
 
       return NextResponse.json(updated);
     }
 
     return NextResponse.json({ error: "Tipo de operación no soportado" }, { status: 400 });
-  } catch {
-    return NextResponse.json({ error: "Error al registrar datos clínicos" }, { status: 500 });
+  } catch (error: any) {
+    console.error("Error in clinical-record POST:", error);
+    return NextResponse.json({ error: error.message || "Error al registrar datos clínicos" }, { status: 500 });
   }
 }
