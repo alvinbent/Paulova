@@ -1,6 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { google } from "googleapis";
+import { createPaunovaAppointment, getGoogleCalendarClient, getGoogleCalendarId } from "./google";
 
 const DB_DIR =
   process.env.NODE_ENV === "production"
@@ -82,6 +83,8 @@ export interface Appointment {
   treatment: string;
   status: "Programada" | "Completada" | "Cancelada";
   notes: string;
+  googleCalendarEventId?: string;
+  googleMeetUrl?: string;
 }
 
 export interface InventoryItem {
@@ -441,7 +444,7 @@ export const db = {
     try {
       const response = await client.spreadsheets.values.get({
         spreadsheetId,
-        range: "Citas!A2:H1000",
+        range: "Citas!A2:J1000",
       });
       const rows = normalizeRows(response.data.values);
       return rows.map((row) => ({
@@ -453,6 +456,8 @@ export const db = {
         treatment: row[5] || "",
         status: normalizeAppointmentStatus(row[6]),
         notes: row[7] || "",
+        googleCalendarEventId: row[8] || "",
+        googleMeetUrl: row[9] || "",
       }));
     } catch (err) {
       console.error("Error reading appointments from Sheets, using local fallback:", err);
@@ -466,9 +471,53 @@ export const db = {
   },
 
   async createAppointment(appt: Omit<Appointment, "id">): Promise<Appointment> {
+    let patientEmail: string | undefined = undefined;
+    try {
+      const patient = await this.getPatient(appt.patientId);
+      if (patient && patient.email) {
+        patientEmail = patient.email;
+      }
+    } catch (err) {
+      console.warn("Could not retrieve patient email for Calendar invite:", err);
+    }
+
+    let googleCalendarEventId: string | undefined = undefined;
+    let googleMeetUrl: string | undefined = undefined;
+
+    try {
+      const timePart = appt.time.includes(":") ? appt.time : `${appt.time}:00`;
+      const startIso = `${appt.date}T${timePart}:00`;
+      
+      const startDate = new Date(startIso);
+      const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour duration
+      
+      const startDateTimeStr = `${startIso}-05:00`;
+      const endHours = String(endDate.getHours()).padStart(2, '0');
+      const endMinutes = String(endDate.getMinutes()).padStart(2, '0');
+      const endDateTimeStr = `${appt.date}T${endHours}:${endMinutes}:00-05:00`;
+
+      const calResult = await createPaunovaAppointment({
+        patientEmail,
+        summary: `${appt.treatment} - ${appt.patientName}`,
+        description: `Cita médica en Paunova Skin & Age Clinic.\nPaciente: ${appt.patientName}\nNotas: ${appt.notes}`,
+        startDateTime: startDateTimeStr,
+        endDateTime: endDateTimeStr,
+      });
+
+      if (calResult && calResult.eventId) {
+        googleCalendarEventId = calResult.eventId;
+        googleMeetUrl = calResult.meetUrl || undefined;
+        console.log("Successfully created Google Calendar Event:", calResult.eventId);
+      }
+    } catch (err) {
+      console.error("Warning: Failed to sync appointment with Google Calendar:", err);
+    }
+
     const newAppt: Appointment = {
       ...appt,
       id: `a_${Date.now()}`,
+      googleCalendarEventId,
+      googleMeetUrl,
     };
 
     const client = getSheetsClient();
@@ -493,7 +542,9 @@ export const db = {
             newAppt.time,
             newAppt.treatment,
             newAppt.status,
-            newAppt.notes
+            newAppt.notes,
+            newAppt.googleCalendarEventId || "",
+            newAppt.googleMeetUrl || ""
           ]]
         }
       });
@@ -525,6 +576,22 @@ export const db = {
 
       const appt = appts[index];
       appt.status = status;
+
+      // Google Calendar event cancel/delete if status changes to Cancelada
+      if (status === "Cancelada" && appt.googleCalendarEventId) {
+        try {
+          const calendar = getGoogleCalendarClient();
+          if (calendar) {
+            await calendar.events.delete({
+              calendarId: getGoogleCalendarId(),
+              eventId: appt.googleCalendarEventId,
+            });
+            console.log("Deleted Google Calendar event for cancelled appointment:", appt.googleCalendarEventId);
+          }
+        } catch (err) {
+          console.error("Warning: Failed to delete Google Calendar event:", err);
+        }
+      }
 
       // Update G column (status)
       const rowNum = index + 2;

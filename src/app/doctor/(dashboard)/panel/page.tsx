@@ -286,20 +286,48 @@ export default async function DoctorDashboard() {
                           {appt.patientName}
                         </Link>
                       </td>
-                      <td className="py-4 text-[#746b61]">{appt.treatment}</td>
+                      <td className="py-4 text-[#746b61]">
+                        <div>{appt.treatment}</div>
+                        {appt.googleMeetUrl && (
+                          <div className="mt-1 flex">
+                            <a
+                              href={appt.googleMeetUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1 text-[10px] text-blue-600 hover:underline font-semibold"
+                            >
+                              <span className="material-symbols-outlined text-xs">video_call</span>
+                              <span>Enlace Meet</span>
+                            </a>
+                          </div>
+                        )}
+                      </td>
                       <td className="py-4">
                         <span className="rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-emerald-700 ring-1 ring-emerald-100">
                           {appt.status}
                         </span>
                       </td>
                       <td className="py-4 text-right">
-                        <Link
-                          href={`/doctor/pacientes/${appt.patientId}`}
-                          className="inline-flex items-center gap-1 text-xs font-semibold text-[#b99862] transition-colors hover:text-[#5f4f42]"
-                        >
-                          <span>Expediente</span>
-                          <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                        </Link>
+                        <div className="inline-flex items-center gap-3 justify-end w-full">
+                          {appt.googleMeetUrl && (
+                            <a
+                              href={appt.googleMeetUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center justify-center p-1.5 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition-all"
+                              title="Unirse a Google Meet"
+                            >
+                              <span className="material-symbols-outlined text-base">video_call</span>
+                            </a>
+                          )}
+                          <Link
+                            href={`/doctor/pacientes/${appt.patientId}`}
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-[#b99862] transition-colors hover:text-[#5f4f42]"
+                          >
+                            <span>Expediente</span>
+                            <span className="material-symbols-outlined text-sm">chevron_right</span>
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   ))}

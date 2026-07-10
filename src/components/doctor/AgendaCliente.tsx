@@ -17,6 +17,8 @@ interface Appointment {
   treatment: string;
   status: "Programada" | "Completada" | "Cancelada";
   notes: string;
+  googleCalendarEventId?: string;
+  googleMeetUrl?: string;
 }
 
 const treatmentOptions = [
@@ -192,7 +194,22 @@ export default function AgendaCliente({
                         {appt.patientName}
                       </Link>
                     </td>
-                    <td className="px-6 py-4 text-[#88705e]">{appt.treatment}</td>
+                    <td className="px-6 py-4 text-[#88705e]">
+                      <div>{appt.treatment}</div>
+                      {appt.googleMeetUrl && (
+                        <div className="mt-1">
+                          <a
+                            href={appt.googleMeetUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-[10px] text-blue-600 hover:underline font-semibold"
+                          >
+                            <span className="material-symbols-outlined text-xs">video_call</span>
+                            <span>Enlace Meet</span>
+                          </a>
+                        </div>
+                      )}
+                    </td>
                     <td className="px-6 py-4 text-gray-500 max-w-[200px] truncate" title={appt.notes}>
                       {appt.notes || "-"}
                     </td>
@@ -210,6 +227,17 @@ export default function AgendaCliente({
                     <td className="px-6 py-4 text-right">
                       {appt.status === "Programada" && (
                         <div className="flex justify-end gap-2">
+                          {appt.googleMeetUrl && (
+                            <a
+                              href={appt.googleMeetUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="bg-blue-500 hover:bg-blue-600 text-white p-1.5 rounded-lg transition-all"
+                              title="Unirse a Google Meet"
+                            >
+                              <span className="material-symbols-outlined text-sm block">video_call</span>
+                            </a>
+                          )}
                           <button
                             onClick={() => handleStatusChange(appt.id, "Completada")}
                             className="bg-emerald-500 hover:bg-emerald-600 text-white p-1.5 rounded-lg transition-all"
