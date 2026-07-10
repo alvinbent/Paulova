@@ -430,3 +430,11 @@ Traducción completa y normalización de la estructura de archivos, rutas de API
 
 **Status**:
 Completado y verificado. Listo para auditoría final por Codex. Handoff exitoso.
+
+---
+
+## Tareas de Pre-producción y Entrega Final
+
+- [ ] **Migración de Facturación de OpenAI**: Cambiar la forma de pago/cuenta bancaria personal a la cuenta corporativa del cliente para el consumo de las APIs de OpenAI asociadas a la cuenta `paunovacliic@gmail.com`.
+- [ ] **Credenciales de WhatsApp en Vercel**: Introducir tokens reales y permanentes de Meta Business en las variables de entorno de Vercel.
+- [ ] **Restablecer Seguridad del Panel Privado**: Desactivar el bypass automático de pruebas (temporizador de 5 segundos) y rehabilitar el login con usuario/contraseña seguros para la ruta `/doctor/panel`.

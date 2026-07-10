@@ -43,3 +43,11 @@ secrets/
 *.credentials.json
 service-account*.json
 paunova-skin-age-clinic-*.json
+
+# Variables y credenciales privadas
+.env
+.env.local
+.env*.local
+*.pem
+credentials/
+secrets/
