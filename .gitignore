@@ -14,3 +14,32 @@ coverage/
 Thumbs.db
 .stitch-cache/
 .dev-db/
+
+# =====================================
+# Variables de entorno
+# =====================================
+
+.env
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
+.env*.local
+
+# =====================================
+# Credenciales Google
+# =====================================
+
+google-service-account.json
+credentials/
+secrets/
+
+# =====================================
+# Cualquier JSON de credenciales
+# (NO usar si tu proyecto necesita subir
+# otros archivos .json importantes)
+# =====================================
+
+*.credentials.json
+service-account*.json
+paunova-skin-age-clinic-*.json

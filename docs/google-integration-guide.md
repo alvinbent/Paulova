@@ -64,31 +64,53 @@ Abre tu archivo local de variables de entorno `.env.local` (y en el panel de Ver
 
 ```env
 # ID del libro de base de datos en Google Sheets
-GOOGLE_SHEETS_SPREADSHEET_ID="Pegar_ID_Del_Sheet_Aqui"
+GOOGLE_SPREADSHEET_ID="Pegar_ID_Del_Sheet_Aqui"
 
 # ID del calendario para agendar citas
 GOOGLE_CALENDAR_ID="paunovaclinic@gmail.com"
 
 # Credenciales de la Cuenta de Servicio de Google (Copiar directamente del archivo JSON descargado)
-GOOGLE_SERVICE_ACCOUNT_EMAIL="paunova-db-sync@paunova-digital-clinic.iam.gserviceaccount.com"
-GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n..."
+GOOGLE_CLIENT_EMAIL="paunova-db-sync@paunova-digital-clinic.iam.gserviceaccount.com"
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n..."
 ```
 
 ---
 
 ## Cómo funciona la generación de links de Google Meet
 
-Cuando agendemos una cita en la base de datos, el backend utilizará la API de Google Calendar para registrar el evento. En la petición de creación del evento en el calendario, agregaremos este parámetro:
+Cuando agendemos una cita en la base de datos, el backend utilizará la API de Google Calendar para registrar el evento. Para crear una reunión nueva de Google Meet, no se debe reutilizar un enlace existente ni usar el mecanismo antiguo `eventHangout`.
+
+Cada evento debe enviar `conferenceDataVersion: 1` en la llamada `calendar.events.insert` y solicitar la conferencia con `conferenceData.createRequest`, usando un `requestId` único por evento.
 
 ```javascript
+import { randomUUID } from "crypto";
+
+const response = await calendar.events.insert({
+  calendarId: process.env.GOOGLE_CALENDAR_ID,
+  conferenceDataVersion: 1,
+  sendUpdates: "all",
+  requestBody: {
+    summary: "Consulta - Dra Carolina Aguirre",
+    description: "Cita de Dra Carolina Aguirre - Paunova Skin & Age Clinic.",
+    start: {
+      dateTime: "2026-07-15T10:00:00-05:00",
+      timeZone: "America/Bogota",
+    },
+    end: {
+      dateTime: "2026-07-15T11:00:00-05:00",
+      timeZone: "America/Bogota",
+    },
+    attendees: [{ email: "correo-del-paciente@example.com" }],
 conferenceData: {
   createRequest: {
-    requestId: "identificador-unico-de-cita",
+        requestId: randomUUID(),
     conferenceSolutionKey: {
-      type: "eventHangout" // Esto le indica a Google que cree un enlace de Google Meet
-    }
-  }
-}
+          type: "hangoutsMeet",
+        },
+      },
+    },
+  },
+});
 ```
 
-Google procesará la solicitud, creará el evento en la agenda oficial y devolverá la URL de **Google Meet** autogenerada. Esa URL se guardará automáticamente en nuestra hoja de cálculo de `Citas` y se enviará por WhatsApp al paciente para su teleconsulta.
+Google procesará la solicitud, creará el evento en la agenda oficial y devolverá la URL de **Google Meet** autogenerada en `response.data.hangoutLink` o en `response.data.conferenceData.entryPoints`. Esa URL se guardará automáticamente en nuestra hoja de cálculo de `Citas` y se enviará por WhatsApp al paciente para su teleconsulta.
