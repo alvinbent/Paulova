@@ -1,8 +1,40 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
 import { Patient, ClinicalRecord, InventoryItem, Lot, Protocol, ProtocolItem, TreatmentApplied } from "@/lib/db";
+import IconoDoctor from "@/components/doctor/IconoDoctor";
+
+type DictationResultEvent = {
+  resultIndex: number;
+  results: ArrayLike<{
+    isFinal: boolean;
+    0: {
+      transcript: string;
+    };
+  }>;
+};
+
+type DictationRecognition = {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  onresult: ((event: DictationResultEvent) => void) | null;
+  onerror: (() => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+};
+
+type DictationRecognitionConstructor = new () => DictationRecognition;
+
+declare global {
+  interface Window {
+    SpeechRecognition?: DictationRecognitionConstructor;
+    webkitSpeechRecognition?: DictationRecognitionConstructor;
+    _recognitionInstance?: DictationRecognition | null;
+  }
+}
 
 export default function PacienteCliente({
   patient,
@@ -50,8 +82,6 @@ export default function PacienteCliente({
   const [priceChargedCop, setPriceChargedCop] = useState<number>(0);
   const [adverseEvent, setAdverseEvent] = useState("");
   const [consentStatus, setConsentStatus] = useState<TreatmentApplied["consentStatus"]>("No Aplica");
-
-  const activeLots = lots.filter((lot) => lot.productId === productUsedId && lot.status === "activo" && lot.currentQty > 0);
 
   // Patient allergy safety check
   const getSafetyWarning = () => {
@@ -232,7 +262,7 @@ export default function PacienteCliente({
 
   // Voice dictation handlers
   const startRecording = () => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       setNotice("El dictado por voz no está soportado en este navegador. Usa Chrome o Edge.");
       return;
@@ -244,7 +274,7 @@ export default function PacienteCliente({
       rec.continuous = true;
       rec.interimResults = true;
 
-      rec.onresult = (event: any) => {
+      rec.onresult = (event: DictationResultEvent) => {
         let interimTranscript = "";
         let finalTranscript = "";
         for (let i = event.resultIndex; i < event.results.length; ++i) {
@@ -266,20 +296,20 @@ export default function PacienteCliente({
       };
 
       rec.start();
-      (window as any)._recognitionInstance = rec;
+      window._recognitionInstance = rec;
       setRecording(true);
       setTranscriptionText("");
-    } catch (err) {
+    } catch {
       setNotice("No se pudo iniciar el dictado.");
     }
   };
 
   const stopRecording = () => {
-    if ((window as any)._recognitionInstance) {
+    if (window._recognitionInstance) {
       try {
-        (window as any)._recognitionInstance.stop();
+        window._recognitionInstance.stop();
       } catch {}
-      (window as any)._recognitionInstance = null;
+      window._recognitionInstance = null;
     }
     setRecording(false);
   };
@@ -356,7 +386,7 @@ export default function PacienteCliente({
           href="/doctor/pacientes"
           className="text-[#c5a880] hover:text-[#6d5847] text-xs font-semibold uppercase tracking-wider transition-all inline-flex items-center gap-1 active:scale-[0.98]"
         >
-          <span className="material-symbols-outlined text-xs">arrow_back</span>
+          <IconoDoctor name="arrow_back" className="h-3.5 w-3.5" />
           <span>Volver a Pacientes</span>
         </Link>
 
@@ -373,14 +403,14 @@ export default function PacienteCliente({
               href={`/doctor/pacientes/${patient.id}/consultas/nueva`}
               className="paunova-button-secondary px-4 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
             >
-              <span className="material-symbols-outlined text-sm">mic</span>
+              <IconoDoctor name="mic" className="h-4 w-4" />
               <span>Nueva consulta</span>
             </Link>
             <button
               onClick={openNewTreatmentModal}
               className="paunova-button-primary px-4 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold transition-all flex items-center gap-2 active:scale-[0.98]"
             >
-              <span className="material-symbols-outlined text-sm">vaccines</span>
+              <IconoDoctor name="vaccines" className="h-4 w-4" />
               <span>Registrar Tratamiento</span>
             </button>
           </div>
@@ -402,18 +432,18 @@ export default function PacienteCliente({
             <h3 className="paunova-title text-lg border-b border-[#d2c4bb]/10 pb-2">Datos Personales</h3>
             <ul className="space-y-3 text-xs font-sans text-gray-600">
               <li className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-sm text-[#c5a880]">phone</span>
+                <IconoDoctor name="phone" className="h-4 w-4 text-[#c5a880]" />
                 <span>{patient.phone}</span>
               </li>
               {patient.email && (
                 <li className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm text-[#c5a880]">mail</span>
+                  <IconoDoctor name="mail" className="h-4 w-4 text-[#c5a880]" />
                   <span className="truncate" title={patient.email}>{patient.email}</span>
                 </li>
               )}
               {patient.birthday && (
                 <li className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm text-[#c5a880]">cake</span>
+                  <IconoDoctor name="cake" className="h-4 w-4 text-[#c5a880]" />
                   <span>{patient.birthday}</span>
                 </li>
               )}
@@ -435,7 +465,7 @@ export default function PacienteCliente({
                   onClick={() => setEditInfoMode(true)}
                   className="text-xs text-[#c5a880] hover:text-[#6d5847] font-semibold flex items-center gap-0.5"
                 >
-                  <span className="material-symbols-outlined text-xs">edit</span>
+                  <IconoDoctor name="edit" className="h-3.5 w-3.5" />
                   <span>Editar</span>
                 </button>
               )}
@@ -545,7 +575,7 @@ export default function PacienteCliente({
                   : "border-transparent text-gray-400 hover:text-gray-600"
               }`}
             >
-              <span className="material-symbols-outlined text-xs">vaccines</span>
+              <IconoDoctor name="vaccines" className="h-3.5 w-3.5" />
               <span>Insumos Consumidos</span>
             </button>
           </div>
@@ -553,7 +583,7 @@ export default function PacienteCliente({
           {tab === "treatments" ? (
             record.treatmentsApplied.length === 0 ? (
               <div className="py-16 text-center text-gray-400">
-                <span className="material-symbols-outlined text-4xl block mb-2">vaccines</span>
+                <IconoDoctor name="vaccines" className="h-9 w-9 mb-2" />
                 <p className="text-xs font-sans">No se han registrado tratamientos médicos aplicados aún.</p>
               </div>
             ) : (
@@ -585,7 +615,7 @@ export default function PacienteCliente({
                             onClick={() => openEditTreatmentModal(treatment)}
                             className="opacity-0 group-hover:opacity-100 text-[#c5a880] hover:text-[#6d5847] font-semibold text-[10px] transition-all flex items-center gap-0.5 active:scale-[0.95]"
                           >
-                            <span className="material-symbols-outlined text-xs">edit</span>
+                            <IconoDoctor name="edit" className="h-3.5 w-3.5" />
                             <span>Editar</span>
                           </button>
                         </div>
@@ -625,7 +655,7 @@ export default function PacienteCliente({
             )
           ) : consumedSupplies.length === 0 ? (
             <div className="py-16 text-center text-gray-400">
-              <span className="material-symbols-outlined text-4xl block mb-2">inventory</span>
+              <IconoDoctor name="inventory" className="h-9 w-9 mb-2" />
               <p className="text-xs font-sans">Este paciente aún no registra consumo de insumos médicos.</p>
             </div>
           ) : (
@@ -678,7 +708,7 @@ export default function PacienteCliente({
                   {editingTreatmentId ? "Editar Tratamiento" : "Registrar Tratamiento"}
                 </h3>
                 <button onClick={() => setTreatmentModalOpen(false)} className="text-[#6d5847] hover:text-[#c5a880]">
-                  <span className="material-symbols-outlined text-2xl">close</span>
+                  <IconoDoctor name="close" className="h-5 w-5" />
                 </button>
               </div>
 
@@ -697,7 +727,7 @@ export default function PacienteCliente({
                     onClick={() => setDictationMode(true)}
                     className={`flex-1 py-2 rounded-lg text-center transition-all flex items-center justify-center gap-1 ${dictationMode ? "bg-[#6d5847] text-[#FDFBF7] shadow-xs" : "text-[#6d5847] hover:bg-[#c5a880]/5"}`}
                   >
-                    <span className="material-symbols-outlined text-xs">mic</span>
+                    <IconoDoctor name="mic" className="h-3.5 w-3.5" />
                     <span>Dictado por Voz (IA)</span>
                   </button>
                 </div>
@@ -719,7 +749,7 @@ export default function PacienteCliente({
                           className="w-16 h-16 rounded-full bg-red-500 text-white flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-md shadow-red-500/20 relative"
                         >
                           <span className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-25" />
-                          <span className="material-symbols-outlined text-3xl">mic_off</span>
+                          <IconoDoctor name="mic_off" className="h-7 w-7" />
                         </button>
                       ) : (
                         <button
@@ -727,7 +757,7 @@ export default function PacienteCliente({
                           onClick={startRecording}
                           className="w-16 h-16 rounded-full bg-[#6d5847] text-[#FDFBF7] flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-md shadow-[#6d5847]/20"
                         >
-                          <span className="material-symbols-outlined text-3xl">mic</span>
+                          <IconoDoctor name="mic" className="h-7 w-7" />
                         </button>
                       )}
                     </div>
@@ -766,12 +796,12 @@ export default function PacienteCliente({
                     >
                       {aiLoading ? (
                         <>
-                          <span className="material-symbols-outlined text-sm animate-spin">sync</span>
+                          <IconoDoctor name="sync" className="h-4 w-4 animate-spin" />
                           <span>Procesando Clínico con IA...</span>
                         </>
                       ) : (
                         <>
-                          <span className="material-symbols-outlined text-sm">psychology</span>
+                          <IconoDoctor name="psychology" className="h-4 w-4" />
                           <span>Generar Reporte con IA</span>
                         </>
                       )}
@@ -906,7 +936,7 @@ export default function PacienteCliente({
                       </label>
                       <select
                         value={consentStatus}
-                        onChange={(e) => setConsentStatus(e.target.value as any)}
+                        onChange={(e) => setConsentStatus(e.target.value as TreatmentApplied["consentStatus"])}
                         className="w-full bg-white border border-[#d2c4bb]/40 rounded-xl px-3 py-2 text-xs text-[#1b1c1c] focus:outline-none focus:border-[#6d5847]"
                       >
                         <option value="No Aplica">No Aplica</option>

@@ -73,8 +73,9 @@ export async function POST(
     }
 
     return NextResponse.json({ error: "Tipo de operación no soportado" }, { status: 400 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error in clinical-record POST:", error);
-    return NextResponse.json({ error: error.message || "Error al registrar datos clínicos" }, { status: 500 });
+    const message = error instanceof Error && error.message ? error.message : "Error al registrar datos clínicos";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

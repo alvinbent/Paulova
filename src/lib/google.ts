@@ -154,7 +154,7 @@ export async function createPaunovaAppointment({
     console.warn("Could not retrieve calendar metadata for allowedSolutions check, defaulting to standard event:", err);
   }
 
-  const requestBody: any = {
+  const requestBody: calendar_v3.Schema$Event = {
     summary,
     description,
     start: {

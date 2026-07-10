@@ -5,8 +5,9 @@ export async function GET() {
   try {
     const list = await db.getLots();
     return NextResponse.json(list);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Error al cargar lotes" }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error && error.message ? error.message : "Error al cargar lotes";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -35,8 +36,9 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(newLot);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Error al registrar lote" }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error && error.message ? error.message : "Error al registrar lote";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -64,7 +66,8 @@ export async function PUT(request: Request) {
     }
 
     return NextResponse.json(updated);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Error al actualizar lote" }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error && error.message ? error.message : "Error al actualizar lote";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

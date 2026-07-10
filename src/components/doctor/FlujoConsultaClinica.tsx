@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { clinicalFlow } from "@/lib/doctor-system";
+import IconoDoctor from "@/components/doctor/IconoDoctor";
 
 const sections = [
   "Motivo de consulta",
@@ -61,7 +62,7 @@ export default function FlujoConsultaClinica({
             href={`/doctor/pacientes/${patientId}`}
             className="paunova-button-secondary inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.16em]"
           >
-            <span className="material-symbols-outlined text-sm">arrow_back</span>
+            <IconoDoctor name="arrow_back" className="h-4 w-4" />
             Expediente
           </Link>
         </div>
@@ -106,9 +107,7 @@ export default function FlujoConsultaClinica({
               }`}
               aria-label={recording ? "Pausar grabacion" : "Iniciar grabacion"}
             >
-              <span className="material-symbols-outlined text-2xl">
-                {recording ? "pause" : "mic"}
-              </span>
+              <IconoDoctor name={recording ? "pause" : "mic"} className="h-5 w-5" />
             </button>
           </div>
 
@@ -165,9 +164,7 @@ export default function FlujoConsultaClinica({
               >
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[#5f4f42]">
                   {item.section}
-                  <span className="material-symbols-outlined text-base transition-transform group-open:rotate-180">
-                    expand_more
-                  </span>
+                  <IconoDoctor name="expand_more" className="h-4 w-4 transition-transform group-open:rotate-180" />
                 </summary>
                 <p className="mt-3 text-sm leading-6 text-[#746b61]">{item.value}</p>
               </details>
@@ -212,7 +209,7 @@ export default function FlujoConsultaClinica({
                 className="rounded-full p-2 text-[#5f4f42] hover:bg-[#b99862]/10"
                 aria-label="Cerrar"
               >
-                <span className="material-symbols-outlined">close</span>
+                <IconoDoctor name="close" className="h-4 w-4" />
               </button>
             </div>
             <p className="mt-4 text-sm leading-6 text-[#746b61]">

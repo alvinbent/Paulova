@@ -7,12 +7,10 @@ export default function DoctorDashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="paunova-app-shell flex flex-col md:flex-row">
+    <div className="paunova-doctor-shell min-h-dvh bg-[#eee6dc] text-[#2b2520] md:flex">
       <BarraLateral />
-      <main className="relative flex-1 w-full overflow-y-auto">
-        <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 md:px-10 md:py-10 xl:px-12">
+      <main className="relative min-w-0 flex-1 overflow-x-hidden p-6 sm:p-8">
         {children}
-        </div>
       </main>
     </div>
   );

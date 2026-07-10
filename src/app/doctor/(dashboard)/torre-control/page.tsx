@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { controlMetrics, doctorModules, integrationStates } from "@/lib/doctor-system";
+import IconoDoctor from "@/components/doctor/IconoDoctor";
 
 const toneClass = {
   gold: "bg-[#fff7e8] text-[#9a6a22] ring-[#e8c78f]/60",
@@ -39,7 +40,7 @@ export default function TorreControlPage() {
                 <p className="mt-4 font-mono text-4xl font-semibold">{metric.value}</p>
                 <p className="mt-2 text-xs leading-5 opacity-80">{metric.detail}</p>
               </div>
-              <span className="material-symbols-outlined text-3xl">{metric.icon}</span>
+              <IconoDoctor name={metric.icon} className="h-7 w-7" />
             </div>
           </article>
         ))}
@@ -59,9 +60,7 @@ export default function TorreControlPage() {
                 className="group rounded-[1.25rem] bg-white/64 p-4 ring-1 ring-[#b99862]/14 transition-all hover:-translate-y-0.5 hover:bg-[#b99862]/8"
               >
                 <div className="flex items-start gap-3">
-                  <span className="material-symbols-outlined rounded-xl bg-[#5f4f42] p-2 text-lg text-[#fffdf8]">
-                    {module.icon}
-                  </span>
+                  <IconoDoctor name={module.icon} className="h-4 w-4 rounded-xl bg-[#5f4f42] p-2 text-[#fffdf8]" />
                   <div>
                     <p className="text-sm font-semibold text-[#5f4f42]">{module.title}</p>
                     <p className="mt-1 text-xs leading-5 text-[#746b61]">{module.summary}</p>

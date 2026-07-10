@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
+import IconoDoctor from "@/components/doctor/IconoDoctor";
 
 interface Patient {
   id: string;
@@ -83,7 +84,7 @@ export default function CrmCliente({ initialPatients }: { initialPatients: Patie
             onClick={() => setModalOpen(true)}
             className="paunova-button-primary w-full px-5 py-3 rounded-full text-xs uppercase tracking-widest font-semibold transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
           >
-            <span className="material-symbols-outlined text-sm">person_add</span>
+            <IconoDoctor name="person_add" className="h-4 w-4" />
             <span>Registrar Paciente</span>
           </button>
         </div>
@@ -92,7 +93,7 @@ export default function CrmCliente({ initialPatients }: { initialPatients: Patie
       {/* Search Input */}
       <div className="max-w-lg w-full relative">
         <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-[#c5a880] pointer-events-none">
-          <span className="material-symbols-outlined text-lg">search</span>
+          <IconoDoctor name="search" className="h-4 w-4" />
         </span>
         <input
           type="text"
@@ -106,7 +107,7 @@ export default function CrmCliente({ initialPatients }: { initialPatients: Patie
       {/* Patients Grid */}
       {filteredPatients.length === 0 ? (
         <div className="paunova-card rounded-[2rem] p-12 text-center">
-          <span className="material-symbols-outlined text-4xl block mb-3 text-[#b99862]">person_search</span>
+          <IconoDoctor name="person_search" className="h-9 w-9 mb-3 text-[#b99862]" />
           <p className="text-sm font-medium text-[#5f4f42]">No se encontraron pacientes que coincidan con la búsqueda.</p>
           <p className="mt-1 text-xs text-[#746b61]">Ajusta el texto o registra un nuevo paciente.</p>
         </div>
@@ -126,18 +127,18 @@ export default function CrmCliente({ initialPatients }: { initialPatients: Patie
                 </div>
                 <div className="space-y-2 text-xs font-sans text-gray-600">
                   <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-sm text-[#c5a880]">phone</span>
+                    <IconoDoctor name="phone" className="h-4 w-4 text-[#c5a880]" />
                     <span>{patient.phone}</span>
                   </div>
                   {patient.email && (
                     <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-sm text-[#c5a880]">mail</span>
+                      <IconoDoctor name="mail" className="h-4 w-4 text-[#c5a880]" />
                       <span className="truncate">{patient.email}</span>
                     </div>
                   )}
                   {patient.birthday && (
                     <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-sm text-[#c5a880]">cake</span>
+                      <IconoDoctor name="cake" className="h-4 w-4 text-[#c5a880]" />
                       <span>{patient.birthday}</span>
                     </div>
                   )}
@@ -148,7 +149,7 @@ export default function CrmCliente({ initialPatients }: { initialPatients: Patie
                   href={`/doctor/pacientes/${patient.id}`}
                   className="paunova-button-primary w-full text-center py-2.5 rounded-full text-[10px] uppercase tracking-widest font-semibold transition-all flex items-center justify-center gap-1 active:scale-[0.98]"
                 >
-                  <span className="material-symbols-outlined text-xs">clinical_notes</span>
+                  <IconoDoctor name="clinical_notes" className="h-3.5 w-3.5" />
                   <span>Ver expediente</span>
                 </Link>
               </div>
@@ -166,13 +167,13 @@ export default function CrmCliente({ initialPatients }: { initialPatients: Patie
               <div className="flex justify-between items-center border-b border-[#d2c4bb]/20 pb-4">
                 <h3 className="paunova-title text-2xl">Registrar nuevo paciente</h3>
                 <button onClick={() => setModalOpen(false)} className="text-[#6d5847] hover:text-[#c5a880]">
-                  <span className="material-symbols-outlined text-2xl">close</span>
+                  <IconoDoctor name="close" className="h-5 w-5" />
                 </button>
               </div>
 
               {error && (
                 <div className="bg-red-50 border border-red-200/50 rounded-xl px-4 py-3 text-xs text-red-600 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm">error</span>
+                  <IconoDoctor name="error" className="h-4 w-4" />
                   <span>{error}</span>
                 </div>
               )}

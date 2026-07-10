@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+import IconoDoctor from "@/components/doctor/IconoDoctor";
 
 const logoSrc = "/brand-assets/logo-paunova-skin-age.png";
+const doctorAvatarSrc = "/brand-assets/dra-carolina-avatar.jpeg";
 
 const menuItems = [
-  { name: "Panel", href: "/doctor/panel", icon: "dashboard" },
+  { name: "Panel", href: "/doctor/dashboard", icon: "dashboard" },
   { name: "Pacientes", href: "/doctor/pacientes", icon: "group" },
   { name: "Historias", href: "/doctor/historias-clinicas", icon: "clinical_notes" },
   { name: "Agenda", href: "/doctor/agenda", icon: "calendar_today" },
@@ -18,7 +20,10 @@ const menuItems = [
   { name: "Solicitudes", href: "/doctor/solicitudes", icon: "shopping_cart" },
   { name: "Seguimientos", href: "/doctor/seguimientos", icon: "event_repeat" },
   { name: "Alertas", href: "/doctor/alertas", icon: "notifications_active" },
-  { name: "Torre Control", href: "/doctor/torre-control", icon: "monitoring" },
+  { name: "Reportes", href: "/doctor/reportes", icon: "chart" },
+  { name: "Finanzas", href: "/doctor/finanzas", icon: "money" },
+  { name: "Configuración", href: "/doctor/configuracion", icon: "settings" },
+  { name: "Torre de control", href: "/doctor/torre-control", icon: "monitoring" },
 ];
 
 export default function BarraLateral() {
@@ -39,23 +44,26 @@ export default function BarraLateral() {
   };
 
   const navList = (onNavigate?: () => void) => (
-    <ul className="space-y-1.5">
+    <ul className="space-y-1">
       {menuItems.map((item) => {
-        const isActive = pathname.startsWith(item.href);
+        const isActive =
+          pathname.startsWith(item.href) ||
+          (item.href === "/doctor/dashboard" && pathname.startsWith("/doctor/panel"));
         return (
           <li key={item.href}>
             <Link
               href={item.href}
               onClick={onNavigate}
-              className={`group flex items-center gap-3 rounded-2xl px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.16em] transition-all duration-300 active:scale-[0.98] ${
+              className={`group flex items-center gap-3 rounded-2xl px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.14em] ${
                 isActive
-                  ? "paunova-button-primary"
-                  : "text-[#5f4f42] hover:bg-[#b99862]/10 hover:text-[#7c6756]"
+                  ? "bg-[#c7aca1] text-[#2b2520]"
+                  : "text-[#d8ccc0] hover:bg-white/8 hover:text-[#fffaf4]"
               }`}
             >
-              <span className="material-symbols-outlined text-lg transition-transform duration-300 group-hover:translate-x-0.5">
-                {item.icon}
-              </span>
+              <IconoDoctor
+                name={item.icon}
+                className="h-5 w-5 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5"
+              />
               <span>{item.name}</span>
             </Link>
           </li>
@@ -66,102 +74,98 @@ export default function BarraLateral() {
 
   return (
     <>
-      <header className="sticky top-0 z-30 flex w-full items-center justify-between border-b border-[#b99862]/20 bg-[#fffdf8]/92 px-5 py-4 backdrop-blur-md md:hidden">
+      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-[#d8ccc0]/60 bg-[#2b2520] px-4 py-3 backdrop-blur-xl md:hidden">
         <Image
           src={logoSrc}
           alt="Paunova Skin & Age Clinic"
-          width={420}
-          height={120}
+          width={360}
+          height={104}
           priority
-          className="h-auto w-[238px] max-w-[64vw] object-contain drop-shadow-[0_18px_26px_rgba(95,79,66,0.18)]"
+          className="h-auto w-48 object-contain"
         />
         <button
+          type="button"
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="rounded-full p-2 text-[#5f4f42] transition-colors hover:bg-[#b99862]/10 focus:outline-none focus:ring-4 focus:ring-[#b99862]/18 active:scale-[0.96]"
-          aria-label="Abrir menú"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-[#2b2520] text-[#fffaf4]"
+          aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
         >
-          <span className="material-symbols-outlined text-2xl">
-            {mobileOpen ? "close" : "menu"}
-          </span>
+          <IconoDoctor name={mobileOpen ? "close" : "menu"} className="h-5 w-5" />
         </button>
       </header>
 
       {mobileOpen && (
-        <div className="fixed inset-0 z-40 flex md:hidden">
-          <div
-            className="fixed inset-0 bg-[#1d1c19]/42 backdrop-blur-sm"
+        <div className="fixed inset-0 z-50 md:hidden">
+          <button
+            type="button"
+            className="fixed inset-0 bg-[#1d1c19]/50 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
+            aria-label="Cerrar menú"
           />
-          <nav className="relative z-50 flex h-full w-80 max-w-[90vw] flex-col justify-between border-r border-[#b99862]/22 bg-[#fffdf8] p-6 shadow-[0_40px_90px_-46px_rgba(29,28,25,0.88)]">
-            <div className="space-y-8">
-              <div className="border-b border-[#b99862]/18 pb-6">
-                <Image
-                  src={logoSrc}
-                  alt="Paunova Skin & Age Clinic"
-                  width={520}
-                  height={148}
-                  className="h-auto w-full max-w-[292px] object-contain drop-shadow-[0_18px_28px_rgba(95,79,66,0.2)]"
-                />
-                <p className="paunova-kicker mt-4">Portal médico</p>
+          <aside className="relative flex h-full w-[min(270px,86vw)] flex-col bg-[#2b2520] p-4 text-[#fffaf4] shadow-2xl">
+            <div className="flex h-full flex-col justify-between">
+              <div className="space-y-6">
+                <div className="rounded-[28px] bg-[#fffaf4] p-4">
+                  <Image
+                    src={logoSrc}
+                    alt="Paunova Skin & Age Clinic"
+                    width={420}
+                    height={120}
+                    className="h-auto w-full object-contain"
+                  />
+                </div>
+                <nav>{navList(() => setMobileOpen(false))}</nav>
               </div>
-              <nav>{navList(() => setMobileOpen(false))}</nav>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-white/8 px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#eadbd2] hover:bg-white/12"
+              >
+                <IconoDoctor name="logout" className="h-4 w-4" />
+                <span>Cerrar sesión</span>
+              </button>
             </div>
-            <button
-              onClick={handleLogout}
-              className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-xs font-semibold uppercase tracking-wider text-[#9b3f36] transition-all hover:bg-[#9b3f36]/8 active:scale-[0.98]"
-            >
-              <span className="material-symbols-outlined text-lg">logout</span>
-              <span>Cerrar sesión</span>
-            </button>
-          </nav>
+          </aside>
         </div>
       )}
 
-      <aside className="sticky top-0 hidden h-screen w-[22rem] flex-col justify-between p-5 md:flex">
-        <div className="paunova-card flex h-full flex-col justify-between rounded-[2rem] p-5">
-          <div className="space-y-8">
-            <div className="border-b border-[#b99862]/18 pb-7">
-              <div className="paunova-inner rounded-[1.65rem] px-4 py-7">
-                <Image
-                  src={logoSrc}
-                  alt="Paunova Skin & Age Clinic"
-                  width={620}
-                  height={177}
-                  priority
-                  className="mx-auto h-auto w-full max-w-[312px] object-contain drop-shadow-[0_22px_34px_rgba(95,79,66,0.22)]"
-                />
-              </div>
-              <div className="mt-5 flex items-center justify-between gap-3">
-                <div>
-                  <p className="paunova-kicker">Cabina clínica</p>
-                  <span className="text-[11px] text-[#746b61]">
-                    Dra. Carolina Aguirre
-                  </span>
-                </div>
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold text-emerald-700 ring-1 ring-emerald-100">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  Activo
-                </span>
-              </div>
+      <aside className="sticky top-0 hidden h-screen w-[260px] shrink-0 bg-[#2b2520] p-4 text-[#fffaf4] md:block">
+        <div className="flex h-full flex-col justify-between">
+          <div className="space-y-6">
+            <div className="rounded-[28px] bg-[#fffaf4] p-4">
+              <Image
+                src={logoSrc}
+                alt="Paunova Skin & Age Clinic"
+                width={420}
+                height={120}
+                priority
+                className="h-auto w-full object-contain"
+              />
             </div>
-
-            <nav>{navList()}</nav>
-
-            <div className="paunova-inner rounded-[1.4rem] p-4 text-[11px] leading-relaxed text-[#746b61]">
-              <p className="paunova-kicker mb-2">Sistema privado</p>
-              <p>
-                Datos clinicos separados del CRM publicitario. La IA solo deja
-                borradores para revision medica.
-              </p>
-            </div>
+            <nav className="mt-8 min-h-0 flex-1 overflow-y-auto pr-1">{navList()}</nav>
           </div>
 
-          <div className="border-t border-[#b99862]/18 pt-5">
+          <div className="mt-6 rounded-[26px] bg-white/8 p-4">
+            <div className="flex items-center gap-3">
+              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-[#c7aca1] ring-1 ring-white/20">
+                <Image
+                  src={doctorAvatarSrc}
+                  alt="Dra Carolina Aguirre"
+                  width={96}
+                  height={96}
+                  className="h-full w-full object-cover object-top"
+                />
+              </div>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold">Dra. Carolina</p>
+                <p className="text-xs text-[#c7aca1]">Médico estético</p>
+              </div>
+            </div>
             <button
+              type="button"
               onClick={handleLogout}
-              className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-[10px] font-semibold uppercase tracking-widest text-[#9b3f36] transition-all duration-300 hover:bg-[#9b3f36]/8 active:scale-[0.98]"
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-white/8 px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#eadbd2] hover:bg-white/12"
             >
-              <span className="material-symbols-outlined text-lg">logout</span>
+              <IconoDoctor name="logout" className="h-4 w-4" />
               <span>Cerrar sesión</span>
             </button>
           </div>

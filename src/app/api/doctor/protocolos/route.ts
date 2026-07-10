@@ -6,8 +6,9 @@ export async function GET() {
     const protocols = await db.getProtocols();
     const items = await db.getProtocolItems();
     return NextResponse.json({ protocols, items });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Error al cargar protocolos" }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error && error.message ? error.message : "Error al cargar protocolos";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -32,7 +33,8 @@ export async function POST(request: Request) {
     }, items || []);
 
     return NextResponse.json(newProtocol);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Error al registrar protocolo" }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error && error.message ? error.message : "Error al registrar protocolo";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

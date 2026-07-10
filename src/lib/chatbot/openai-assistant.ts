@@ -1,7 +1,5 @@
 import { clinicServices, searchServiceByName } from "./servicios";
 import { db } from "../db";
-import { getGoogleCalendarClient, getGoogleCalendarId } from "../google";
-import { randomUUID } from "crypto";
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
@@ -209,7 +207,7 @@ export async function processChatbotMessage(
             occupiedSlots: occupiedTimes,
             message: "Estos horarios ya están ocupados. Ofrécele al paciente los horarios libres entre las 8:00 AM y las 5:00 PM."
           });
-        } catch (err) {
+        } catch {
           toolResult = JSON.stringify({ error: "Error consultando disponibilidad." });
         }
       } else if (functionName === "reservar_cita_clinica") {
@@ -231,7 +229,7 @@ export async function processChatbotMessage(
           });
           session.state = "completed_booking";
           await db.saveConversation(session);
-        } catch (err) {
+        } catch {
           toolResult = JSON.stringify({ error: "No se pudo agendar la cita. Error interno." });
         }
       } else if (functionName === "registrar_paciente_nuevo") {
@@ -257,7 +255,7 @@ export async function processChatbotMessage(
           session.fullName = patient.name;
           session.state = "waiting_booking";
           await db.saveConversation(session);
-        } catch (err) {
+        } catch {
           toolResult = JSON.stringify({ error: "Error registrando paciente." });
         }
       } else if (functionName === "solicitar_agente_humano") {

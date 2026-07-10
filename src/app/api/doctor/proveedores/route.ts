@@ -5,8 +5,9 @@ export async function GET() {
   try {
     const list = await db.getProviders();
     return NextResponse.json(list);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Error al cargar proveedores" }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error && error.message ? error.message : "Error al cargar proveedores";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -33,7 +34,8 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(newProvider);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Error al registrar proveedor" }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error && error.message ? error.message : "Error al registrar proveedor";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

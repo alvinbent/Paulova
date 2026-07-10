@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { db } from "@/lib/db";
+import IconoDoctor from "@/components/doctor/IconoDoctor";
 
 export const revalidate = 0;
 
@@ -33,30 +34,30 @@ export default async function DoctorPage() {
           />
 
           <div>
-            <p className="paunova-kicker mb-4">Aplicacion privada</p>
+            <p className="paunova-kicker mb-4">Aplicación privada</p>
             <h1 className="paunova-title text-5xl leading-tight md:text-6xl">
               Bienvenida, <span className="italic">Dra Carolina Aguirre</span>.
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-[#746b61]">
               Hoy tienes {todayAppointments.length} citas, {lowStock.length} alertas
               de inventario y {patients.length} expedientes activos en el sistema
-              clinico de Paunova Skin & Age Clinic.
+              clínico de Paunova Skin & Age Clinic.
             </p>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
             <Link
-              href="/doctor/panel"
+              href="/doctor/dashboard"
               className="paunova-button-primary inline-flex items-center justify-center gap-2 rounded-full px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.16em] transition-all active:scale-[0.98]"
             >
-              <span className="material-symbols-outlined text-base">dashboard</span>
+              <IconoDoctor name="dashboard" className="h-4 w-4" />
               Ingresar al panel
             </Link>
             <Link
               href="/doctor/torre-control"
               className="paunova-button-secondary inline-flex items-center justify-center gap-2 rounded-full px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.16em] transition-all active:scale-[0.98]"
             >
-              <span className="material-symbols-outlined text-base">monitoring</span>
+              <IconoDoctor name="monitoring" className="h-4 w-4" />
               Torre de control
             </Link>
           </div>
@@ -89,7 +90,7 @@ export default async function DoctorPage() {
               </div>
 
               <div className="paunova-inner rounded-[1.5rem] p-5">
-                <p className="paunova-kicker">Proxima cita</p>
+                <p className="paunova-kicker">Próxima cita</p>
                 {nextAppointment ? (
                   <div className="mt-3">
                     <p className="text-xl font-semibold text-[#5f4f42]">

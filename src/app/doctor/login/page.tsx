@@ -1,8 +1,9 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import IconoDoctor from "@/components/doctor/IconoDoctor";
 
 export default function DoctorLogin() {
   const [error, setError] = useState("");
@@ -69,7 +70,7 @@ export default function DoctorLogin() {
           ) : (
             <>
               <span>Entrar ahora</span>
-              <span className="material-symbols-outlined text-sm">login</span>
+              <IconoDoctor name="login" className="h-4 w-4" />
             </>
           )}
         </button>

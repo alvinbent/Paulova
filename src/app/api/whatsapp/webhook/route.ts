@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true });
     }
 
-    console.log(`WhatsApp Webhook: Received message from ${from}: "${textBody}"`);
+    console.log(`WhatsApp Webhook: Received message ${messageId} from ${from}: "${textBody}"`);
 
     // WhatsApp expects an immediate 200 OK response to prevent retries.
     // We trigger the processing asynchronously so it does not block the HTTP thread.

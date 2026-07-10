@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
+import IconoDoctor from "@/components/doctor/IconoDoctor";
 
 interface Patient {
   id: string;
@@ -132,7 +133,7 @@ export default function AgendaCliente({
             onClick={() => setModalOpen(true)}
             className="paunova-button-primary w-full px-5 py-3 rounded-full text-xs uppercase tracking-widest font-semibold transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
           >
-            <span className="material-symbols-outlined text-sm">edit_calendar</span>
+            <IconoDoctor name="edit_calendar" className="h-4 w-4" />
             <span>Programar Cita</span>
           </button>
         </div>
@@ -164,7 +165,7 @@ export default function AgendaCliente({
       {/* Appointments List */}
       {filteredAppointments.length === 0 ? (
         <div className="paunova-card rounded-[2rem] p-12 text-center">
-          <span className="material-symbols-outlined text-4xl block mb-3 text-[#b99862]">event_busy</span>
+          <IconoDoctor name="event_busy" className="h-9 w-9 mb-3 text-[#b99862]" />
           <p className="text-sm font-medium text-[#5f4f42]">No hay citas en este rango de selección.</p>
           <p className="mt-1 text-xs text-[#746b61]">Cambia el filtro o programa una nueva cita.</p>
         </div>
@@ -204,7 +205,7 @@ export default function AgendaCliente({
                             rel="noreferrer"
                             className="inline-flex items-center gap-1 text-[10px] text-blue-600 hover:underline font-semibold"
                           >
-                            <span className="material-symbols-outlined text-xs">video_call</span>
+                            <IconoDoctor name="video_call" className="h-3.5 w-3.5" />
                             <span>Enlace Meet</span>
                           </a>
                         </div>
@@ -235,7 +236,7 @@ export default function AgendaCliente({
                               className="bg-blue-500 hover:bg-blue-600 text-white p-1.5 rounded-lg transition-all"
                               title="Unirse a Google Meet"
                             >
-                              <span className="material-symbols-outlined text-sm block">video_call</span>
+                              <IconoDoctor name="video_call" className="h-4 w-4" />
                             </a>
                           )}
                           <button
@@ -243,14 +244,14 @@ export default function AgendaCliente({
                             className="bg-emerald-500 hover:bg-emerald-600 text-white p-1.5 rounded-lg transition-all"
                             title="Completar cita"
                           >
-                            <span className="material-symbols-outlined text-sm block">check</span>
+                            <IconoDoctor name="check" className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => handleStatusChange(appt.id, "Cancelada")}
                             className="bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-lg transition-all"
                             title="Cancelar cita"
                           >
-                            <span className="material-symbols-outlined text-sm block">close</span>
+                            <IconoDoctor name="close" className="h-4 w-4" />
                           </button>
                         </div>
                       )}
@@ -275,13 +276,13 @@ export default function AgendaCliente({
               <div className="flex justify-between items-center border-b border-[#d2c4bb]/20 pb-4">
                 <h3 className="paunova-title text-2xl">Programar nueva cita</h3>
                 <button onClick={() => setModalOpen(false)} className="text-[#6d5847] hover:text-[#c5a880]">
-                  <span className="material-symbols-outlined text-2xl">close</span>
+                  <IconoDoctor name="close" className="h-5 w-5" />
                 </button>
               </div>
 
               {error && (
                 <div className="bg-red-50 border border-red-200/50 rounded-xl px-4 py-3 text-xs text-red-600 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm">error</span>
+                  <IconoDoctor name="error" className="h-4 w-4" />
                   <span>{error}</span>
                 </div>
               )}

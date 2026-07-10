@@ -2,6 +2,9 @@
 
 import React, { useState } from "react";
 import { InventoryItem, Lot, Provider } from "@/lib/db";
+import IconoDoctor from "@/components/doctor/IconoDoctor";
+
+type InventoryTab = "catalog" | "lots" | "providers";
 
 export default function InventarioCliente({
   initialInventory,
@@ -17,7 +20,7 @@ export default function InventarioCliente({
   const [providers, setProviders] = useState<Provider[]>(initialProviders);
 
   // Navigation tabs: "catalog" | "lots" | "providers"
-  const [activeTab, setActiveTab] = useState<"catalog" | "lots" | "providers">("catalog");
+  const [activeTab, setActiveTab] = useState<InventoryTab>("catalog");
   const [searchQuery, setSearchQuery] = useState("");
 
   // Modals state
@@ -373,7 +376,7 @@ export default function InventarioCliente({
             <button
               key={id}
               onClick={() => {
-                setActiveTab(id as any);
+                setActiveTab(id as InventoryTab);
                 setSearchQuery("");
                 setNotice("");
               }}
@@ -383,7 +386,7 @@ export default function InventarioCliente({
                   : "border-transparent text-gray-400 hover:text-gray-600"
               }`}
             >
-              <span className="material-symbols-outlined text-xs">{icon}</span>
+              <IconoDoctor name={icon} className="h-3.5 w-3.5" />
               <span>{label}</span>
             </button>
           ))}
@@ -392,7 +395,7 @@ export default function InventarioCliente({
         {/* Global Tab Search & Action */}
         <div className="flex w-full sm:w-auto items-center gap-3">
           <div className="relative flex-1 sm:w-64">
-            <span className="material-symbols-outlined absolute left-3 top-2.5 text-gray-400 text-sm">search</span>
+            <IconoDoctor name="search" className="h-4 w-4 absolute left-3 top-2.5 text-gray-400" />
             <input
               type="text"
               placeholder="Buscar..."
@@ -407,7 +410,7 @@ export default function InventarioCliente({
               onClick={() => openProductModal(null)}
               className="paunova-button-primary px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5"
             >
-              <span className="material-symbols-outlined text-sm">add</span>
+              <IconoDoctor name="add" className="h-4 w-4" />
               <span>Nuevo Producto</span>
             </button>
           )}
@@ -417,7 +420,7 @@ export default function InventarioCliente({
               onClick={() => openLotModal(null)}
               className="paunova-button-primary px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5"
             >
-              <span className="material-symbols-outlined text-sm">library_add</span>
+              <IconoDoctor name="library_add" className="h-4 w-4" />
               <span>Registrar Lote</span>
             </button>
           )}
@@ -427,7 +430,7 @@ export default function InventarioCliente({
               onClick={() => openProviderModal(null)}
               className="paunova-button-primary px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5"
             >
-              <span className="material-symbols-outlined text-sm">add</span>
+              <IconoDoctor name="add" className="h-4 w-4" />
               <span>Nuevo Proveedor</span>
             </button>
           )}
@@ -485,7 +488,7 @@ export default function InventarioCliente({
                           onClick={() => openProductModal(item)}
                           className="text-[#c5a880] hover:text-[#6d5847] font-semibold transition-all inline-flex items-center gap-1 active:scale-[0.95]"
                         >
-                          <span className="material-symbols-outlined text-xs">edit</span>
+                          <IconoDoctor name="edit" className="h-3.5 w-3.5" />
                           <span>Editar</span>
                         </button>
                       </td>
@@ -542,7 +545,7 @@ export default function InventarioCliente({
                           onClick={() => openLotModal(lot)}
                           className="text-[#c5a880] hover:text-[#6d5847] font-semibold transition-all inline-flex items-center gap-1 active:scale-[0.95]"
                         >
-                          <span className="material-symbols-outlined text-xs">edit</span>
+                          <IconoDoctor name="edit" className="h-3.5 w-3.5" />
                           <span>Ajustar</span>
                         </button>
                       </td>
@@ -583,7 +586,7 @@ export default function InventarioCliente({
                         onClick={() => openProviderModal(prov)}
                         className="text-[#c5a880] hover:text-[#6d5847] font-semibold transition-all inline-flex items-center gap-1 active:scale-[0.95]"
                       >
-                        <span className="material-symbols-outlined text-xs">edit</span>
+                        <IconoDoctor name="edit" className="h-3.5 w-3.5" />
                         <span>Editar</span>
                       </button>
                     </td>
@@ -605,7 +608,7 @@ export default function InventarioCliente({
                 {selectedProduct ? "Editar Producto" : "Nuevo Producto"}
               </h3>
               <button onClick={() => setProductModalOpen(false)} className="text-[#6d5847] hover:text-[#c5a880]">
-                <span className="material-symbols-outlined text-xl">close</span>
+                <IconoDoctor name="close" className="h-5 w-5" />
               </button>
             </div>
 
@@ -639,7 +642,7 @@ export default function InventarioCliente({
                   <select
                     required
                     value={prodCategory}
-                    onChange={(e) => setProdCategory(e.target.value as any)}
+                    onChange={(e) => setProdCategory(e.target.value as InventoryItem["category"])}
                     className="w-full bg-[#FDFBF7] border border-[#d2c4bb]/40 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#6d5847]"
                   >
                     <option value="Inyectable">Inyectable</option>
@@ -768,7 +771,7 @@ export default function InventarioCliente({
                 {selectedLot ? "Ajustar Lote Físico" : "Nuevo Lote de Insumo"}
               </h3>
               <button onClick={() => setLotModalOpen(false)} className="text-[#6d5847] hover:text-[#c5a880]">
-                <span className="material-symbols-outlined text-xl">close</span>
+                <IconoDoctor name="close" className="h-5 w-5" />
               </button>
             </div>
 
@@ -913,7 +916,7 @@ export default function InventarioCliente({
                   <select
                     required
                     value={lotStatus}
-                    onChange={(e) => setLotStatus(e.target.value as any)}
+                    onChange={(e) => setLotStatus(e.target.value as Lot["status"])}
                     className="w-full bg-[#FDFBF7] border border-[#d2c4bb]/40 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#6d5847]"
                   >
                     <option value="activo">Activo</option>
@@ -968,7 +971,7 @@ export default function InventarioCliente({
                 {selectedProvider ? "Editar Proveedor" : "Nuevo Proveedor"}
               </h3>
               <button onClick={() => setProviderModalOpen(false)} className="text-[#6d5847] hover:text-[#c5a880]">
-                <span className="material-symbols-outlined text-xl">close</span>
+                <IconoDoctor name="close" className="h-5 w-5" />
               </button>
             </div>
 
