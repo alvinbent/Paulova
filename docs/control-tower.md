@@ -418,3 +418,20 @@ Reconstrucci?n y normalizaci?n visual de la aplicaci?n privada de la Dra Carolin
 - [ ] **Migraci?n de Facturaci?n de OpenAI**: Cambiar la forma de pago/cuenta bancaria personal a la cuenta corporativa del cliente para el consumo de las APIs de OpenAI asociadas a la cuenta `paunovacliic@gmail.com`.
 - [ ] **Credenciales de WhatsApp en Vercel**: Introducir tokens reales y permanentes de Meta Business en las variables de entorno de Vercel.
 - [ ] **Restablecer Seguridad del Panel Privado**: Desactivar el bypass autom?tico de pruebas y rehabilitar el login con usuario/contrase?a seguros para las rutas privadas.
+
+### Protected Area Repair - 2026-07-10 - Codex
+
+**Reason**:
+El build remoto de Vercel fallo porque Tailwind/Turbopack intento resolver una clase arbitraria de fondo con URL placeholder como un asset real.
+
+**Source of Truth**:
+Mantener la salida visual de Stitch sin reinterpretar el diseno; solo retirar el marcador tecnico que bloqueaba produccion.
+
+**Exact files changed**:
+- `public/stitch-assets/pages/quienes-somos.html`
+
+**Change**:
+- Se reemplazaron tres clases arbitrarias de fondo placeholder por `bg-soft-nude`, conservando estructura, textos, `data-alt`, opacidad y composicion.
+
+**Rollback Path**:
+- `git restore public/stitch-assets/pages/quienes-somos.html`

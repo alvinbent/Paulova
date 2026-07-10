@@ -51,3 +51,6 @@ paunova-skin-age-clinic-*.json
 *.pem
 credentials/
 secrets/
+.vercel
+.env*
+.stitch-cache/

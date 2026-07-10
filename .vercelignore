@@ -1,0 +1,6 @@
+.stitch-cache/
+.dev-db/
+.env
+.env.*
+node_modules/
+.next/
