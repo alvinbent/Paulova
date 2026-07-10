@@ -31,7 +31,7 @@ const treatmentOptions = [
   "Revitalización Profunda",
 ];
 
-export default function AgendaClient({
+export default function AgendaCliente({
   initialAppointments,
   patients,
 }: {
@@ -57,7 +57,7 @@ export default function AgendaClient({
   const handleStatusChange = async (id: string, newStatus: Appointment["status"]) => {
     setStatusError("");
     try {
-      const res = await fetch(`/api/doctor/appointments/${id}`, {
+      const res = await fetch(`/api/doctor/citas/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
@@ -78,7 +78,7 @@ export default function AgendaClient({
     setLoading(true);
 
     try {
-      const res = await fetch("/api/doctor/appointments", {
+      const res = await fetch("/api/doctor/citas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ patientId: selectedPatientId, date, time, treatment, notes }),

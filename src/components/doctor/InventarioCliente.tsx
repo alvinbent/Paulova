@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { InventoryItem, Lot, Provider } from "@/lib/db";
 
-export default function InventarioClient({
+export default function InventarioCliente({
   initialInventory,
   initialLots,
   initialProviders,
@@ -157,7 +157,7 @@ export default function InventarioClient({
 
     try {
       const isEdit = !!selectedProduct;
-      const res = await fetch("/api/doctor/inventory", {
+      const res = await fetch("/api/doctor/inventario", {
         method: isEdit ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -201,7 +201,7 @@ export default function InventarioClient({
 
     try {
       const isEdit = !!selectedLot;
-      const url = "/api/doctor/lots";
+      const url = "/api/doctor/lotes";
       const method = isEdit ? "PUT" : "POST";
       const payload = isEdit
         ? {
@@ -242,7 +242,7 @@ export default function InventarioClient({
           setNotice("Nuevo lote registrado correctamente.");
         }
         // Sync catalog quantities
-        const updatedInventoryRes = await fetch("/api/doctor/inventory");
+        const updatedInventoryRes = await fetch("/api/doctor/inventario");
         if (updatedInventoryRes.ok) {
           const updatedInventory = await updatedInventoryRes.json();
           setInventory(updatedInventory);
@@ -266,7 +266,7 @@ export default function InventarioClient({
 
     try {
       const isEdit = !!selectedProvider;
-      const res = await fetch("/api/doctor/providers", {
+      const res = await fetch("/api/doctor/proveedores", {
         method: isEdit ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

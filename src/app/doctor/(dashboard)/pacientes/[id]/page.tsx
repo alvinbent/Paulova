@@ -1,7 +1,7 @@
 import React from "react";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
-import PacienteClient from "@/components/doctor/PacienteClient";
+import PacienteCliente from "@/components/doctor/PacienteCliente";
 
 export const revalidate = 0; // Disable cache to fetch real-time updates
 
@@ -25,7 +25,7 @@ export default async function DoctorPacientePerfil({
   const protocolItems = await db.getProtocolItems();
 
   return (
-    <PacienteClient
+    <PacienteCliente
       patient={patient}
       record={record}
       inventory={inventory}

@@ -18,7 +18,7 @@ export default function DoctorLogin() {
       const data = await res.json();
 
       if (data.success) {
-        router.push("/doctor/dashboard");
+        router.push("/doctor/panel");
         router.refresh();
       } else {
         setError(data.error || "No fue posible abrir la aplicación.");

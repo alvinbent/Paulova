@@ -8,7 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 const logoSrc = "/brand-assets/logo-paunova-skin-age.png";
 
 const menuItems = [
-  { name: "Dashboard", href: "/doctor/dashboard", icon: "dashboard" },
+  { name: "Panel", href: "/doctor/panel", icon: "dashboard" },
   { name: "Pacientes", href: "/doctor/pacientes", icon: "group" },
   { name: "Historias", href: "/doctor/historias-clinicas", icon: "clinical_notes" },
   { name: "Agenda", href: "/doctor/agenda", icon: "calendar_today" },
@@ -21,7 +21,7 @@ const menuItems = [
   { name: "Torre Control", href: "/doctor/torre-control", icon: "monitoring" },
 ];
 
-export default function Sidebar() {
+export default function BarraLateral() {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);

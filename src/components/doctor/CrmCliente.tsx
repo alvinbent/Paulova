@@ -13,7 +13,7 @@ interface Patient {
   createdAt: string;
 }
 
-export default function CrmClient({ initialPatients }: { initialPatients: Patient[] }) {
+export default function CrmCliente({ initialPatients }: { initialPatients: Patient[] }) {
   const [patients, setPatients] = useState<Patient[]>(initialPatients);
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
@@ -40,7 +40,7 @@ export default function CrmClient({ initialPatients }: { initialPatients: Patien
     setLoading(true);
 
     try {
-      const res = await fetch("/api/doctor/patients", {
+      const res = await fetch("/api/doctor/pacientes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, phone, email, birthday, notes }),

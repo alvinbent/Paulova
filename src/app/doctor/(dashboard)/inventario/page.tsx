@@ -1,6 +1,6 @@
 import React from "react";
 import { db } from "@/lib/db";
-import InventarioClient from "@/components/doctor/InventarioClient";
+import InventarioCliente from "@/components/doctor/InventarioCliente";
 
 export const revalidate = 0; // Disable cache to fetch real-time updates
 
@@ -10,7 +10,7 @@ export default async function DoctorInventario() {
   const providers = await db.getProviders();
 
   return (
-    <InventarioClient
+    <InventarioCliente
       initialInventory={inventory}
       initialLots={lots}
       initialProviders={providers}

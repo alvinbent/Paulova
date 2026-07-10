@@ -1,12 +1,12 @@
-import { ModulePage, WorkflowCard } from "@/components/doctor/ModulePage";
+import { PaginaModulo, TarjetaFlujo } from "@/components/doctor/PaginaModulo";
 import { doctorModules } from "@/lib/doctor-system";
 
 const pageModule = doctorModules.find((item) => item.href === "/doctor/insumos")!;
 
 export default function InsumosPage() {
   return (
-    <ModulePage module={pageModule}>
-      <WorkflowCard
+    <PaginaModulo module={pageModule}>
+      <TarjetaFlujo
         title="Control esperado"
         icon="vaccines"
         items={[
@@ -16,6 +16,6 @@ export default function InsumosPage() {
           "Solicitar compra al llegar a stock minimo",
         ]}
       />
-    </ModulePage>
+    </PaginaModulo>
   );
 }

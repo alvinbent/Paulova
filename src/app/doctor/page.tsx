@@ -46,7 +46,7 @@ export default async function DoctorPage() {
 
           <div className="grid gap-3 sm:grid-cols-2">
             <Link
-              href="/doctor/dashboard"
+              href="/doctor/panel"
               className="paunova-button-primary inline-flex items-center justify-center gap-2 rounded-full px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.16em] transition-all active:scale-[0.98]"
             >
               <span className="material-symbols-outlined text-base">dashboard</span>

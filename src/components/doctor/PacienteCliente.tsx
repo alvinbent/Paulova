@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Patient, ClinicalRecord, InventoryItem, Lot, Protocol, ProtocolItem, TreatmentApplied } from "@/lib/db";
 
-export default function PacienteClient({
+export default function PacienteCliente({
   patient,
   record: initialRecord,
   inventory,
@@ -83,7 +83,7 @@ export default function PacienteClient({
     setLoading(true);
 
     try {
-      const res = await fetch(`/api/doctor/patients/${patient.id}/clinical-record`, {
+      const res = await fetch(`/api/doctor/pacientes/${patient.id}/historial-clinico`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type: "info", allergies, skinType, notes }),
@@ -210,7 +210,7 @@ export default function PacienteClient({
         consentStatus: consentStatus || "No Aplica",
       };
 
-      const res = await fetch(`/api/doctor/patients/${patient.id}/clinical-record`, {
+      const res = await fetch(`/api/doctor/pacientes/${patient.id}/historial-clinico`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -293,7 +293,7 @@ export default function PacienteClient({
     setAiLoading(true);
 
     try {
-      const res = await fetch(`/api/doctor/patients/${patient.id}/process-dictation`, {
+      const res = await fetch(`/api/doctor/pacientes/${patient.id}/procesar-dictado`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: transcriptionText }),

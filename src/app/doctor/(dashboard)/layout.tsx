@@ -1,5 +1,5 @@
 import React from "react";
-import Sidebar from "@/components/doctor/Sidebar";
+import BarraLateral from "@/components/doctor/BarraLateral";
 
 export default function DoctorDashboardLayout({
   children,
@@ -8,7 +8,7 @@ export default function DoctorDashboardLayout({
 }) {
   return (
     <div className="paunova-app-shell flex flex-col md:flex-row">
-      <Sidebar />
+      <BarraLateral />
       <main className="relative flex-1 w-full overflow-y-auto">
         <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 md:px-10 md:py-10 xl:px-12">
         {children}

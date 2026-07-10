@@ -1,12 +1,12 @@
-import { ModulePage, WorkflowCard } from "@/components/doctor/ModulePage";
+import { PaginaModulo, TarjetaFlujo } from "@/components/doctor/PaginaModulo";
 import { doctorModules } from "@/lib/doctor-system";
 
 const pageModule = doctorModules.find((item) => item.href === "/doctor/solicitudes")!;
 
 export default function SolicitudesPage() {
   return (
-    <ModulePage module={pageModule}>
-      <WorkflowCard
+    <PaginaModulo module={pageModule}>
+      <TarjetaFlujo
         title="Estados de solicitud"
         icon="shopping_cart"
         items={[
@@ -18,6 +18,6 @@ export default function SolicitudesPage() {
           "Cancelada con justificacion",
         ]}
       />
-    </ModulePage>
+    </PaginaModulo>
   );
 }

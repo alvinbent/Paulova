@@ -21,10 +21,10 @@ const statusCopy: Record<DoctorModule["status"], { label: string; className: str
   },
 };
 
-export function ModulePage({
+export function PaginaModulo({
   module,
   children,
-  backHref = "/doctor/dashboard",
+  backHref = "/doctor/panel",
 }: {
   module: DoctorModule;
   children?: React.ReactNode;
@@ -92,7 +92,7 @@ export function ModulePage({
   );
 }
 
-export function WorkflowCard({
+export function TarjetaFlujo({
   title,
   icon,
   items,

@@ -1,4 +1,4 @@
-import ClinicalConsultationFlow from "@/components/doctor/ClinicalConsultationFlow";
+import FlujoConsultaClinica from "@/components/doctor/FlujoConsultaClinica";
 
 export default async function NuevaConsultaPage({
   params,
@@ -7,5 +7,5 @@ export default async function NuevaConsultaPage({
 }) {
   const { id } = await params;
 
-  return <ClinicalConsultationFlow patientId={id} />;
+  return <FlujoConsultaClinica patientId={id} />;
 }

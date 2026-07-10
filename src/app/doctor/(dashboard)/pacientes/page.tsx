@@ -1,10 +1,10 @@
 import { db } from "@/lib/db";
-import CrmClient from "@/components/doctor/CrmClient";
+import CrmCliente from "@/components/doctor/CrmCliente";
 
 export const revalidate = 0;
 
 export default async function DoctorPacientes() {
   const patients = await db.getPatients();
 
-  return <CrmClient initialPatients={patients} />;
+  return <CrmCliente initialPatients={patients} />;
 }

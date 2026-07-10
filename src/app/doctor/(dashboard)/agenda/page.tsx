@@ -1,6 +1,6 @@
 import React from "react";
 import { db } from "@/lib/db";
-import AgendaClient from "@/components/doctor/AgendaClient";
+import AgendaCliente from "@/components/doctor/AgendaCliente";
 
 export const revalidate = 0; // Disable cache to fetch real-time updates
 
@@ -19,7 +19,7 @@ export default async function DoctorAgenda() {
   }));
 
   return (
-    <AgendaClient
+    <AgendaCliente
       initialAppointments={sortedAppointments}
       patients={patientOptions}
     />

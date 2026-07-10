@@ -1,4 +1,4 @@
-import { PatientSectionPage } from "@/components/doctor/PatientSectionPage";
+import { PaginaSeccionPaciente } from "@/components/doctor/PaginaSeccionPaciente";
 
 export default async function ProductosPacientePage({
   params,
@@ -8,7 +8,7 @@ export default async function ProductosPacientePage({
   const { id } = await params;
 
   return (
-    <PatientSectionPage
+    <PaginaSeccionPaciente
       patientId={id}
       title="Productos aplicados"
       eyebrow="Lotes por paciente"

@@ -1,12 +1,12 @@
-import { ModulePage, WorkflowCard } from "@/components/doctor/ModulePage";
+import { PaginaModulo, TarjetaFlujo } from "@/components/doctor/PaginaModulo";
 import { doctorModules } from "@/lib/doctor-system";
 
 const pageModule = doctorModules.find((item) => item.href === "/doctor/alertas")!;
 
 export default function AlertasPage() {
   return (
-    <ModulePage module={pageModule}>
-      <WorkflowCard
+    <PaginaModulo module={pageModule}>
+      <TarjetaFlujo
         title="Semaforo de prioridad"
         icon="notifications_active"
         items={[
@@ -16,6 +16,6 @@ export default function AlertasPage() {
           "Toda alerta sensible debe quedar en auditoria",
         ]}
       />
-    </ModulePage>
+    </PaginaModulo>
   );
 }

@@ -60,7 +60,7 @@ const iconPaths: Record<string, string[]> = {
   warning: ["M12 4l9 16H3z", "M12 9v5", "M12 17h.01"],
 };
 
-export default function DoctorIcon({
+export default function IconoDoctor({
   name,
   className = "h-5 w-5",
 }: {

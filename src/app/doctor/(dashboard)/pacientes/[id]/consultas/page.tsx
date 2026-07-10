@@ -1,10 +1,10 @@
-import { PatientSectionPage } from "@/components/doctor/PatientSectionPage";
+import { PaginaSeccionPaciente } from "@/components/doctor/PaginaSeccionPaciente";
 
 export default async function ConsultasPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   return (
-    <PatientSectionPage
+    <PaginaSeccionPaciente
       patientId={id}
       title="Consultas"
       eyebrow="Linea de tiempo clinica"

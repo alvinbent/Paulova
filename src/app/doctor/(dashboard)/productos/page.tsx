@@ -1,12 +1,12 @@
-import { ModulePage, WorkflowCard } from "@/components/doctor/ModulePage";
+import { PaginaModulo, TarjetaFlujo } from "@/components/doctor/PaginaModulo";
 import { doctorModules } from "@/lib/doctor-system";
 
 const pageModule = doctorModules.find((item) => item.href === "/doctor/productos")!;
 
 export default function ProductosPage() {
   return (
-    <ModulePage module={pageModule}>
-      <WorkflowCard
+    <PaginaModulo module={pageModule}>
+      <TarjetaFlujo
         title="Campos por producto"
         icon="science"
         items={[
@@ -16,6 +16,6 @@ export default function ProductosPage() {
           "Uso por paciente, zona, consulta y observaciones",
         ]}
       />
-    </ModulePage>
+    </PaginaModulo>
   );
 }

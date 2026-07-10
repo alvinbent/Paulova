@@ -17,7 +17,7 @@ const sections = [
   "Proximo control",
 ];
 
-export default function ClinicalConsultationFlow({
+export default function FlujoConsultaClinica({
   patientId,
 }: {
   patientId: string;

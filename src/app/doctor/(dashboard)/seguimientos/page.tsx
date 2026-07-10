@@ -1,12 +1,12 @@
-import { ModulePage, WorkflowCard } from "@/components/doctor/ModulePage";
+import { PaginaModulo, TarjetaFlujo } from "@/components/doctor/PaginaModulo";
 import { doctorModules } from "@/lib/doctor-system";
 
 const pageModule = doctorModules.find((item) => item.href === "/doctor/seguimientos")!;
 
 export default function SeguimientosPage() {
   return (
-    <ModulePage module={pageModule}>
-      <WorkflowCard
+    <PaginaModulo module={pageModule}>
+      <TarjetaFlujo
         title="Controles configurables"
         icon="event_repeat"
         items={[
@@ -16,6 +16,6 @@ export default function SeguimientosPage() {
           "Seguimiento por WhatsApp o manual en fase posterior",
         ]}
       />
-    </ModulePage>
+    </PaginaModulo>
   );
 }
