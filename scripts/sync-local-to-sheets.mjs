@@ -101,7 +101,7 @@ function readLocalJson(filename, defaultValue) {
     try {
       console.log(`Reading local file: ${filename}`);
       return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    } catch (err) {
+    } catch {
       console.warn(`⚠️ Warning: Could not parse ${filename}, using default mock.`);
     }
   }

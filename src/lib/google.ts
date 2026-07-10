@@ -1,39 +1,18 @@
 import { randomUUID } from "crypto";
-import { google } from "googleapis";
-
-const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n");
-
-if (!process.env.GOOGLE_CLIENT_EMAIL) {
-  throw new Error("Falta GOOGLE_CLIENT_EMAIL");
-}
-
-if (!privateKey) {
-  throw new Error("Falta GOOGLE_PRIVATE_KEY");
-}
-
-export const googleAuth = new google.auth.JWT({
-  email: process.env.GOOGLE_CLIENT_EMAIL,
-  key: privateKey,
-  scopes: [
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/calendar",
-  ],
-});
-
-export const sheets = google.sheets({
-  version: "v4",
-  auth: googleAuth,
-});
-
-export const calendar = google.calendar({
-  version: "v3",
-  auth: googleAuth,
-});
+import { calendar_v3, google, sheets_v4 } from "googleapis";
 
 export const GOOGLE_SCOPES = [
   "https://www.googleapis.com/auth/spreadsheets",
   "https://www.googleapis.com/auth/calendar",
 ];
+
+type GoogleAuthClient = InstanceType<typeof google.auth.JWT>;
+type GoogleSheetsClient = sheets_v4.Sheets;
+type GoogleCalendarClient = calendar_v3.Calendar;
+
+let googleAuthClient: GoogleAuthClient | null = null;
+let sheetsClient: GoogleSheetsClient | null = null;
+let calendarClient: GoogleCalendarClient | null = null;
 
 function getRequiredEnv(name: string): string {
   const value = process.env[name];
@@ -47,27 +26,57 @@ function getGooglePrivateKey(): string {
   return getRequiredEnv("GOOGLE_PRIVATE_KEY").replace(/\\n/g, "\n");
 }
 
-export function getGoogleAuth() {
-  return new google.auth.JWT({
-    email: getRequiredEnv("GOOGLE_CLIENT_EMAIL"),
-    key: getGooglePrivateKey(),
-    scopes: GOOGLE_SCOPES,
-  });
+export function getGoogleAuth(): GoogleAuthClient {
+  if (!googleAuthClient) {
+    googleAuthClient = new google.auth.JWT({
+      email: getRequiredEnv("GOOGLE_CLIENT_EMAIL"),
+      key: getGooglePrivateKey(),
+      scopes: GOOGLE_SCOPES,
+    });
+  }
+
+  return googleAuthClient;
 }
 
-export function getGoogleSheetsClient() {
-  return google.sheets({
-    version: "v4",
-    auth: getGoogleAuth(),
-  });
+export function getGoogleSheetsClient(): GoogleSheetsClient {
+  if (!sheetsClient) {
+    sheetsClient = google.sheets({
+      version: "v4",
+      auth: getGoogleAuth(),
+    });
+  }
+
+  return sheetsClient;
 }
 
-export function getGoogleCalendarClient() {
-  return google.calendar({
-    version: "v3",
-    auth: getGoogleAuth(),
-  });
+export function getGoogleCalendarClient(): GoogleCalendarClient {
+  if (!calendarClient) {
+    calendarClient = google.calendar({
+      version: "v3",
+      auth: getGoogleAuth(),
+    });
+  }
+
+  return calendarClient;
 }
+
+export const googleAuth = new Proxy({} as GoogleAuthClient, {
+  get(_target, property, receiver) {
+    return Reflect.get(getGoogleAuth(), property, receiver);
+  },
+});
+
+export const sheets = new Proxy({} as GoogleSheetsClient, {
+  get(_target, property, receiver) {
+    return Reflect.get(getGoogleSheetsClient(), property, receiver);
+  },
+});
+
+export const calendar = new Proxy({} as GoogleCalendarClient, {
+  get(_target, property, receiver) {
+    return Reflect.get(getGoogleCalendarClient(), property, receiver);
+  },
+});
 
 export function getGoogleSpreadsheetId() {
   return getRequiredEnv("GOOGLE_SPREADSHEET_ID");
@@ -132,7 +141,7 @@ export async function createPaunovaAppointment({
   endDateTime,
   timeZone = "America/Bogota",
 }: CreatePaunovaAppointmentInput) {
-  const response = await calendar.events.insert({
+  const response = await getGoogleCalendarClient().events.insert({
     calendarId: getGoogleCalendarId(),
     conferenceDataVersion: 1,
     sendUpdates: "all",

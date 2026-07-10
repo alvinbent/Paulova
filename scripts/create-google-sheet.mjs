@@ -113,7 +113,7 @@ async function createAndInitializeSheet() {
         sendNotificationEmail: true
       });
       console.log(`✅ Shared successfully with ${targetEmail}! Check your Google Sheets inbox.`);
-    } catch (shareError) {
+    } catch {
       console.warn(`⚠️ Could not share automatically. Google Drive API might not be enabled.`);
       console.warn(`Please enable it in Google Console, or manually share using the Service Account email:`);
       console.warn(`👉 ${clientEmail}`);

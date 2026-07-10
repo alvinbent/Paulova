@@ -8,10 +8,17 @@ import { usePathname, useRouter } from "next/navigation";
 const logoSrc = "/brand-assets/logo-paunova-skin-age.png";
 
 const menuItems = [
-  { name: "Resumen", href: "/doctor/dashboard", icon: "dashboard" },
-  { name: "Pacientes", href: "/doctor/crm", icon: "group" },
+  { name: "Dashboard", href: "/doctor/dashboard", icon: "dashboard" },
+  { name: "Pacientes", href: "/doctor/pacientes", icon: "group" },
+  { name: "Historias", href: "/doctor/historias-clinicas", icon: "clinical_notes" },
   { name: "Agenda", href: "/doctor/agenda", icon: "calendar_today" },
+  { name: "Productos", href: "/doctor/productos", icon: "science" },
+  { name: "Insumos", href: "/doctor/insumos", icon: "vaccines" },
   { name: "Inventario", href: "/doctor/inventario", icon: "inventory_2" },
+  { name: "Solicitudes", href: "/doctor/solicitudes", icon: "shopping_cart" },
+  { name: "Seguimientos", href: "/doctor/seguimientos", icon: "event_repeat" },
+  { name: "Alertas", href: "/doctor/alertas", icon: "notifications_active" },
+  { name: "Torre Control", href: "/doctor/torre-control", icon: "monitoring" },
 ];
 
 export default function Sidebar() {
@@ -32,7 +39,7 @@ export default function Sidebar() {
   };
 
   const navList = (onNavigate?: () => void) => (
-    <ul className="space-y-2">
+    <ul className="space-y-1.5">
       {menuItems.map((item) => {
         const isActive = pathname.startsWith(item.href);
         return (
@@ -40,7 +47,7 @@ export default function Sidebar() {
             <Link
               href={item.href}
               onClick={onNavigate}
-              className={`group flex items-center gap-3 rounded-2xl px-4 py-3.5 text-[10px] font-semibold uppercase tracking-[0.18em] transition-all duration-300 active:scale-[0.98] ${
+              className={`group flex items-center gap-3 rounded-2xl px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.16em] transition-all duration-300 active:scale-[0.98] ${
                 isActive
                   ? "paunova-button-primary"
                   : "text-[#5f4f42] hover:bg-[#b99862]/10 hover:text-[#7c6756]"
@@ -141,10 +148,10 @@ export default function Sidebar() {
             <nav>{navList()}</nav>
 
             <div className="paunova-inner rounded-[1.4rem] p-4 text-[11px] leading-relaxed text-[#746b61]">
-              <p className="paunova-kicker mb-2">Modo pruebas</p>
+              <p className="paunova-kicker mb-2">Sistema privado</p>
               <p>
-                Acceso temporal sin clave mientras se completa la generación y
-                validación del sistema.
+                Datos clinicos separados del CRM publicitario. La IA solo deja
+                borradores para revision medica.
               </p>
             </div>
           </div>

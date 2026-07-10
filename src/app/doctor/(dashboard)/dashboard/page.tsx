@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { doctorModules, integrationStates } from "@/lib/doctor-system";
 
 export const revalidate = 0;
 
@@ -31,7 +32,7 @@ export default async function DoctorDashboard() {
     {
       label: "Pacientes activos",
       value: patients.length,
-      href: "/doctor/crm",
+      href: "/doctor/pacientes",
       icon: "group",
       note: "Expedientes disponibles",
     },
@@ -77,7 +78,7 @@ export default async function DoctorDashboard() {
 
           <div className="grid grid-cols-2 gap-3 sm:flex">
             <Link
-              href="/doctor/crm"
+              href="/doctor/pacientes"
               className="paunova-button-primary inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] transition-all duration-300 active:scale-[0.98]"
             >
               <span className="material-symbols-outlined text-base">person_add</span>
@@ -115,6 +116,75 @@ export default async function DoctorDashboard() {
             </div>
           </Link>
         ))}
+      </section>
+
+      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+        <div className="paunova-card rounded-[2rem] p-5 md:p-6">
+          <div className="mb-5 flex flex-col gap-3 border-b border-[#b99862]/16 pb-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="paunova-kicker">Mapa del sistema</p>
+              <h2 className="paunova-title mt-1 text-2xl">
+                Modulos de la clinica digital
+              </h2>
+            </div>
+            <Link
+              href="/doctor/torre-control"
+              className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#b99862] transition-colors hover:text-[#5f4f42]"
+            >
+              Ver torre de control
+            </Link>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            {doctorModules.slice(0, 8).map((module) => (
+              <Link
+                key={module.href}
+                href={module.href}
+                className="group rounded-[1.25rem] bg-white/64 p-4 ring-1 ring-[#b99862]/14 transition-all hover:-translate-y-0.5 hover:bg-[#b99862]/8"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="material-symbols-outlined rounded-xl bg-[#5f4f42] p-2 text-lg text-[#fffdf8] transition-all group-hover:bg-[#b99862]">
+                    {module.icon}
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold text-[#5f4f42]">
+                      {module.title}
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-[#746b61]">
+                      {module.summary}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="paunova-card rounded-[2rem] p-5 md:p-6">
+          <div className="mb-5 border-b border-[#b99862]/16 pb-5">
+            <p className="paunova-kicker">Sincronizacion</p>
+            <h2 className="paunova-title mt-1 text-2xl">Estado tecnico</h2>
+          </div>
+          <div className="space-y-3">
+            {integrationStates.map((integration) => (
+              <article
+                key={integration.name}
+                className="rounded-[1.2rem] bg-white/68 p-4 ring-1 ring-[#b99862]/14"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="text-sm font-semibold text-[#5f4f42]">
+                    {integration.name}
+                  </h3>
+                  <span className="rounded-full bg-emerald-50 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.14em] text-emerald-700 ring-1 ring-emerald-100">
+                    {integration.status}
+                  </span>
+                </div>
+                <p className="mt-2 text-xs leading-5 text-[#746b61]">
+                  {integration.detail}
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1.55fr_0.85fr]">

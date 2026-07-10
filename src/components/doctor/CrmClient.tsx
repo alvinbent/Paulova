@@ -72,7 +72,7 @@ export default function CrmClient({ initialPatients }: { initialPatients: Patien
         <div>
           <p className="paunova-kicker mb-2">Relación paciente</p>
           <h1 className="paunova-title text-3xl md:text-4xl">
-            Expedientes de <span className="italic">Pacientes (CRM)</span>
+            Expedientes de <span className="italic">Pacientes</span>
           </h1>
           <p className="text-sm text-[#746b61] mt-3 max-w-2xl leading-6">
             Gestión y seguimiento de fichas clínicas, consentimientos e historial estético.

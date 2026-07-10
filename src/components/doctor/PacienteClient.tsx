@@ -304,7 +304,7 @@ export default function PacienteClient({
       {/* Back button and profile header */}
       <div className="space-y-4">
         <Link
-          href="/doctor/crm"
+          href="/doctor/pacientes"
           className="text-[#c5a880] hover:text-[#6d5847] text-xs font-semibold uppercase tracking-wider transition-all inline-flex items-center gap-1 active:scale-[0.98]"
         >
           <span className="material-symbols-outlined text-xs">arrow_back</span>
@@ -323,7 +323,14 @@ export default function PacienteClient({
               Fecha de registro: {new Date(patient.createdAt).toLocaleDateString()}
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Link
+              href={`/doctor/pacientes/${patient.id}/consultas/nueva`}
+              className="paunova-button-secondary px-4 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
+            >
+              <span className="material-symbols-outlined text-sm">mic</span>
+              <span>Nueva consulta</span>
+            </Link>
             <button
               onClick={() => setTreatmentModalOpen(true)}
               className="paunova-button-primary px-4 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold transition-all flex items-center gap-2 active:scale-[0.98]"
@@ -340,6 +347,29 @@ export default function PacienteClient({
           {notice}
         </div>
       )}
+
+      <div className="paunova-card rounded-[1.75rem] p-3">
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-4 xl:grid-cols-7">
+          {[
+            ["Consultas", "history", `/doctor/pacientes/${patient.id}/consultas`],
+            ["Tratamientos", "spa", `/doctor/pacientes/${patient.id}/tratamientos`],
+            ["Productos", "science", `/doctor/pacientes/${patient.id}/productos`],
+            ["Insumos", "vaccines", `/doctor/pacientes/${patient.id}/insumos`],
+            ["Fotos", "photo_camera", `/doctor/pacientes/${patient.id}/fotografias`],
+            ["Consent.", "fact_check", `/doctor/pacientes/${patient.id}/consentimientos`],
+            ["Nueva", "add_circle", `/doctor/pacientes/${patient.id}/consultas/nueva`],
+          ].map(([label, icon, href]) => (
+            <Link
+              key={href}
+              href={href}
+              className="flex items-center justify-center gap-2 rounded-[1rem] px-3 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#5f4f42] transition-all hover:bg-[#b99862]/10"
+            >
+              <span className="material-symbols-outlined text-sm">{icon}</span>
+              <span>{label}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
 
       {/* Main Grid Details */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

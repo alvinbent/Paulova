@@ -350,3 +350,39 @@ El boton secreto y modal se inyectan en las paginas HTML materializadas de Stitc
 
 **Status**:
 Listo para pruebas locales, build, commit, push y despliegue.
+
+### Completed Work - 2026-07-10 - Codex
+
+**Scope**:
+Evolucionar la aplicacion privada de Dra Carolina Aguirre - Paunova Skin & Age Clinic hacia un centro operativo medico-estetico inspirado en una referencia medtech moderna, sin redisenar Stitch publico.
+
+**Source of Truth**:
+- Briefs entregados por el usuario para Paunova Digital Clinic System.
+- Reglas de `AGENTS.md`.
+- Lineamientos de marca existentes en `public/brand-assets`.
+
+**Protected Areas**:
+No se modificaron `public/stitch-assets/pages/**`, `public/stitch-assets/images/**` ni screenshots. El trabajo se concentro en rutas privadas `/doctor`.
+
+**App Files changed**:
+- Navegacion privada ampliada en `src/components/doctor/Sidebar.tsx`.
+- Dashboard operativo ampliado en `src/app/doctor/(dashboard)/dashboard/page.tsx`.
+- Pantalla privada de bienvenida en `src/app/doctor/page.tsx`.
+- Nuevas rutas privadas: pacientes, historias clinicas, productos, insumos, solicitudes, seguimientos, alertas y torre de control.
+- Nuevas subrutas del expediente: consultas, nueva consulta, tratamientos, productos, insumos, fotografias y consentimientos.
+- Componentes nuevos: `ModulePage`, `PatientSectionPage`, `ClinicalConsultationFlow`.
+- Capa de configuracion visual-operativa: `src/lib/doctor-system.ts`.
+
+**Security and Data Notes**:
+- La IA se presenta solo como organizador de borradores clinicos, no como diagnostico automatico.
+- Las historias firmadas se documentan como no editables directamente.
+- Se mantiene separacion entre datos clinicos, CRM y marketing.
+- `src/lib/google.ts` se ajusto a inicializacion perezosa para no exigir secretos durante import/build.
+
+**Verification planned**:
+- `npm run lint`
+- `npm run build`
+- Push a GitHub y despliegue Vercel de produccion desde `main`.
+
+**Status**:
+En implementacion y verificacion.

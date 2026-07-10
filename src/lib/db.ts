@@ -12,7 +12,37 @@ const clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
 const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n");
 const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
 
-let sheetsClient: any = null;
+type SheetsClient = ReturnType<typeof google.sheets>;
+type SheetRow = string[];
+
+let sheetsClient: SheetsClient | null = null;
+
+function normalizeRows(rows: unknown): SheetRow[] {
+  if (!Array.isArray(rows)) return [];
+
+  return rows
+    .filter((row): row is unknown[] => Array.isArray(row))
+    .map((row) => row.map((cell) => String(cell ?? "")));
+}
+
+function normalizeAppointmentStatus(value: string): Appointment["status"] {
+  if (value === "Completada" || value === "Cancelada") return value;
+  return "Programada";
+}
+
+function normalizeInventoryCategory(value: string): InventoryItem["category"] {
+  const allowed: InventoryItem["category"][] = [
+    "Inyectable",
+    "Exfoliante",
+    "Equipo/Accesorios",
+    "Cuidado Post-Láser",
+    "Anestésico",
+  ];
+
+  return allowed.includes(value as InventoryItem["category"])
+    ? (value as InventoryItem["category"])
+    : "Inyectable";
+}
 
 function getSheetsClient() {
   if (sheetsClient) return sheetsClient;
@@ -286,8 +316,8 @@ export const db = {
         spreadsheetId,
         range: "Pacientes!A2:G1000",
       });
-      const rows = response.data.values || [];
-      return rows.map((row: any) => ({
+      const rows = normalizeRows(response.data.values);
+      return rows.map((row) => ({
         id: row[0] || "",
         name: row[1] || "",
         phone: row[2] || "",
@@ -360,15 +390,15 @@ export const db = {
         spreadsheetId,
         range: "Citas!A2:H1000",
       });
-      const rows = response.data.values || [];
-      return rows.map((row: any) => ({
+      const rows = normalizeRows(response.data.values);
+      return rows.map((row) => ({
         id: row[0] || "",
         patientId: row[1] || "",
         patientName: row[2] || "",
         date: row[3] || "",
         time: row[4] || "",
         treatment: row[5] || "",
-        status: (row[6] as any) || "Programada",
+        status: normalizeAppointmentStatus(row[6]),
         notes: row[7] || "",
       }));
     } catch (err) {
@@ -477,11 +507,11 @@ export const db = {
         spreadsheetId,
         range: "Inventario!A2:F1000",
       });
-      const rows = response.data.values || [];
-      return rows.map((row: any) => ({
+      const rows = normalizeRows(response.data.values);
+      return rows.map((row) => ({
         id: row[0] || "",
         name: row[1] || "",
-        category: (row[2] as any) || "Inyectable",
+        category: normalizeInventoryCategory(row[2]),
         units: Number(row[3]) || 0,
         minUnits: Number(row[4]) || 0,
         unitName: row[5] || "",
@@ -587,16 +617,16 @@ export const db = {
         spreadsheetId,
         range: "Fichas_Medicas!A2:D1000",
       });
-      const sheetRows = responseSheets.data.values || [];
+      const sheetRows = normalizeRows(responseSheets.data.values);
 
       // 2. Fetch Tratamientos_Aplicados
       const responseTreatments = await client.spreadsheets.values.get({
         spreadsheetId,
         range: "Tratamientos_Aplicados!A2:H1000",
       });
-      const treatmentRows = responseTreatments.data.values || [];
+      const treatmentRows = normalizeRows(responseTreatments.data.values);
 
-      const treatments: (TreatmentApplied & { patientId: string })[] = treatmentRows.map((row: any) => ({
+      const treatments: (TreatmentApplied & { patientId: string })[] = treatmentRows.map((row) => ({
         id: row[0] || "",
         patientId: row[1] || "",
         treatmentName: row[2] || "",
@@ -607,7 +637,7 @@ export const db = {
         date: row[7] || "",
       }));
 
-      return sheetRows.map((row: any) => {
+      return sheetRows.map((row) => {
         const patientId = row[0] || "";
         return {
           patientId,
@@ -716,7 +746,7 @@ export const db = {
         spreadsheetId,
         range: "Fichas_Medicas!A2:A1000",
       });
-      const ids = (responseSheets.data.values || []).map((row: any) => row[0]);
+      const ids = normalizeRows(responseSheets.data.values).map((row) => row[0]);
       const index = ids.indexOf(patientId);
 
       if (index === -1) {
