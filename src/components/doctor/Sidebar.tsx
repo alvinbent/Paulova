@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -7,18 +7,38 @@ import { usePathname, useRouter } from "next/navigation";
 
 const logoSrc = "/brand-assets/logo-paunova-skin-age.png";
 
-const menuItems = [
-  { name: "Dashboard", href: "/doctor/dashboard", icon: "dashboard" },
-  { name: "Pacientes", href: "/doctor/pacientes", icon: "group" },
-  { name: "Historias", href: "/doctor/historias-clinicas", icon: "clinical_notes" },
-  { name: "Agenda", href: "/doctor/agenda", icon: "calendar_today" },
-  { name: "Productos", href: "/doctor/productos", icon: "science" },
-  { name: "Insumos", href: "/doctor/insumos", icon: "vaccines" },
-  { name: "Inventario", href: "/doctor/inventario", icon: "inventory_2" },
-  { name: "Solicitudes", href: "/doctor/solicitudes", icon: "shopping_cart" },
-  { name: "Seguimientos", href: "/doctor/seguimientos", icon: "event_repeat" },
-  { name: "Alertas", href: "/doctor/alertas", icon: "notifications_active" },
-  { name: "Torre Control", href: "/doctor/torre-control", icon: "monitoring" },
+const menuSections = [
+  {
+    title: "Atencion",
+    items: [
+      { name: "Dashboard", href: "/doctor/dashboard", icon: "dashboard" },
+      { name: "Agenda", href: "/doctor/agenda", icon: "calendar_today" },
+      { name: "Seguimientos", href: "/doctor/seguimientos", icon: "event_repeat" },
+    ],
+  },
+  {
+    title: "Pacientes",
+    items: [
+      { name: "Pacientes", href: "/doctor/pacientes", icon: "group" },
+      { name: "Historias", href: "/doctor/historias-clinicas", icon: "clinical_notes" },
+      { name: "Alertas", href: "/doctor/alertas", icon: "notifications_active" },
+    ],
+  },
+  {
+    title: "Operacion",
+    items: [
+      { name: "Productos", href: "/doctor/productos", icon: "science" },
+      { name: "Insumos", href: "/doctor/insumos", icon: "vaccines" },
+      { name: "Inventario", href: "/doctor/inventario", icon: "inventory_2" },
+      { name: "Solicitudes", href: "/doctor/solicitudes", icon: "shopping_cart" },
+    ],
+  },
+  {
+    title: "Direccion",
+    items: [
+      { name: "Torre Control", href: "/doctor/torre-control", icon: "monitoring" },
+    ],
+  },
 ];
 
 export default function Sidebar() {
@@ -39,29 +59,38 @@ export default function Sidebar() {
   };
 
   const navList = (onNavigate?: () => void) => (
-    <ul className="space-y-1.5">
-      {menuItems.map((item) => {
-        const isActive = pathname.startsWith(item.href);
-        return (
-          <li key={item.href}>
-            <Link
-              href={item.href}
-              onClick={onNavigate}
-              className={`group flex items-center gap-3 rounded-2xl px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.16em] transition-all duration-300 active:scale-[0.98] ${
-                isActive
-                  ? "paunova-button-primary"
-                  : "text-[#5f4f42] hover:bg-[#b99862]/10 hover:text-[#7c6756]"
-              }`}
-            >
-              <span className="material-symbols-outlined text-lg transition-transform duration-300 group-hover:translate-x-0.5">
-                {item.icon}
-              </span>
-              <span>{item.name}</span>
-            </Link>
-          </li>
-        );
-      })}
-    </ul>
+    <div className="space-y-4">
+      {menuSections.map((section) => (
+        <div key={section.title}>
+          <p className="mb-2 px-4 text-[9px] font-semibold uppercase tracking-[0.18em] text-[#b99862]">
+            {section.title}
+          </p>
+          <ul className="space-y-1">
+            {section.items.map((item) => {
+              const isActive = pathname.startsWith(item.href);
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    onClick={onNavigate}
+                    className={`group flex items-center gap-3 rounded-2xl px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.14em] transition-all duration-300 active:scale-[0.98] ${
+                      isActive
+                        ? "paunova-button-primary"
+                        : "text-[#5f4f42] hover:bg-[#b99862]/10 hover:text-[#7c6756]"
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-lg transition-transform duration-300 group-hover:translate-x-0.5">
+                      {item.icon}
+                    </span>
+                    <span>{item.name}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
+    </div>
   );
 
   return (
@@ -92,8 +121,8 @@ export default function Sidebar() {
             className="fixed inset-0 bg-[#1d1c19]/42 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
           />
-          <nav className="relative z-50 flex h-full w-80 max-w-[90vw] flex-col justify-between border-r border-[#b99862]/22 bg-[#fffdf8] p-6 shadow-[0_40px_90px_-46px_rgba(29,28,25,0.88)]">
-            <div className="space-y-8">
+          <nav className="relative z-50 flex h-full w-80 max-w-[90vw] flex-col justify-between overflow-y-auto border-r border-[#b99862]/22 bg-[#fffdf8] p-6 shadow-[0_40px_90px_-46px_rgba(29,28,25,0.88)]">
+            <div className="space-y-6">
               <div className="border-b border-[#b99862]/18 pb-6">
                 <Image
                   src={logoSrc}
@@ -117,11 +146,11 @@ export default function Sidebar() {
         </div>
       )}
 
-      <aside className="sticky top-0 hidden h-screen w-[22rem] flex-col justify-between p-5 md:flex">
-        <div className="paunova-card flex h-full flex-col justify-between rounded-[2rem] p-5">
-          <div className="space-y-8">
-            <div className="border-b border-[#b99862]/18 pb-7">
-              <div className="paunova-inner rounded-[1.65rem] px-4 py-7">
+      <aside className="sticky top-0 hidden h-screen w-[18.5rem] flex-col justify-between p-4 md:flex lg:w-[20rem]">
+        <div className="paunova-card flex h-full flex-col justify-between overflow-hidden rounded-[2rem] p-4">
+          <div className="min-h-0 space-y-5 overflow-y-auto pr-1">
+            <div className="border-b border-[#b99862]/18 pb-5">
+              <div className="paunova-inner rounded-[1.65rem] px-4 py-5">
                 <Image
                   src={logoSrc}
                   alt="Paunova Skin & Age Clinic"
@@ -149,10 +178,7 @@ export default function Sidebar() {
 
             <div className="paunova-inner rounded-[1.4rem] p-4 text-[11px] leading-relaxed text-[#746b61]">
               <p className="paunova-kicker mb-2">Sistema privado</p>
-              <p>
-                Datos clinicos separados del CRM publicitario. La IA solo deja
-                borradores para revision medica.
-              </p>
+              <p>Historias como borrador, inventario validado y auditoria de acciones sensibles.</p>
             </div>
           </div>
 

@@ -19,6 +19,17 @@ export interface ControlMetric {
   icon: string;
 }
 
+export interface ModuleWorkspace {
+  metrics: Array<{ label: string; value: string; icon: string }>;
+  records: Array<{
+    title: string;
+    subject: string;
+    meta: string;
+    state: string;
+  }>;
+  actions: Array<{ label: string; href: string; icon: string }>;
+}
+
 export const doctorModules: DoctorModule[] = [
   {
     title: "Pacientes",
@@ -224,3 +235,198 @@ export const integrationStates = [
     detail: "Despliegue conectado a GitHub/main.",
   },
 ];
+
+export const moduleWorkspaces: Record<string, ModuleWorkspace> = {
+  "/doctor/historias-clinicas": {
+    metrics: [
+      { label: "Borradores", value: "4", icon: "edit_note" },
+      { label: "Por firmar", value: "2", icon: "signature" },
+      { label: "Transcribir", value: "1", icon: "record_voice_over" },
+    ],
+    records: [
+      {
+        title: "Historia pendiente de revision",
+        subject: "Sofia Rodriguez",
+        meta: "Comparar dictado con borrador IA antes de firmar",
+        state: "Revision",
+      },
+      {
+        title: "Transcripcion lista",
+        subject: "Valeria Cardenas",
+        meta: "Requiere correccion manual de producto y zona",
+        state: "Borrador",
+      },
+      {
+        title: "Consulta sin cierre",
+        subject: "Mateo Gomez",
+        meta: "Falta recomendacion y proximo control",
+        state: "Pendiente",
+      },
+    ],
+    actions: [
+      { label: "Nueva consulta", href: "/doctor/pacientes", icon: "mic" },
+      { label: "Ver pendientes", href: "/doctor/alertas", icon: "task_alt" },
+      { label: "Torre control", href: "/doctor/torre-control", icon: "monitoring" },
+    ],
+  },
+  "/doctor/productos": {
+    metrics: [
+      { label: "Lotes activos", value: "18", icon: "science" },
+      { label: "Por vencer", value: "3", icon: "event_busy" },
+      { label: "Bloqueados", value: "1", icon: "block" },
+    ],
+    records: [
+      {
+        title: "Dysport 500U",
+        subject: "Lote DY-0726",
+        meta: "Stock sobre minimo, validar cadena de frio",
+        state: "Disponible",
+      },
+      {
+        title: "Acido Hialuronico Ultra 4",
+        subject: "Lote AH-1026",
+        meta: "Requiere confirmacion de vencimiento",
+        state: "Revision",
+      },
+      {
+        title: "Bioestimulador",
+        subject: "Lote BC-0526",
+        meta: "No permitir uso hasta actualizar inventario",
+        state: "Bloqueado",
+      },
+    ],
+    actions: [
+      { label: "Registrar entrada", href: "/doctor/inventario", icon: "add_box" },
+      { label: "Solicitar compra", href: "/doctor/solicitudes", icon: "shopping_cart" },
+      { label: "Alertas", href: "/doctor/alertas", icon: "notifications_active" },
+    ],
+  },
+  "/doctor/insumos": {
+    metrics: [
+      { label: "Disponibles", value: "42", icon: "inventory_2" },
+      { label: "Minimo", value: "5", icon: "warning" },
+      { label: "Salidas hoy", value: "9", icon: "outbox" },
+    ],
+    records: [
+      {
+        title: "Jeringas 1 ml",
+        subject: "Procedimientos",
+        meta: "Consumo alto esta semana",
+        state: "Minimo",
+      },
+      {
+        title: "Agujas 30G",
+        subject: "Insumo esteril",
+        meta: "Registrar nueva entrada antes de agenda del viernes",
+        state: "Solicitar",
+      },
+      {
+        title: "Gasas esteriles",
+        subject: "Cabina clinica",
+        meta: "Stock ideal completo",
+        state: "OK",
+      },
+    ],
+    actions: [
+      { label: "Registrar salida", href: "/doctor/inventario", icon: "remove_circle" },
+      { label: "Ajustar stock", href: "/doctor/inventario", icon: "tune" },
+      { label: "Crear solicitud", href: "/doctor/solicitudes", icon: "shopping_cart" },
+    ],
+  },
+  "/doctor/solicitudes": {
+    metrics: [
+      { label: "Borradores", value: "2", icon: "draft" },
+      { label: "Pendientes", value: "3", icon: "schedule" },
+      { label: "Recibidas", value: "1", icon: "inventory" },
+    ],
+    records: [
+      {
+        title: "Pedido insumos cabina",
+        subject: "Proveedor principal",
+        meta: "Faltan cantidades de agujas y guantes",
+        state: "Borrador",
+      },
+      {
+        title: "Reposicion toxina",
+        subject: "Proveedor farmaceutico",
+        meta: "Esperando confirmacion de disponibilidad",
+        state: "Enviada",
+      },
+      {
+        title: "Material post-procedimiento",
+        subject: "Compras Paunova",
+        meta: "Recepcion parcial registrada",
+        state: "Parcial",
+      },
+    ],
+    actions: [
+      { label: "Nueva solicitud", href: "/doctor/solicitudes", icon: "add_shopping_cart" },
+      { label: "Inventario", href: "/doctor/inventario", icon: "inventory_2" },
+      { label: "Alertas compra", href: "/doctor/alertas", icon: "warning" },
+    ],
+  },
+  "/doctor/seguimientos": {
+    metrics: [
+      { label: "Hoy", value: "5", icon: "today" },
+      { label: "Vencidos", value: "3", icon: "event_busy" },
+      { label: "Semana", value: "14", icon: "date_range" },
+    ],
+    records: [
+      {
+        title: "Control 24 horas",
+        subject: "Sofia Rodriguez",
+        meta: "Confirmar inflamacion y signos de alarma",
+        state: "Hoy",
+      },
+      {
+        title: "Control 7 dias",
+        subject: "Mateo Gomez",
+        meta: "Enviar seguimiento manual por WhatsApp",
+        state: "Pendiente",
+      },
+      {
+        title: "Repeticion sugerida",
+        subject: "Valeria Cardenas",
+        meta: "La doctora debe definir fecha, no automatizar",
+        state: "Revision",
+      },
+    ],
+    actions: [
+      { label: "Ver pacientes", href: "/doctor/pacientes", icon: "group" },
+      { label: "Agenda", href: "/doctor/agenda", icon: "calendar_today" },
+      { label: "Alertas", href: "/doctor/alertas", icon: "notifications_active" },
+    ],
+  },
+  "/doctor/alertas": {
+    metrics: [
+      { label: "Rojas", value: "2", icon: "priority_high" },
+      { label: "Naranjas", value: "4", icon: "warning" },
+      { label: "Amarillas", value: "7", icon: "error" },
+    ],
+    records: [
+      {
+        title: "Producto sin stock",
+        subject: "Inventario",
+        meta: "Bloquear uso hasta entrada confirmada",
+        state: "Roja",
+      },
+      {
+        title: "Historia sin firma",
+        subject: "Sofia Rodriguez",
+        meta: "Documento no debe cerrarse automaticamente",
+        state: "Naranja",
+      },
+      {
+        title: "Seguimiento vencido",
+        subject: "Mateo Gomez",
+        meta: "Control manual pendiente",
+        state: "Amarilla",
+      },
+    ],
+    actions: [
+      { label: "Resolver alerta", href: "/doctor/alertas", icon: "task_alt" },
+      { label: "Inventario", href: "/doctor/inventario", icon: "inventory_2" },
+      { label: "Seguimientos", href: "/doctor/seguimientos", icon: "event_repeat" },
+    ],
+  },
+};

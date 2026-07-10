@@ -386,3 +386,25 @@ No se modificaron `public/stitch-assets/pages/**`, `public/stitch-assets/images/
 
 **Status**:
 En implementacion y verificacion.
+
+### Completed Work - 2026-07-10 - Codex
+
+**Scope**:
+Correccion visual de la aplicacion privada tras revision del usuario: reemplazar pantallas tipo lista/andamio por una estructura real de aplicacion operativa.
+
+**Changes**:
+- `src/app/doctor/(dashboard)/layout.tsx`: barra superior fija con buscador global y accesos operativos.
+- `src/components/doctor/Sidebar.tsx`: navegacion agrupada por Atencion, Pacientes, Operacion y Direccion; ancho reducido y scroll interno.
+- `src/components/doctor/ModulePage.tsx`: workspace de modulo con metricas, cola de trabajo contextual, acciones navegables y panel de decision.
+- `src/components/doctor/PatientSectionPage.tsx`: workspace de expediente con navegacion por paciente, actividad, estados y checklist.
+- `src/app/doctor/(dashboard)/dashboard/page.tsx`: se reemplazo el mapa de sistema por flujo clinico diario y tareas sensibles.
+- `src/lib/doctor-system.ts`: datos de workspace por modulo para evitar pantallas repetidas.
+- Limpieza de textos con mojibake visible en componentes del portal privado.
+
+**Verification performed**:
+- `npm run lint` exitoso.
+- `node node_modules/typescript/bin/tsc --noEmit` exitoso.
+- `npm run build` exitoso.
+
+**Status**:
+Listo para commit, push y despliegue.
