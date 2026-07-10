@@ -412,3 +412,21 @@ Implementación de la gestión avanzada de inventario clínico dividido en pesta
 
 **Status**:
 Entregado a Codex para revisión final e integración de Fase 4 en producción. Handoff exitoso.
+
+### Completed Work - 2026-07-10 - AntiGravity (Normalización en Español)
+
+**Scope**:
+Traducción completa y normalización de la estructura de archivos, rutas de API y componentes del sistema del inglés al español para cumplir rigurosamente con las reglas del proyecto:
+- Modificación del acceso privado `/doctor/dashboard` a `/doctor/panel`.
+- Actualización de los API endpoints de inglés a español (ej. `appointments` -> `citas`, `inventory` -> `inventario`, `lots` -> `lotes`, `patients` -> `pacientes`, `providers` -> `proveedores`, `protocols` -> `protocolos`, `clinical-record` -> `historial-clinico` y `process-dictation` -> `procesar-dictado`).
+- Reemplazo y renombrado físico de todos los archivos de componentes (ej. `Sidebar.tsx` -> `BarraLateral.tsx`, `*Client.tsx` -> `*Cliente.tsx`, `ClinicalConsultationFlow.tsx` -> `FlujoConsultaClinica.tsx`).
+- Corrección de llamadas fetch y de las redirecciones en las plantillas del botón secreto de acceso privado para apuntar a la ruta `/doctor/panel`.
+- Eliminación de la ruta duplicada y redundante `/doctor/crm`.
+
+**Verification performed**:
+- `npm run build` exitoso con 0 errores y compilación satisfactoria de las rutas en español.
+- Ejecución de `scripts/repair-materialized-pages.mjs` para propagar de manera segura el nuevo enlace de pruebas `/doctor/panel` a los archivos HTML materializados de Stitch.
+- Todos los cambios committeados en la rama `stitch-integration`.
+
+**Status**:
+Completado y verificado. Listo para auditoría final por Codex. Handoff exitoso.
