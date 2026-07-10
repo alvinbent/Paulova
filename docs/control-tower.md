@@ -435,3 +435,49 @@ Mantener la salida visual de Stitch sin reinterpretar el diseno; solo retirar el
 
 **Rollback Path**:
 - `git restore public/stitch-assets/pages/quienes-somos.html`
+
+### Responsive Coordination - 2026-07-10 - Codex
+
+**Scope**:
+Coordinar versiones escritorio, tablet y movil para la web publica materializada desde Stitch y para la aplicacion privada de la doctora.
+
+**Source of Truth**:
+- Web publica: HTML materializado desde Stitch en `public/stitch-assets/pages/**`.
+- App privada: rutas Next.js bajo `/doctor`.
+- Ruta canonica privada: `/doctor/dashboard`.
+
+**Reason for Protected Areas modifications**:
+La web publica se sirve dentro de un iframe desde HTML estatico de Stitch. Para que los cambios responsive se vean en Vercel, la capa responsive debe cargarse directamente dentro de esos HTML protegidos.
+
+**Exact Protected Files changed**:
+- `public/stitch-assets/pages/*.html` (inyeccion de CSS/JS responsive compartido y redireccion a `/doctor/dashboard`).
+- `public/stitch-assets/responsive-coordinator.css`
+- `public/stitch-assets/responsive-coordinator.js`
+
+**Related App Files changed**:
+- `src/app/doctor/(dashboard)/layout.tsx`
+- `src/components/doctor/BarraLateral.tsx`
+- `src/app/doctor/login/page.tsx`
+- `src/app/doctor/(dashboard)/dashboard/page.tsx`
+- `src/app/doctor/(dashboard)/panel/page.tsx`
+- `src/app/globals.css`
+- `scripts/materialize-stitch-assets.mjs`
+- `scripts/repair-materialized-pages.mjs`
+- `scripts/secret-access-template.mjs`
+
+**Responsive Decisions**:
+- Escritorio amplio (`>=1280px`): sidebar fija de la aplicacion privada y grid dashboard completo.
+- Tablet (`768px-1279px`): header superior con drawer lateral para la aplicacion privada, sin sidebar fija.
+- Movil (`<=767px`): una columna, menu publico funcional, margenes reducidos y control de overflow horizontal.
+
+**Rollback Path**:
+- `git restore public/stitch-assets/pages/ public/stitch-assets/responsive-coordinator.css public/stitch-assets/responsive-coordinator.js`
+- `git restore src/app/doctor/(dashboard)/layout.tsx src/components/doctor/BarraLateral.tsx src/app/doctor/login/page.tsx src/app/doctor/(dashboard)/dashboard/page.tsx src/app/doctor/(dashboard)/panel/page.tsx src/app/globals.css`
+- `git restore scripts/materialize-stitch-assets.mjs scripts/repair-materialized-pages.mjs scripts/secret-access-template.mjs docs/control-tower.md`
+
+**Verification performed**:
+- `npm run lint` exitoso.
+- `npm run typecheck` exitoso.
+- `npm run build` exitoso.
+- `git diff --check` exitoso.
+- Revision HTTP local: `/` responde `200`, `/stitch-assets/responsive-coordinator.css` responde `200`, `/stitch-assets/responsive-coordinator.js` responde `200`, `/doctor/dashboard` existe y `/doctor/panel` redirige.

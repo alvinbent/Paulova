@@ -109,6 +109,8 @@ const hashRewrites = new Map([
 const canonicalLocation = "Av. Principal 123, Centro Médico Especializado, Consultorio 504.";
 const canonicalClinicName = "Paunova";
 const canonicalClinicLongName = "Paunova Skin & Age Clinic";
+const responsiveCssTag = '<link rel="stylesheet" href="/stitch-assets/responsive-coordinator.css">';
+const responsiveJsTag = '<script src="/stitch-assets/responsive-coordinator.js" defer></script>';
 
 const topNavigationScript = `<script>
 document.addEventListener("click", function(event) {
@@ -366,6 +368,17 @@ function injectGlobalInteractionStyle(html) {
   return html.replace("</head>", `${globalInteractionStyle}</head>`);
 }
 
+function injectResponsiveCoordinator(html) {
+  let next = html;
+  if (!next.includes("/stitch-assets/responsive-coordinator.css")) {
+    next = next.replace("</head>", `${responsiveCssTag}\n</head>`);
+  }
+  if (!next.includes("/stitch-assets/responsive-coordinator.js")) {
+    next = next.replace("</body>", `${responsiveJsTag}\n</body>`);
+  }
+  return next;
+}
+
 function rewriteBrandAssets(html) {
   return html
     .replaceAll("/brand-assets/logo-horizontal-dorado.png", "/brand-assets/logo-paunova-skin-age.png")
@@ -459,6 +472,7 @@ async function rewriteHtml(page) {
   html = rewriteLocationCopy(html);
   html = rewriteBrandAssets(html);
   html = injectGlobalInteractionStyle(html);
+  html = injectResponsiveCoordinator(html);
   html = html.replace(/btn\.innerHTML = '\u00a1Enviado con \u00e9xito!';/g, "btn.innerHTML = 'Solicitud enviada';");
   html = html.replace("</body>", `${secretButtonHtml}${topNavigationScript}</body>`);
   await writeFile(path.join(PAGES_OUT, page.output), html, "utf8");
@@ -496,7 +510,12 @@ async function main() {
     throw new Error(`Stitch ZIP export not found at ${ZIP_EXPORT_ROOT}. Unzip the Stitch export before materializing.`);
   }
 
-  await rm(PUBLIC_OUT, { recursive: true, force: true });
+  await mkdir(PUBLIC_OUT, { recursive: true });
+  await rm(PAGES_OUT, { recursive: true, force: true });
+  await rm(IMAGES_OUT, { recursive: true, force: true });
+  await rm(SHOTS_OUT, { recursive: true, force: true });
+  await rm(REFERENCE_OUT, { recursive: true, force: true });
+  await rm(path.join(PUBLIC_OUT, "manifest.json"), { force: true });
   await mkdir(PAGES_OUT, { recursive: true });
   await mkdir(IMAGES_OUT, { recursive: true });
   await mkdir(SHOTS_OUT, { recursive: true });
@@ -522,7 +541,7 @@ async function main() {
       screenshot: `/stitch-assets/screenshots/${slug}.png`,
     })),
     assets: {
-      cssFiles: [],
+      cssFiles: ["/stitch-assets/responsive-coordinator.css"],
       fonts: [
         "Google Fonts: EB Garamond",
         "Google Fonts: Hanken Grotesk",

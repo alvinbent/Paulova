@@ -20,6 +20,8 @@ html,
 body {
   margin: 0;
   min-height: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -28,6 +30,19 @@ body {
   font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
 }
 
 iframe {
@@ -145,5 +160,93 @@ iframe {
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
+}
+
+.paunova-doctor-shell {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.paunova-doctor-shell main {
+  isolation: isolate;
+}
+
+.paunova-doctor-shell a,
+.paunova-doctor-shell button {
+  -webkit-tap-highlight-color: transparent;
+  transition-property: transform, box-shadow, background-color, border-color, color, opacity;
+  transition-duration: 220ms;
+  transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.paunova-doctor-shell button:not(:disabled),
+.paunova-doctor-shell a[href] {
+  cursor: pointer;
+}
+
+.paunova-doctor-shell button:disabled {
+  cursor: not-allowed;
+}
+
+@media (hover: hover) {
+  .paunova-doctor-shell a[href]:hover,
+  .paunova-doctor-shell button:not(:disabled):hover {
+    transform: translateY(-1px);
+  }
+}
+
+.paunova-doctor-shell a[href]:active,
+.paunova-doctor-shell button:not(:disabled):active {
+  transform: translateY(1px) scale(0.99);
+}
+
+@media (max-width: 767px) {
+  .paunova-doctor-shell main {
+    padding-inline: 1rem;
+  }
+
+  .paunova-doctor-shell h1 {
+    font-size: 2.25rem;
+    line-height: 1.03;
+  }
+
+  .paunova-doctor-shell h2 {
+    font-size: 1.65rem;
+    line-height: 1.12;
+  }
+
+  .paunova-doctor-shell h3 {
+    font-size: 1.3rem;
+    line-height: 1.16;
+  }
+
+  .paunova-doctor-shell .paunova-card,
+  .paunova-doctor-shell .paunova-table-wrap {
+    border-radius: 1.5rem;
+  }
+
+  .paunova-doctor-shell .grid,
+  .paunova-doctor-shell section,
+  .paunova-doctor-shell article,
+  .paunova-doctor-shell div {
+    min-width: 0;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1279px) {
+  .paunova-doctor-shell main {
+    padding-inline: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paunova-doctor-shell *,
+  .paunova-doctor-shell *::before,
+  .paunova-doctor-shell *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 

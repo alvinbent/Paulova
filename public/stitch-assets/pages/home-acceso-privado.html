@@ -196,7 +196,8 @@
     transform: none !important;
   }
 }
-</style></head>
+</style><link rel="stylesheet" href="/stitch-assets/responsive-coordinator.css">
+</head>
 <body class="bg-warm-white text-on-background font-body-md overflow-x-hidden">
 <nav class="fixed top-0 left-0 w-full z-50 glass-nav border-b border-outline-variant/20">
 <div class="max-w-container-max mx-auto px-margin-desktop h-20 flex justify-between items-center">
@@ -948,7 +949,7 @@ document.addEventListener("click", function(event) {
         return;
       }
 
-      window.top.location.assign('/doctor/panel');
+      window.top.location.assign('/doctor/dashboard');
     } catch {
       errorNode.textContent = 'No fue posible conectar con la aplicación. Intenta nuevamente.';
     } finally {
@@ -957,4 +958,5 @@ document.addEventListener("click", function(event) {
     }
   });
 })();
-</script></body></html>
+</script><script src="/stitch-assets/responsive-coordinator.js" defer></script>
+</body></html>

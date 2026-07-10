@@ -7,9 +7,9 @@ export default function DoctorDashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="paunova-doctor-shell min-h-dvh bg-[#eee6dc] text-[#2b2520] md:flex">
+    <div className="paunova-doctor-shell min-h-dvh bg-[#eee6dc] text-[#2b2520] xl:flex">
       <BarraLateral />
-      <main className="relative min-w-0 flex-1 overflow-x-hidden p-6 sm:p-8">
+      <main className="relative min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 xl:p-8">
         {children}
       </main>
     </div>

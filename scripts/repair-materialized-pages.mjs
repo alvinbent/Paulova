@@ -5,6 +5,8 @@ import path from "node:path";
 import { secretAccessHtml } from "./secret-access-template.mjs";
 
 const pagesDir = path.join(process.cwd(), "public", "stitch-assets", "pages");
+const responsiveCssTag = '<link rel="stylesheet" href="/stitch-assets/responsive-coordinator.css">';
+const responsiveJsTag = '<script src="/stitch-assets/responsive-coordinator.js" defer></script>';
 
 function repairMojibake(html) {
   if (!/[\u00c3\u00c2\u00e2]/.test(html)) return html;
@@ -24,6 +26,17 @@ function injectSecretAccess(html) {
     throw new Error("Cannot inject secret access: missing </body>");
   }
   return cleaned.replace("</body>", `${secretAccessHtml}</body>`);
+}
+
+function injectResponsiveCoordinator(html) {
+  let next = html;
+  if (!next.includes("/stitch-assets/responsive-coordinator.css")) {
+    next = next.replace("</head>", `${responsiveCssTag}\n</head>`);
+  }
+  if (!next.includes("/stitch-assets/responsive-coordinator.js")) {
+    next = next.replace("</body>", `${responsiveJsTag}\n</body>`);
+  }
+  return next;
 }
 
 function rewriteBrandAssets(html) {
@@ -68,7 +81,9 @@ const files = (await readdir(pagesDir)).filter((file) => file.endsWith(".html"))
 for (const file of files) {
   const filePath = path.join(pagesDir, file);
   const original = await readFile(filePath, "utf8");
-  const repairedBase = injectSecretAccess(rewriteBrandAssets(polishCopy(repairMojibake(original))));
+  const repairedBase = injectResponsiveCoordinator(
+    injectSecretAccess(rewriteBrandAssets(polishCopy(repairMojibake(original))))
+  );
   const repaired = file === "home.html" ? injectHomeHeroVideo(repairedBase) : repairedBase;
   await writeFile(filePath, repaired, "utf8");
   console.log(`Repaired ${file}`);

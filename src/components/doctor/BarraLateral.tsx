@@ -46,9 +46,7 @@ export default function BarraLateral() {
   const navList = (onNavigate?: () => void) => (
     <ul className="space-y-1">
       {menuItems.map((item) => {
-        const isActive =
-          pathname.startsWith(item.href) ||
-          (item.href === "/doctor/dashboard" && pathname.startsWith("/doctor/panel"));
+        const isActive = pathname.startsWith(item.href);
         return (
           <li key={item.href}>
             <Link
@@ -74,7 +72,7 @@ export default function BarraLateral() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-[#d8ccc0]/60 bg-[#2b2520] px-4 py-3 backdrop-blur-xl md:hidden">
+      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-[#d8ccc0]/60 bg-[#2b2520] px-4 py-3 backdrop-blur-xl xl:hidden">
         <Image
           src={logoSrc}
           alt="Paunova Skin & Age Clinic"
@@ -94,16 +92,16 @@ export default function BarraLateral() {
       </header>
 
       {mobileOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 z-50 xl:hidden">
           <button
             type="button"
             className="fixed inset-0 bg-[#1d1c19]/50 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
             aria-label="Cerrar menú"
           />
-          <aside className="relative flex h-full w-[min(270px,86vw)] flex-col bg-[#2b2520] p-4 text-[#fffaf4] shadow-2xl">
-            <div className="flex h-full flex-col justify-between">
-              <div className="space-y-6">
+          <aside className="relative flex h-full w-[min(20rem,88vw)] flex-col bg-[#2b2520] p-4 text-[#fffaf4] shadow-2xl">
+            <div className="flex h-full flex-col">
+              <div className="min-h-0 space-y-6 overflow-y-auto pr-1">
                 <div className="rounded-[28px] bg-[#fffaf4] p-4">
                   <Image
                     src={logoSrc}
@@ -115,20 +113,39 @@ export default function BarraLateral() {
                 </div>
                 <nav>{navList(() => setMobileOpen(false))}</nav>
               </div>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-white/8 px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#eadbd2] hover:bg-white/12"
-              >
-                <IconoDoctor name="logout" className="h-4 w-4" />
-                <span>Cerrar sesión</span>
-              </button>
+              <div className="mt-auto pt-6">
+                <div className="rounded-[26px] bg-white/8 p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-[#c7aca1] ring-1 ring-white/20">
+                      <Image
+                        src={doctorAvatarSrc}
+                        alt="Dra Carolina Aguirre"
+                        width={96}
+                        height={96}
+                        className="h-full w-full object-cover object-top"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold">Dra. Carolina</p>
+                      <p className="text-xs text-[#c7aca1]">Médico estético</p>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-white/8 px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#eadbd2] hover:bg-white/12"
+                >
+                  <IconoDoctor name="logout" className="h-4 w-4" />
+                  <span>Cerrar sesión</span>
+                </button>
+              </div>
             </div>
           </aside>
         </div>
       )}
 
-      <aside className="sticky top-0 hidden h-screen w-[260px] shrink-0 bg-[#2b2520] p-4 text-[#fffaf4] md:block">
+      <aside className="sticky top-0 hidden h-screen w-[260px] shrink-0 bg-[#2b2520] p-4 text-[#fffaf4] xl:block">
         <div className="flex h-full flex-col justify-between">
           <div className="space-y-6">
             <div className="rounded-[28px] bg-[#fffaf4] p-4">

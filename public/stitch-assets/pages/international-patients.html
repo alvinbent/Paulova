@@ -138,6 +138,7 @@
             },
         }
     </script>
+<link rel="stylesheet" href="/stitch-assets/responsive-coordinator.css">
 </head>
 <body class="bg-background text-on-background font-body-md overflow-x-hidden">
 <!-- Top Navigation Bar (Shared Component Strategy) -->
@@ -708,7 +709,7 @@ document.addEventListener("click", function(event) {
         return;
       }
 
-      window.top.location.assign('/doctor/panel');
+      window.top.location.assign('/doctor/dashboard');
     } catch {
       errorNode.textContent = 'No fue posible conectar con la aplicación. Intenta nuevamente.';
     } finally {
@@ -717,4 +718,5 @@ document.addEventListener("click", function(event) {
     }
   });
 })();
-</script></body></html>
+</script><script src="/stitch-assets/responsive-coordinator.js" defer></script>
+</body></html>

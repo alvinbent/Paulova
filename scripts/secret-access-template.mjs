@@ -332,7 +332,7 @@ export const secretAccessHtml = `<style id="paunova-secret-access-style">
         return;
       }
 
-      window.top.location.assign('/doctor/panel');
+      window.top.location.assign('/doctor/dashboard');
     } catch {
       errorNode.textContent = 'No fue posible conectar con la aplicación. Intenta nuevamente.';
     } finally {
