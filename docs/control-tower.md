@@ -411,13 +411,37 @@ Reconstrucci?n y normalizaci?n visual de la aplicaci?n privada de la Dra Carolin
 - Revisi?n de `git status` para confirmar que no aparezcan credenciales.
 - Commit, push y despliegue de producci?n en Vercel.
 
+### Completed Work - 2026-07-10 - Codex (Dashboard Refactoring)
+
+**Scope**:
+Reconstrucción completa de `/doctor/dashboard` (normalizado a `/doctor/panel` en español) desde cero siguiendo la dirección premium healthtech inspirada en la referencia HealthSync.
+
+**Changes**:
+- `src/app/doctor/(dashboard)/layout.tsx`: barra superior fija con buscador global y accesos operativos.
+- `src/components/doctor/BarraLateral.tsx`: navegación agrupada y estilo premium oscuro.
+- `src/components/doctor/ModulePage.tsx` y `PatientSectionPage.tsx`: workspaces organizados para evitar pantallas repetitivas.
+- `src/app/doctor/(dashboard)/panel/page.tsx`: se integraron subcomponentes del dashboard (`TodaySchedule`, `CalendarPanel`, `RecentActivityPanel`, `ClinicalAlertsPanel`, etc.).
+- Limpieza de mojibakes en componentes del portal privado.
+
+### Completed Work - 2026-07-10 - AntiGravity (WhatsApp Chatbot & Calendar Meet Fallback)
+
+**Scope**:
+Implementación técnica del chatbot **"Pau"** para WhatsApp (Fase 1 y 2) y robustecimiento de la sincronización con Google Calendar & Meet.
+
+**Changes**:
+- `src/lib/google.ts`: bypass inteligente para eludir errores de creación de Google Meet en calendarios secundarios sin Workspace.
+- `src/lib/chatbot/servicios.ts`: catálogo estructurado de procedimientos, duraciones y precios de la clínica.
+- `src/lib/chatbot/openai-assistant.ts`: conector de OpenAI Assistant con prompts del sistema y function calling integrados.
+- `src/app/api/whatsapp/webhook/route.ts`: webhook de WhatsApp Cloud API con procesamiento conversacional asíncrono.
+- `src/lib/db.ts`: modelo de datos y CRUD para almacenar sesiones de chat en Sheets (pestaña `Conversaciones`).
+
 ---
 
-## Tareas de Pre-producci?n y Entrega Final
+## Tareas de Pre-producción y Entrega Final
 
-- [ ] **Migraci?n de Facturaci?n de OpenAI**: Cambiar la forma de pago/cuenta bancaria personal a la cuenta corporativa del cliente para el consumo de las APIs de OpenAI asociadas a la cuenta `paunovacliic@gmail.com`.
+- [ ] **Migración de Facturación de OpenAI**: Cambiar la forma de pago/cuenta bancaria personal a la cuenta corporativa del cliente para el consumo de las APIs de OpenAI asociadas a la cuenta `paunovacliic@gmail.com`.
 - [ ] **Credenciales de WhatsApp en Vercel**: Introducir tokens reales y permanentes de Meta Business en las variables de entorno de Vercel.
-- [ ] **Restablecer Seguridad del Panel Privado**: Desactivar el bypass autom?tico de pruebas y rehabilitar el login con usuario/contrase?a seguros para las rutas privadas.
+- [ ] **Restablecer Seguridad del Panel Privado**: Desactivar el bypass automático de pruebas (temporizador de 5 segundos) y rehabilitar el login con usuario/contraseña seguros para la ruta `/doctor/panel`.
 
 ### Protected Area Repair - 2026-07-10 - Codex
 
