@@ -442,6 +442,7 @@ Implementación técnica del chatbot **"Pau"** para WhatsApp (Fase 1 y 2) y robu
 - [ ] **Migración de Facturación de OpenAI**: Cambiar la forma de pago/cuenta bancaria personal a la cuenta corporativa del cliente para el consumo de las APIs de OpenAI asociadas a la cuenta `Paunova.co@gmail.com`.
 - [ ] **Credenciales de WhatsApp en Vercel**: Introducir tokens reales y permanentes de Meta Business en las variables de entorno de Vercel.
 - [ ] **Restablecer Seguridad del Panel Privado**: Desactivar el bypass automático de pruebas (temporizador de 5 segundos) y rehabilitar el login con usuario/contraseña seguros para la ruta `/doctor/panel`.
+- [ ] **Migración a Google Workspace para Google Meet**: Si se requiere habilitar la autogeneración de enlaces de Google Meet en calendarios secundarios en el futuro, migrar de una cuenta @gmail.com estándar a Google Workspace (ej: dominio corporativo @paunova.co) para permitir permisos de conferencia programática a la Cuenta de Servicio.
 
 ### Protected Area Repair - 2026-07-10 - Codex
 
