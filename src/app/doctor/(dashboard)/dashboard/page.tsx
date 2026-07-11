@@ -11,6 +11,7 @@ import { db } from "@/lib/db";
 import IconoDoctor from "@/components/doctor/IconoDoctor";
 
 export const revalidate = 0;
+export const dynamic = "force-dynamic";
 
 export default async function DoctorDashboard() {
   const patients = await db.getPatients();

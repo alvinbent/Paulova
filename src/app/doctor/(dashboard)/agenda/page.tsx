@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import AgendaCliente from "@/components/doctor/AgendaCliente";
 
 export const revalidate = 0; // Disable cache to fetch real-time updates
+export const dynamic = "force-dynamic";
 
 export default async function DoctorAgenda() {
   const appointments = await db.getAppointments();

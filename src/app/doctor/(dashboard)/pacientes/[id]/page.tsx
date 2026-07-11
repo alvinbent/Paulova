@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import PacienteCliente from "@/components/doctor/PacienteCliente";
 
 export const revalidate = 0; // Disable cache to fetch real-time updates
+export const dynamic = "force-dynamic";
 
 export default async function DoctorPacientePerfil({
   params,

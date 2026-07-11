@@ -31,7 +31,7 @@ envContent.split('\n').forEach(line => {
 
 const clientEmail = env.GOOGLE_CLIENT_EMAIL;
 const privateKey = env.GOOGLE_PRIVATE_KEY;
-const targetEmail = 'paunovaclinic@gmail.com';
+const targetEmail = 'Paunova.co@gmail.com';
 
 if (!clientEmail || !privateKey) {
   console.error('Error: Missing GOOGLE_CLIENT_EMAIL or GOOGLE_PRIVATE_KEY in .env.local');

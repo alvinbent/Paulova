@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { doctorModules } from "@/lib/doctor-system";
 
 export const revalidate = 0;
+export const dynamic = "force-dynamic";
 
 const pageModule = doctorModules.find((item) => item.href === "/doctor/reportes")!;
 

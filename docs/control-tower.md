@@ -439,7 +439,7 @@ Implementación técnica del chatbot **"Pau"** para WhatsApp (Fase 1 y 2) y robu
 
 ## Tareas de Pre-producción y Entrega Final
 
-- [ ] **Migración de Facturación de OpenAI**: Cambiar la forma de pago/cuenta bancaria personal a la cuenta corporativa del cliente para el consumo de las APIs de OpenAI asociadas a la cuenta `paunovacliic@gmail.com`.
+- [ ] **Migración de Facturación de OpenAI**: Cambiar la forma de pago/cuenta bancaria personal a la cuenta corporativa del cliente para el consumo de las APIs de OpenAI asociadas a la cuenta `Paunova.co@gmail.com`.
 - [ ] **Credenciales de WhatsApp en Vercel**: Introducir tokens reales y permanentes de Meta Business en las variables de entorno de Vercel.
 - [ ] **Restablecer Seguridad del Panel Privado**: Desactivar el bypass automático de pruebas (temporizador de 5 segundos) y rehabilitar el login con usuario/contraseña seguros para la ruta `/doctor/panel`.
 

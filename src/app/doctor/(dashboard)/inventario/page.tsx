@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import InventarioCliente from "@/components/doctor/InventarioCliente";
 
 export const revalidate = 0; // Disable cache to fetch real-time updates
+export const dynamic = "force-dynamic";
 
 export default async function DoctorInventario() {
   const inventory = await db.getInventory();

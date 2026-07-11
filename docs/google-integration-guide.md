@@ -1,6 +1,6 @@
 # Guía de Sincronización: Google Sheets, Calendar y Meet
 
-Esta guía explica paso a paso cómo conectar la aplicación privada con la cuenta oficial **`paunovaclinic@gmail.com`** de Google. 
+Esta guía explica paso a paso cómo conectar la aplicación privada con la cuenta oficial **`Paunova.co@gmail.com`** de Google. 
 
 Para lograr una sincronización automatizada en segundo plano (servidor a servidor) sin necesidad de solicitarle credenciales interactivas a la doctora constantemente, utilizaremos una **Cuenta de Servicio (Service Account)** de Google Cloud.
 
@@ -8,7 +8,7 @@ Para lograr una sincronización automatizada en segundo plano (servidor a servid
 
 ## Paso 1: Configurar el Proyecto en Google Cloud Console
 
-1. Ingresa a [Google Cloud Console](https://console.cloud.google.com/) con la cuenta **`paunovaclinic@gmail.com`**.
+1. Ingresa a [Google Cloud Console](https://console.cloud.google.com/) con la cuenta **`Paunova.co@gmail.com`**.
 2. Crea un nuevo proyecto llamado **`Paunova Digital Clinic`**.
 3. En el menú de navegación izquierdo, ve a **APIs y servicios** > **Biblioteca**.
 4. Busca y activa las siguientes APIs:
@@ -33,7 +33,7 @@ Para lograr una sincronización automatizada en segundo plano (servidor a servid
 
 ## Paso 3: Crear y Compartir el Google Sheet
 
-1. Abre Google Drive con la cuenta **`paunovaclinic@gmail.com`**.
+1. Abre Google Drive con la cuenta **`Paunova.co@gmail.com`**.
 2. Crea una nueva Hoja de Cálculo (Google Sheet) con el nombre: `Paunova Clinic DB`.
 3. Estructura el libro creando las **6 pestañas** definidas en el archivo [google-sheets-template.md](file:///c:/dev/Paunova/paunova%20proyect/docs/google-sheets-template.md).
 4. **Compartir el archivo**:
@@ -53,7 +53,7 @@ El `ID_DEL_SHEET` es una cadena larga de letras y números.
 ### B. ID del Google Calendar
 1. Abre [Google Calendar](https://calendar.google.com/) con la cuenta de la clínica.
 2. En la barra lateral izquierda, pasa el cursor sobre tu calendario principal, haz clic en los tres puntos y selecciona **Configuración y uso compartido**.
-3. Baja hasta la sección **Integrar el calendario** y copia la **ID del calendario** (suele ser la dirección de correo electrónico `paunovaclinic@gmail.com` o una cadena larga terminada en `@group.calendar.google.com`).
+3. Baja hasta la sección **Integrar el calendario** y copia la **ID del calendario** (suele ser la dirección de correo electrónico `Paunova.co@gmail.com` o una cadena larga terminada en `@group.calendar.google.com`).
 4. En la sección superior **Compartir con personas específicas**, haz clic en **Agregar personas** y añade el correo de tu cuenta de servicio (el mismo del paso anterior) otorgándole permisos para **Realizar cambios y administrar el uso compartido**.
 
 ---
@@ -67,7 +67,7 @@ Abre tu archivo local de variables de entorno `.env.local` (y en el panel de Ver
 GOOGLE_SPREADSHEET_ID="Pegar_ID_Del_Sheet_Aqui"
 
 # ID del calendario para agendar citas
-GOOGLE_CALENDAR_ID="paunovaclinic@gmail.com"
+GOOGLE_CALENDAR_ID="Paunova.co@gmail.com"
 
 # Credenciales de la Cuenta de Servicio de Google (Copiar directamente del archivo JSON descargado)
 GOOGLE_CLIENT_EMAIL="paunova-db-sync@paunova-digital-clinic.iam.gserviceaccount.com"

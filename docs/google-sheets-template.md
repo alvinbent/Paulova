@@ -1,6 +1,6 @@
 # Plantilla de Base de Datos - Google Sheets
 
-Este documento detalla la estructura y columnas exactas que deben crearse en el Google Sheet oficial bajo la cuenta **`paunovaclinic@gmail.com`** durante la **Fase 4**.
+Este documento detalla la estructura y columnas exactas que deben crearse en el Google Sheet oficial bajo la cuenta **`Paunova.co@gmail.com`** durante la **Fase 4**.
 
 El archivo de Google Sheets debe contener **6 pestañas (hojas)** con las siguientes columnas en la primera fila:
 
