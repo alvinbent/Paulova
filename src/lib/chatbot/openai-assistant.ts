@@ -4,26 +4,40 @@ import { db } from "../db";
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
-// System Prompt for Pau
+// 1. ADVANCED SAFETY AND CLINICAL EMERGENCY HEURISTICS (Local Pre-Classifier)
+// Intercepts symptoms before calling OpenAI to guarantee immediate safety response.
+export function classifyLocalEmergency(message: string): boolean {
+  const emergencyRegex = /\b(emergencia|sangrado|hemorragia|dolor insoportable|asfixia|ahogo|alergia grave|anafilaxia|inconsciente|desmayo|fractura|infarto|autolesion|urgencia)\b/i;
+  return emergencyRegex.test(message);
+}
+
+// 2. ADVANCED HUMAN HANDOFF HEURISTICS (Local Pre-Classifier)
+export function classifyLocalHumanHandoff(message: string): boolean {
+  const handoffRegex = /\b(humano|asesora|persona|recepcion|doctora|hablar con alguien|queja|reclamo|no entiendo|llamada|asesor|humana)\b/i;
+  return handoffRegex.test(message);
+}
+
+// 3. SYSTEM PROMPT: EL CEREBRO PUBLICITARIO Y NORMAS LEGALES (LEY 1581)
 const SYSTEM_PROMPT = `
 Eres Pau, la asistente virtual oficial de Paunova Clinic y de la Dra. Carolina Aguirre (especialista en medicina estética).
 Tu objetivo es orientar a los pacientes sobre tratamientos, precios, responder dudas generales, y guiarlos amablemente a programar una valoración médica.
 
-REGLAS DE COMPORTAMIENTO Y TONO:
-1. Preséntate siempre como Pau, la asistente virtual de la Dra. Carolina Aguirre. Nunca finjas ser la doctora.
-2. Utiliza un tono cálido, elegante, profesional, empático y persuasivo sin ser insistente comercialmente.
-3. Habla en español colombiano neutro, con calidez. Usa máximo uno o dos emojis por mensaje (ej. 👋, ✨, 🌸).
-4. Escribe mensajes breves y legibles (máximo 3-4 párrafos cortos). Haz una sola pregunta a la vez para guiar al paciente progresivamente.
-5. Si te preguntan sobre precios o tratamientos, responde la duda primero brevemente antes de ofrecer agendar una cita.
-6. NUNCA diagnostiques ni prescribas tratamientos. Si te piden un diagnóstico, di amablemente: "Puedo darte información general, pero la Dra. Carolina Aguirre debe valorar tu caso personalmente. ¿Te gustaría agendar una valoración?"
-7. Si el paciente menciona una urgencia médica grave (sangrado severo, dificultad respiratoria, dolor agudo post-tratamiento), detén todo el flujo comercial e indícale acudir de inmediato a urgencias o llamar al 123.
-8. Si el paciente pide hablar con una persona, o tiene quejas, activa la transferencia a un asesor humano de inmediato.
+REGLAS DE MARCA Y CEREBRO PUBLICITARIO (MARKETING ÉTICO):
+1. Preséntate siempre como Pau, la asistente virtual de Paunova Clinic y de la Dra. Carolina Aguirre. Nunca finjas ser la doctora.
+2. Utiliza un tono cálido, elegante, profesional, empático y persuasivo sin ser comercialmente agresivo.
+3. Habla en español colombiano neutro. Usa máximo uno o dos emojis por mensaje (ej. 👋, ✨).
+4. No improvises valores. Si te preguntan por precios, aclara siempre que son valores iniciales ("desde") y están sujetos a valoración presencial.
+5. No prometas resultados definitivos ni promuevas descuentos no autorizados. Enfatiza los beneficios educativos y el cuidado ético del paciente.
+6. Si te preguntan por tratamientos, da una respuesta de 2 a 4 frases, ofrece ampliar los beneficios o preparación, y finaliza con una invitación suave a agendar valoración.
 
-FLUJO DE DATOS Y REGISTRO:
-- Solicita primero el nombre.
-- Antes de pedir datos sensibles (como tipo/número de documento o fecha de nacimiento), muestra el aviso corto de privacidad e indica que puede aceptar respondiendo "Sí, autorizo".
-- Cuando se confirme una cita presencial o virtual, se creará en el sistema. Si es virtual, se intentará generar un enlace de Google Meet.
-- No inventes precios ni servicios que no estén en tu catálogo. Si no conoces un dato, di que consultarás con un asesor humano.
+NORMAS LEGALES (LEY 1581 - PROTECCIÓN DE DATOS):
+1. Antes de capturar cualquier dato personal sensible (como tipo/número de documento, fecha de nacimiento o historial clínico), debes mostrar el AVISO DE PRIVACIDAD CORTO y obtener un consentimiento afirmativo ("Sí, autorizo").
+2. Si el usuario no autoriza, detén el registro de inmediato y ofrece transferir a atención humana.
+3. Nunca solicites el número de documento completo en el chat principal si la política de seguridad lo desaconseja; indícale al paciente que se le enviará un link seguro para completarlo.
+
+CRITERIOS CLÍNICOS Y DE SEGURIDAD:
+1. No diagnostiques ni prescribas tratamientos.
+2. Si el paciente menciona una emergencia médica, detén el flujo comercial de inmediato.
 `;
 
 interface ChatMessage {
@@ -31,7 +45,6 @@ interface ChatMessage {
   content: string;
 }
 
-// Function declarations for OpenAI Function Calling
 const tools = [
   {
     type: "function" as const,
@@ -120,11 +133,7 @@ export async function processChatbotMessage(
   userMessage: string,
   chatHistory: ChatMessage[] = []
 ): Promise<string> {
-  if (!OPENAI_API_KEY) {
-    return "Lo siento, mi conexión con el motor de inteligencia artificial no está configurada temporalmente. Por favor, comunícate al canal de atención humana.";
-  }
-
-  // Find or initialize session state from database
+  // 1. Retrieve session state from Google Sheets
   let session = await db.getConversation(whatsappUserId);
   if (!session) {
     session = await db.saveConversation({
@@ -138,6 +147,25 @@ export async function processChatbotMessage(
       consentStatus: "Pendiente",
       lastMessageAt: new Date().toISOString(),
     });
+  }
+
+  // 2. CHECK LOCAL EMERGENCY HEURISTICS (Clinical Priority)
+  if (classifyLocalEmergency(userMessage)) {
+    session.state = "human_agent";
+    await db.saveConversation(session);
+    return "🚨 *Alerta de Seguridad*: Los síntomas que mencionas podrían requerir valoración médica inmediata. Ten en cuenta que este chat no es un canal para emergencias médicas. Te recomendamos acudir de inmediato a tu servicio de urgencias más cercano o llamar al 123 (Colombia). Hemos alertado al personal de la clínica para que se comunique contigo lo antes posible.";
+  }
+
+  // 3. CHECK LOCAL HUMAN HANDOFF HEURISTICS (Handoff Priority)
+  if (classifyLocalHumanHandoff(userMessage)) {
+    session.state = "human_agent";
+    await db.saveConversation(session);
+    return "👋 He transferido tu conversación a nuestro equipo de atención humana. En un momento, una de nuestras asesoras de Paunova Clinic se comunicará contigo directamente por este chat. ¡Gracias por escribirnos!";
+  }
+
+  // 4. VERIFY IA ACTIVATION
+  if (!OPENAI_API_KEY) {
+    return "Lo siento, mi conexión con el motor de inteligencia artificial no está configurada temporalmente. Por favor, comunícate al canal de atención humana.";
   }
 
   // Build the message history
@@ -234,7 +262,6 @@ export async function processChatbotMessage(
         }
       } else if (functionName === "registrar_paciente_nuevo") {
         try {
-          // Check if patient exists
           const patients = await db.getPatients();
           let patient = patients.find((p) => p.phone.replace(/\s+/g, "") === args.telefono.replace(/\s+/g, ""));
           if (!patient) {
@@ -298,7 +325,6 @@ export async function processChatbotMessage(
     // State machine updates based on simple heuristics in conversation
     const lowerMessage = userMessage.toLowerCase();
     if (session.state === "greeting") {
-      // Heuristic to capture preferred name if greeting
       const nameParts = userMessage.trim().split(" ");
       if (nameParts.length > 0 && nameParts.length <= 3 && !lowerMessage.includes("hola") && !lowerMessage.includes("precio")) {
         session.preferredName = nameParts[0];
